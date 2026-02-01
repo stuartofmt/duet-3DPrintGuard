@@ -3,6 +3,8 @@ import logging
 import os
 from contextlib import asynccontextmanager
 
+
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
@@ -142,7 +144,12 @@ async def http_redirect_middleware(request: Request, call_next):
     return response
 
 def run():
+    from .duet import duet
+    print(f'app DWC is {duet["DWC"]}')
+    DWC = duet["DWC"]
+
     """
+
     Run the FastAPI application with uvicorn, handling different startup modes.
     """
     # pylint: disable=C0415
@@ -166,7 +173,8 @@ def run():
                         host="0.0.0.0",
                         port=8000,
                         ssl_certfile=SSL_CERT_FILE,
-                        ssl_keyfile=ssl_private_key_path)
+                        ssl_keyfile=ssl_private_key_path
+                        )
         case SiteStartupMode.TUNNEL:
             match tunnel_provider:
                 case TunnelProvider.NGROK:

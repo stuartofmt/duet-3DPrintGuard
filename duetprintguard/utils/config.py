@@ -1,3 +1,7 @@
+from ..duet import duet
+print(f'config DWC is {duet["DWC"]}')
+DWC = duet["DWC"]
+
 import json
 import logging
 import os
@@ -28,10 +32,13 @@ if is_running_in_docker():
     APP_DATA_DIR = "/data"
 else:
     APP_DATA_DIR = user_data_dir("printguard", "printguard")
+"""SRS"""
+if DWC:
+    APP_DATA_DIR = os.getcwd()
+"""/SRS"""
 
 KEYRING_SERVICE_NAME = "printguard"
 os.makedirs(APP_DATA_DIR, exist_ok=True)
-
 CONFIG_FILE = os.path.join(APP_DATA_DIR, "config.json")
 SECRETS_FILE = os.path.join(APP_DATA_DIR, "secrets.json")
 LOCK_FILE = os.path.join(APP_DATA_DIR, "config.lock")
