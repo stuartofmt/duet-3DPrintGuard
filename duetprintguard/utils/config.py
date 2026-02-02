@@ -1,7 +1,4 @@
 from ..duet import duet
-print(f'config DWC is {duet["DWC"]}')
-DWC = duet["DWC"]
-
 import json
 import logging
 import os
@@ -28,14 +25,16 @@ def is_running_in_docker():
     """Check if the application is running inside a Docker container."""
     return os.path.exists('/.dockerenv')
 
+###  Runs on module import
 if is_running_in_docker():
     APP_DATA_DIR = "/data"
 else:
     APP_DATA_DIR = user_data_dir("printguard", "printguard")
-"""SRS"""
-if DWC:
-    APP_DATA_DIR = os.getcwd()
-"""/SRS"""
+    """SRS"""
+    if duet.DWC:
+        APP_DATA_DIR = os.getcwd()
+        logging.warning(f'Duet config files located at {APP_DATA_DIR}')
+    """/SRS"""
 
 KEYRING_SERVICE_NAME = "printguard"
 os.makedirs(APP_DATA_DIR, exist_ok=True)
@@ -387,3 +386,5 @@ DETECTION_TUNNEL_INTERVAL_MS = 1000 / DETECTIONS_PER_SECOND
 PRINTER_STAT_POLLING_RATE_MS = 2000
 MIN_SSE_DISPATCH_DELAY_MS = 100
 STANDARD_STAT_POLLING_RATE_MS = 250
+
+

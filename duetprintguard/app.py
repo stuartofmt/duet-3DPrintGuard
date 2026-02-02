@@ -1,3 +1,4 @@
+from .duet import duet
 import asyncio
 import logging
 import os
@@ -135,7 +136,7 @@ async def http_redirect_middleware(request: Request, call_next):
     """
     if request.url.scheme == "http":
         if (request.url.path.startswith("/setup") or
-            request.url.path.startswith("/static")):
+            request.url.path.startswith("/static") or request.url.path.startswith("/")):
             response = await call_next(request)
             return response
         else:
@@ -144,9 +145,9 @@ async def http_redirect_middleware(request: Request, call_next):
     return response
 
 def run():
-    from .duet import duet
-    print(f'app DWC is {duet["DWC"]}')
-    DWC = duet["DWC"]
+    for key, val in duet.items():
+        print(f'dict key is {key}')
+    print(f'app PORT is {duet.PORT}')
 
     """
 
@@ -161,20 +162,40 @@ def run():
     app_config = get_config()
     site_domain = app_config.get(SavedConfig.SITE_DOMAIN, "")
     tunnel_provider = app_config.get(SavedConfig.TUNNEL_PROVIDER, None)
-    stop_cloudflare_tunnel()
+    """SRS"""
+    if not duet.DWC:
+        stop_cloudflare_tunnel()
+    """/SRS"""
     match startup_mode:
         case SiteStartupMode.SETUP:
-            logging.warning("Starting in setup mode. Available at http://localhost:8000/setup")
-            uvicorn.run(app, host="0.0.0.0", port=8000)
+            """SRS"""
+            # Original defaults
+            HOST = "0.0.0.0"
+            PORT = 8000
+            if duet.DWC:
+                HOST = duet.HOST
+                PORT = duet.PORT
+
+            logging.warning(f'Starting in setup mode. Available at http://localhost:{PORT}/setup')
+            uvicorn.run(app, host=duet.HOST, port=duet.PORT)
+            """/SRS"""
         case SiteStartupMode.LOCAL:
             logging.warning("Starting in local mode. Available at %s", site_domain)
-            ssl_private_key_path = get_ssl_private_key_temporary_path()
-            uvicorn.run(app,
-                        host="0.0.0.0",
-                        port=8000,
-                        ssl_certfile=SSL_CERT_FILE,
-                        ssl_keyfile=ssl_private_key_path
-                        )
+            """SRS"""
+            if duet.DWC:
+                uvicorn.run(app,
+                            host=duet.HOST,
+                            port=duet.PORT
+                            )
+            else:
+                ssl_private_key_path = get_ssl_private_key_temporary_path()
+                uvicorn.run(app,
+                            host="0.0.0.0",
+                            port=8000,
+                            ssl_certfile=SSL_CERT_FILE,
+                            ssl_keyfile=ssl_private_key_path
+                            )
+            """/SRS"""
         case SiteStartupMode.TUNNEL:
             match tunnel_provider:
                 case TunnelProvider.NGROK:
