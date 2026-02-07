@@ -7,14 +7,14 @@ import cv2
 import numpy as np
 from PIL import Image
 
-from .model_utils import _run_inference
-from .sse_utils import sse_update_camera_state
-from .detection_utils import (_passed_majority_vote, _create_alert_and_notify,
+from utils.model_utils import _run_inference
+from utils.sse_utils import sse_update_camera_state
+from utils.detection_utils import (_passed_majority_vote, _create_alert_and_notify,
                               _send_alert)
-from .camera_utils import get_camera_state_sync
-from .shared_video_stream import get_shared_camera_frame
-from ..models import SavedConfig, SiteStartupMode
-from .config import (get_config, STREAM_MAX_FPS, STREAM_TUNNEL_FPS,
+from utils.camera_utils import get_camera_state_sync
+from utils.shared_video_stream import get_shared_camera_frame
+from models import SavedConfig, SiteStartupMode
+from utils.config import (get_config, STREAM_MAX_FPS, STREAM_TUNNEL_FPS,
                      STREAM_JPEG_QUALITY, STREAM_TUNNEL_JPEG_QUALITY,
                      STREAM_MAX_WIDTH, STREAM_TUNNEL_MAX_WIDTH,
                      DETECTION_INTERVAL_MS, DETECTION_TUNNEL_INTERVAL_MS)

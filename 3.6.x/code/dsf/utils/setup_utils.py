@@ -109,7 +109,7 @@ def startup_mode_requirements_met() -> SiteStartupMode:
     May not need this module since assuming local mode
     and http at all times
     """
-    from ..duet import duet
+    from duet import duet
     if duet.DWC:
         return SiteStartupMode.LOCAL
     """/SRS"""
