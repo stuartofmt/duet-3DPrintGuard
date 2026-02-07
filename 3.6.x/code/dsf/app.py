@@ -145,8 +145,9 @@ async def http_redirect_middleware(request: Request, call_next):
     return response
 
 def run():
+    logging.warning(f'duet config values')
     for key, val in duet.items():
-        print(f'dict key is {key}')
+        logging.warning(f'{key} = {val}')
     print(f'app PORT is {duet.PORT}')
 
     """

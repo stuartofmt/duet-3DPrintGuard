@@ -101,8 +101,13 @@ def open_camera(camera_uuid) -> cv2.VideoCapture:
     if not camera_state or not camera_state.source:
         raise ValueError(f"Camera with UUID {camera_uuid} does not have a valid source.")
     source = camera_state.source
+
     if isinstance(source, str) and source.isdigit():
         source = int(source)
+
+    """SRS"""
+    source = 'http://localhost:8090/stream'
+    """/SRS"""
 
     cap = cv2.VideoCapture(source, cv2.CAP_ANY)
     if not cap.isOpened():

@@ -1,1 +1,0 @@
-Failed to enable notifications: Failed to register a ServiceWorker for scope ('https://0.0.0.0:8000/static/js/') with script ('https://0.0.0.0:8000/static/js/sw.js'): An SSL certificate error occurred when fetching the script.
