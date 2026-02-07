@@ -2,8 +2,8 @@ import asyncio
 from typing import Any
 import logging
 
-from .config import SENSITIVITY
-from .inference_lib import get_inference_engine
+from utils.config import SENSITIVITY
+from utils.inference_lib import get_inference_engine
 
 async def _run_inference(model: Any,
                          batch_tensor: Any,

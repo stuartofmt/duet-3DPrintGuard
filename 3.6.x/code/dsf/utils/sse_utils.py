@@ -16,7 +16,7 @@ async def outbound_packet_fetch():
         str: Serialized JSON packet from application outbound queue.
     """
     # pylint: disable=C0415
-    from ..app import app
+    from app import app
     while True:
         packet = await app.state.outbound_queue.get()
         yield packet
@@ -38,7 +38,7 @@ async def append_new_outbound_packet(packet, sse_data_type: SSEDataType):
                      sse_data_type.value, time_since_last_dispatch)
         return
     # pylint: disable=C0415
-    from ..app import app
+    from app import app
     pkt = {"data": {"event": sse_data_type.value, "data": packet}}
     pkt_json = json.dumps(pkt)
     await app.state.outbound_queue.put(pkt_json)
@@ -52,7 +52,7 @@ async def append_new_outbound_packet_force(packet, sse_data_type: SSEDataType):
         sse_data_type (SSEDataType): The type of SSE event.
     """
     # pylint: disable=C0415
-    from ..app import app
+    from app import app
     pkt = {"data": {"event": sse_data_type.value, "data": packet}}
     pkt_json = json.dumps(pkt)
     await app.state.outbound_queue.put(pkt_json)
@@ -91,7 +91,7 @@ async def _sse_update_camera_state_func(camera_uuid):
         camera_uuid (str): The UUID of the camera.
     """
     # pylint: disable=import-outside-toplevel
-    from .camera_utils import get_camera_state
+    from utils.camera_utils import get_camera_state
     state = await get_camera_state(camera_uuid)
     detection_history = state.detection_history
     total_detections = len(detection_history)
@@ -152,7 +152,7 @@ def get_polling_task(camera_uuid):
         PollingTask or None: The polling task if exists, otherwise None.
     """
     # pylint: disable=C0415
-    from ..app import app
+    from app import app
     return app.state.polling_tasks.get(camera_uuid) or None
 
 def stop_and_remove_polling_task(camera_uuid):
@@ -162,7 +162,7 @@ def stop_and_remove_polling_task(camera_uuid):
         camera_uuid (str): The UUID of the camera.
     """
     # pylint: disable=C0415
-    from ..app import app
+    from app import app
     task = get_polling_task(camera_uuid)
     if task:
         task.stop_event.set()
