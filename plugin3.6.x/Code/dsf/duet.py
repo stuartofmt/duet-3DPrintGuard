@@ -24,6 +24,7 @@ duet = {
 "majority_vote_threshold": 2,
 "majority_vote_window": 5,
 "printer_id": None,
+"camera_url" : "http://localhost:8090/stream",
 "printer_config": None # last entry - no comma !
 }
 

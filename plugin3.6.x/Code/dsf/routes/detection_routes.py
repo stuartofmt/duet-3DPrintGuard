@@ -7,6 +7,7 @@ from fastapi.responses import StreamingResponse
 
 from utils.camera_utils import get_camera_state, update_camera_state
 from utils.detection_utils import _live_detection_loop
+from duet import duet
 
 router = APIRouter()
 
@@ -37,6 +38,7 @@ async def start_live_detection(request: Request, camera_uuid: str = Body(..., em
                                        "live_detection_task": asyncio.create_task(
                                            _live_detection_loop(request.app.state, camera_uuid)
                                            )})
+    print('LIVE DETECTION STARTED')
     return {"message": f"Live detection started for camera {camera_state.nickname}"}
 
 @router.post("/detect/live/stop")

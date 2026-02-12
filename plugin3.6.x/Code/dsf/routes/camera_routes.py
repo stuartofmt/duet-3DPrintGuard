@@ -26,10 +26,12 @@ async def get_camera_state_ep(request: Request, camera_uuid: str = Body(..., emb
         dict: Dictionary containing comprehensive camera state information including
               detection history, settings, error status, and printer configuration.
     """
+    """
     camera_state = await get_camera_state(camera_uuid)
     detection_times = [t for t, _ in camera_state.detection_history] if (
         camera_state.detection_history
         ) else []
+    
     response = {
         "nickname": camera_state.nickname,
         "start_time": camera_state.start_time,
@@ -50,6 +52,31 @@ async def get_camera_state_ep(request: Request, camera_uuid: str = Body(..., emb
         "printer_config": camera_state.printer_config,
         "countdown_action": camera_state.countdown_action
     }
+    """
+    """SRS Dummy data"""
+    """camera_state = await get_camera_state(camera_uuid)"""
+    response =  {
+            "nickname": "usb",
+            "source": "http://localhost:8090/stream",
+            "current_alert_id": None,
+            "detection_history": [],
+            "live_detection_running": False,
+            "last_result": None,
+            "last_time": None,
+            "start_time": None,
+            "error": None,
+            "brightness": 1.0,
+            "contrast": 1.0,
+            "focus": 1.0,
+            "sensitivity": 1.0,
+            "countdown_time": 60.0,
+            "countdown_action": "dismiss",
+            "majority_vote_threshold": 2,
+            "majority_vote_window": 5,
+            "printer_id": None,
+            "printer_config": None
+    }
+    
     return response
 
 @router.get('/camera/feed/{camera_uuid}', include_in_schema=False)

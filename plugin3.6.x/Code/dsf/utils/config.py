@@ -168,8 +168,8 @@ def init_config():
 					SavedConfig.SITE_DOMAIN: "localhost",
 					SavedConfig.TUNNEL_PROVIDER: None,
 					SavedConfig.PUSH_SUBSCRIPTIONS: [],
-					SavedConfig.CAMERA_STATES: 
-											{"f615bdc5-f42f-4729-9482-c53d6942973f":
+					SavedConfig.CAMERA_STATES:
+											{"Stream":
 												{
 												"nickname": "usb",
 												"source": "http://localhost:8090/stream",
@@ -204,11 +204,11 @@ def init_config():
 					SavedConfig.PUSH_SUBSCRIPTIONS: [],
 					SavedConfig.CAMERA_STATES: {}
 				}
-			with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
-				json.dump(default_config, f, indent=2)
-			logging.info("Created new config file with version %s at %s",
-						 CONFIG_VERSION,
-						 CONFIG_FILE)
+		with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
+			json.dump(default_config, f, indent=2)
+		logging.warning("Created new config file with version %s at %s",
+						CONFIG_VERSION,
+						CONFIG_FILE)
 	finally:
 		release_lock()
 
