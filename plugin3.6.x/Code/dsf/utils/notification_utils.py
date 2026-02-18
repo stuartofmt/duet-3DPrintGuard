@@ -46,7 +46,7 @@ async def send_defect_notification(alert_id):
     if alert:
         logging.debug("Alert found for ID %s, preparing notification", alert_id)
         # pylint: disable=import-outside-toplevel
-        from utils.camera_utils import get_camera_state
+        from .camera_utils import get_camera_state
         camera_state = await get_camera_state(alert.camera_uuid)
         camera_nickname = camera_state.nickname if camera_state else alert.camera_uuid
         notification = Notification(

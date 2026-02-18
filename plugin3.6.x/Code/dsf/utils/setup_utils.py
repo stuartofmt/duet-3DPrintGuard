@@ -1,8 +1,7 @@
 import logging
 
 from models import SavedConfig, SavedKey, SiteStartupMode
-
-from utils.config import SSL_CERT_FILE, get_config, get_key
+from .config import SSL_CERT_FILE, get_config, get_key
 
 
 def setup_ngrok_tunnel(close: bool = False) -> bool:
@@ -104,16 +103,6 @@ def startup_mode_requirements_met() -> SiteStartupMode:
     Returns:
         SiteStartupMode: The site startup mode if requirements are met, SETUP otherwise.
     """
-    """SRS"""
-    """
-    May not need this module since assuming local mode
-    and http at all times
-    """
-    from duet import duet
-    if duet.DWC:
-        return SiteStartupMode.LOCAL
-    """/SRS"""
-
     startup_mode = get_config().get(SavedConfig.STARTUP_MODE, None)
     match startup_mode:
         case SiteStartupMode.SETUP:

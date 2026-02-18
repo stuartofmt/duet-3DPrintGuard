@@ -6,7 +6,7 @@ from typing import Any, List, Tuple, Dict, Optional
 
 import numpy as np
 
-from utils.backends.base_engine import BaseInferenceEngine
+from .base_engine import BaseInferenceEngine
 
 try:
     import onnxruntime as ort

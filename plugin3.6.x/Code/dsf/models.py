@@ -39,7 +39,7 @@ class Notification(BaseModel):
 
 def _get_config_value(key: str):
     # pylint: disable=import-outside-toplevel
-    from .utils.config import (BRIGHTNESS, CONTRAST,
+    from utils.config import (BRIGHTNESS, CONTRAST,
                               FOCUS, SENSITIVITY,
                               COUNTDOWN_TIME, COUNTDOWN_ACTION,
                               DETECTION_VOTING_THRESHOLD,

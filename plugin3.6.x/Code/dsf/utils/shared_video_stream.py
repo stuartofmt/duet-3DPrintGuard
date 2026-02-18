@@ -5,7 +5,7 @@ from typing import Dict, Optional, List, Callable
 import cv2
 import numpy as np
 
-from utils.camera_utils import get_camera_state_sync
+from .camera_utils import get_camera_state_sync
 
 
 class SharedVideoStream:

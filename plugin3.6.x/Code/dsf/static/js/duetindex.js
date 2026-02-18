@@ -375,7 +375,7 @@ camDetectionToggleButton.addEventListener('click', function() {
     }
 });
 
-render_ascii_title(asciiTitle, 'PrintGuard');
+render_ascii_title(asciiTitle, 'duetPrintGuard');
 
 cameraItems.forEach(item => {
     item.addEventListener('click', function() {
@@ -604,7 +604,7 @@ function updateAsciiTitle() {
     if (isSettingsVisible) {
         render_ascii_title(asciiTitle, 'Settings');
     } else {
-        const title = 'PrintGuard';
+        const title = 'duetPrintGuard';
         render_ascii_title(asciiTitle, title);
 
         if (isMobileView()) {

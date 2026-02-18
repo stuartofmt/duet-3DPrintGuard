@@ -17,7 +17,7 @@ from models import FeedSettings, SavedConfig
 
 router = APIRouter()
 
-@router.get("/", include_in_schema=False)
+@router.get("/duetindex", include_in_schema=False)
 async def serve_index(request: Request):
     """Serve the main index page with camera states and configuration.
 
@@ -37,14 +37,14 @@ async def serve_index(request: Request):
     camera_states = {}
     for cam_uuid in camera_uuids:
         camera_states[cam_uuid] = await camera_state_manager.get_camera_state(cam_uuid)
-    return templates.TemplateResponse("index.html", {
+    return templates.TemplateResponse("duetindex.html", {
         "camera_states": camera_states,
         "request": request,
         "current_time": time.time(),
     })
 
 # pylint: disable=unused-argument
-@router.post("/", include_in_schema=False)
+@router.post("/duetindex", include_in_schema=False)
 async def update_settings(request: Request,
                           camera_uuid: str = Form(...),
                           sensitivity: float = Form(...),
@@ -83,5 +83,4 @@ async def update_settings(request: Request,
         "majority_vote_threshold": majority_vote_threshold,
         "majority_vote_window": majority_vote_window,
     })
-    return RedirectResponse("/", status_code=303)
-
+    return RedirectResponse("/duetindex", status_code=303)

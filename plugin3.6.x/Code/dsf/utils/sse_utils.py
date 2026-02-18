@@ -91,7 +91,7 @@ async def _sse_update_camera_state_func(camera_uuid):
         camera_uuid (str): The UUID of the camera.
     """
     # pylint: disable=import-outside-toplevel
-    from utils.camera_utils import get_camera_state
+    from .camera_utils import get_camera_state
     state = await get_camera_state(camera_uuid)
     detection_history = state.detection_history
     total_detections = len(detection_history)
@@ -181,7 +181,7 @@ def add_polling_task(camera_uuid, task: PollingTask):
         task (PollingTask): The task object containing the asyncio.Task and stop_event.
     """
     # pylint: disable=C0415
-    from ..app import app
+    from app import app
     if camera_uuid in app.state.polling_tasks:
         stop_and_remove_polling_task(camera_uuid)
     app.state.polling_tasks[camera_uuid] = task
