@@ -21,6 +21,7 @@ from routes.setup_routes import router as setup_router
 from routes.index_routes import router as index_router
 """SRS"""
 from routes.duetindex_routes import router as duetindex_router
+from routes.settings_routes import router as settings_router
 from routes.save_get_feedsettings_routes import router as feedsettings_router
 from routes.camera_routes import router as camera_router
 from routes.printer_routes import router as printer_router
@@ -130,6 +131,7 @@ app.include_router(setup_router, tags=["setup"])
 app.include_router(index_router, tags=["index"])
 """SRS"""
 app.include_router(duetindex_router, tags=["duetindex"])
+app.include_router(settings_router, tags=["settings"])
 app.include_router(feedsettings_router, tags=["feedsettings"])	
 
 app.include_router(camera_router, tags=["camera"])
@@ -151,6 +153,9 @@ async def http_redirect_middleware(request: Request, call_next):
 		elif request.url.path.startswith("/duetindex"):
 			logging.warning(f'Redirecting to duetindex')
 			return RedirectResponse(url="/duetindex", status_code=307)
+		elif request.url.path.startswith("/settings"):
+			logging.warning(f'Redirecting to settings')
+			return RedirectResponse(url="/settings", status_code=307)
 		else:
 			return RedirectResponse(url="/setup", status_code=307)
 	response = await call_next(request)

@@ -1,23 +1,15 @@
-<!--
-Modified form of index.html - minimal elements retained to support
-a monitoring UI in DWC as part of plugin
-Removed unnecessary elements with style="display: none;" to preserve code linkages
-and allow for easier reintroduction if needed in the future without breaking existing code.
-Uses original index.js and modified stylesheet to facilitate reformattingfor DWC
-
--->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>duetPrintGuard</title>
+    <title>Settings</title>
     <link rel="stylesheet" href="{{ url_for('static', path='css/universal.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', path='css/duetindex.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/settings.css') }}">
     <script type="module" src="{{ url_for('static', path='js/notifications.js') }}"></script>
     <script src="{{ url_for('static', path='js/sse.js') }}" defer></script>
     <script type="module" src="{{ url_for('static', path='js/utils.js') }}" defer></script>
-    <script type="module" src="{{ url_for('static', path='js/duetindex.js') }}" defer></script>
+    <script type="module" src="{{ url_for('static', path='js/settings.js') }}" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/figlet@1.8.1/lib/figlet.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding&display=swap" rel="stylesheet">
 </head>
@@ -27,22 +19,19 @@ Uses original index.js and modified stylesheet to facilitate reformattingfor DWC
     </div>
     <div class="grid-container">
         <div class="grid-item" style="display: none;">
-            <pre id="ascii-title" style="display: none;"></pre>
+            <pre id="ascii-title"></pre>
             <div class="camera-header">
                 <p class="camera-title" id="cameraTitle"></p>
                 <span class="live-indicator"></span>
             </div>
         </div>
-
         <div class="grid-item" id="video-feed-container" style="display: none;">
-            <!--Just hide the display to preserve other code linkages-->
-            <img id="videoPreview" src="" alt="Live Video Feed Preview"/>
-            <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+            <img id="videoPreview" src="" alt="Live Video Feed Preview" />
+            <div id="loadingOverlay" class="loading-overlay">
                 <div class="loading-spinner"></div>
                 <p>Loading camera feed...</p>
             </div>
         </div>
-        <!--List of cameras-->
         <div class="grid-item" id="camera-list-container">
             <ul id="cameraList" name="camera">
                 {% for camera_id, camera_state in camera_states.items() %}
@@ -50,18 +39,19 @@ Uses original index.js and modified stylesheet to facilitate reformattingfor DWC
                         <div class="camera-text-content">
                             <div class="camera-header">
                                 <span>{{ camera_state.nickname }}</span>
-                                <span class="camera-status"></span>
+                                <span class="camera-status" style="display: none;"></span>
                             </div>
-                            <span class="camera-prediction">-</span>
-                            <span class="camera-prediction-time">Last Active: <span id="lastTimeValue">-</span></span>
+                            <span class="camera-prediction" style="display: none;">-</span>
+                            <span class="camera-prediction-time" style="display: none;">Detected at: <span id="lastTimeValue">-</span></span>
+                            <img src="{{ url_for('static', path='images/default_icon.png') }}" alt="Camera Icon" class="camera-video-preview" id="cameraPreview">
+                            <button class="remove-camera-btn" title="Remove camera">Remove Camera</button>
+
                         </div>
-                        <img src="{{ url_for('static', path='images/default_icon.png') }}" alt="Camera Icon" class="camera-video-preview" id="cameraPreview">
-                        <button class="start-stop-camera-btn" title="start Stop Detection";>Start Detection</button>
                     </li>
                 {% endfor %}
             </ul>
             {% if not camera_states %}
-            <div id="noCamerasMessage" class="no-cameras-container">
+            <div id="noCamerasMessage" class="no-cameras-container" style="display: none;">
                 <div class="no-cameras-content">
                     <h3>No cameras configured</h3>
                     <p>Get started by adding your first camera</p>
@@ -73,31 +63,55 @@ Uses original index.js and modified stylesheet to facilitate reformattingfor DWC
         <div class="grid-item">
             <div class="camera-display-section">
                 <div class="info-grid">
-                    <!--Just hide the display to preserve other code linkages-->
-                    <div class="info-item" style="display: none;">
-                        <span class="info-value success-status" id="camPredictionDisplay" >Inactive</span>
+                    <div class="info-item">
+                        <span class="info-value success-status" id="camPredictionDisplay">Inactive</span>
                         <span class="info-label" id="camPredictionTimeDisplay">at -</span>
                     </div>
-
-                    <div class="info-item" style="display: none;">
+                    <div class="info-item">
                         <span class="info-value" id="camTotalDetectionsDisplay">-</span>
                         <span class="info-label">total detections</span>
                     </div>
-
-                    <div class="info-item" style="display: none;">
-                        <button class="start-stop-btn" id="camDetectionToggleButton" >Start Detection</button>
+                    <div class="info-item">
+                        <button class="start-stop-btn" id="camDetectionToggleButton">Start Detection</button>
                     </div>
-
-                    <div class="info-item" style="display: none;">
+                    <div class="info-item">
                         <span class="info-value" id="camFrameRateDisplay">-</span>
                         <span class="info-label">frames per second</span>
                     </div>
-
                 </div>
             </div>
             <div class="settings-section" style="display: none;">
                 <form action="{{ url_for('update_settings') }}" method="post" class="settings-form settings-grid">
                     <input type="hidden" id="camera_uuid" name="camera_uuid"  value="">
+                    <div class="settings-item">
+                        <button class="start-stop-btn" id="configureSetupBtn">Configure Setup</button>
+                    </div>
+                    <div class="settings-item">
+                        <button class="start-stop-btn" id="addCameraBtn">Add Camera</button>
+                    </div>
+                    <div class="settings-item">
+                        <button class="start-stop-btn" id="printerConfigBtn" style="display: none;">
+                            <span id="printerConfigStatus">Printer Connected</span>
+                        </button>
+                        <button class="start-stop-btn" id="linkPrinterBtn">
+                            Link Printer
+                        </button>
+                    </div>
+                        <div class="settings-item">
+                        <label for="countdown_action">Countdown Action</label>
+                        <select id="countdown_action" name="countdown_action" class="settings-dropdown">
+                            <option value="dismiss">Dismiss</option>
+                            <option value="cancel_print">Cancel Print</option>
+                            <option value="pause_print">Pause Print</option>
+                        </select>
+                    </div>
+                    <div class="settings-item">
+                        <label for="notificationBtn">Notifications</label>
+                        <div class="notification-control">
+                            <button id="notificationBtn">Enable Notifications</button>
+                        </div>
+                    </div>
+
                     <div class="settings-item">
                         <label for="sensitivity">Sensitivity: <span id="sensitivity_val"></span></label>
                         <input type="range" id="sensitivity" name="sensitivity" min="0" max="2" step="0.05"  value="-" />
@@ -119,14 +133,6 @@ Uses original index.js and modified stylesheet to facilitate reformattingfor DWC
                         <input type="range" id="countdown_time" name="countdown_time" min="0" max="300" step="5"  value="-" />
                     </div>
                     <div class="settings-item">
-                        <label for="countdown_action">Countdown Action</label>
-                        <select id="countdown_action" name="countdown_action" class="settings-dropdown">
-                            <option value="dismiss">Dismiss</option>
-                            <option value="cancel_print">Cancel Print</option>
-                            <option value="pause_print">Pause Print</option>
-                        </select>
-                    </div>
-                    <div class="settings-item">
                         <label for="majority_vote_threshold">Majority Vote Threshold: <span id="majority_vote_threshold_val"></span></label>
                         <input type="range" id="majority_vote_threshold" name="majority_vote_threshold" min="1" max="20"  value="-" />
                     </div>
@@ -134,32 +140,14 @@ Uses original index.js and modified stylesheet to facilitate reformattingfor DWC
                         <label for="majority_vote_window">Majority Vote Window (frames): <span id="majority_vote_window_val"></span></label>
                         <input type="range" id="majority_vote_window" name="majority_vote_window" min="1" max="100"  value="-" />
                     </div>
-                    <div class="settings-item">
-                        <button class="start-stop-btn" id="printerConfigBtn" style="display: none;">
-                            <span id="printerConfigStatus">Printer Connected</span>
-                        </button>
-                        <button class="start-stop-btn" id="linkPrinterBtn">
-                            Link Printer
-                        </button>
-                    </div>
-                    <div class="settings-item">
-                        <label for="notificationBtn">Notifications</label>
-                        <div class="notification-control">
-                            <button id="notificationBtn">Enable Notifications</button>
-                        </div>
-                    </div>
-                    <div class="settings-item">
-                        <button class="start-stop-btn" id="configureSetupBtn">Configure Setup</button>
-                    </div>
-                    <div class="settings-item">
-                        <button class="start-stop-btn" id="addCameraBtn">Add Camera</button>
-                    </div>
                 </form>
             </div>
         </div>
     </div>
-    <button class="settings-button" id="settingsButton" style="display: none;">Settings</button>
-    <div class="setup-modal-overlay" id="setupModalOverlay" style="display: none;">
+    <button class="settings-button" id="settingsButton">
+        Settings
+    </button>
+    <div class="setup-modal-overlay" id="setupModalOverlay">
         <div class="setup-modal">
             <div class="setup-modal-header">
                 <h2 class="setup-modal-title">Configure Setup</h2>
@@ -241,6 +229,7 @@ Uses original index.js and modified stylesheet to facilitate reformattingfor DWC
                             <label for="modalPrinterConnectionType">Connection Type</label>
                             <select id="modalPrinterConnectionType" name="printer_type" required>
                                 <option value="">Select connection type...</option>
+                                <option value="Duet3D">Duet3D</option>
                                 <option value="octoprint">OctoPrint</option>
                             </select>
                         </div>

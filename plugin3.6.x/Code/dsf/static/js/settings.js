@@ -466,6 +466,8 @@ addFirstCameraBtn?.addEventListener('click', function(e) {
 
 let isSettingsVisible = false;
 
+
+
 settingsButton.addEventListener('click', function() {
     isSettingsVisible = !isSettingsVisible;
     
@@ -481,6 +483,9 @@ settingsButton.addEventListener('click', function() {
         settingsButton.textContent = 'Settings';
     }
 });
+
+/*SRS*/
+settingsButton.click();
 
 let notificationsEnabled = false;
 notificationsBtn.textContent = '';

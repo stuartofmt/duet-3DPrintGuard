@@ -107,10 +107,13 @@ function toggleIsDetectingStatus(isActive) {
 }
 
 function updateDetectionButton(isActive) {
+    console.warn('Updating detection button, isActive:', isActive);
     if (isActive) {
         camDetectionToggleButton.textContent = stopDetectionBtnLabel;
     } else {
+
         camDetectionToggleButton.textContent = startDetectionBtnLabel;
+
     }
 }
 
@@ -139,6 +142,7 @@ function updateSelectedCameraSettings(d) {
     updateSliderFill(settingsMajorityVoteWindow);
     settingsCountdownAction.value = d.countdown_action;
     currentCameraPrinterConfig = d.printer_config;
+    console.warn('updateSelectedCameraSettings: live_detection_running ==>', d.live_detection_running);
 
     const hasPrinter = d.printer_id !== null && d.printer_id !== undefined;
     for (const option of settingsCountdownAction.options) {
@@ -185,6 +189,7 @@ function updateSelectedCameraData(d) {
     updateTotalDetectionsCount(d.total_detections, camTotalDetectionsDisplay);
     updateFrameRate(d.frame_rate, camFrameRateDisplay);
     toggleIsDetectingStatus(d.live_detection_running);
+    console.warn('updateSelectedCameraData:  With live detection status:', d.live_detection_running);
     updateDetectionButton(d.live_detection_running);
     printerTileStyle(d.printer_id !== undefined && d.printer_id !== null);
 }
@@ -192,21 +197,25 @@ function updateSelectedCameraData(d) {
 function updateCameraSelectionListData(d) {
     cameraItems.forEach(item => {
         const cameraId = item.dataset.cameraId;
-
         if (cameraId == d.camera_uuid) {
+            console.warn('updateCameraSelectionListData:', d.nickname, 'with last time data:', d.last_time);
             item.querySelector('.camera-prediction').textContent = d.last_result;
             item.querySelector('#lastTimeValue').textContent = d.last_time ? new Date(d.last_time * 1000).toLocaleTimeString() : '-';
             item.querySelector('.camera-prediction').style.color = d.last_result === 'success' ? 'green' : 'red';
             let statusIndicator = item.querySelector('.camera-status');
             if (d.live_detection_running) {
-                statusIndicator.textContent = `active`;
+                statusIndicator.textContent = `Detecting`;
                 statusIndicator.style.color = '#2ecc40';
                 statusIndicator.style.backgroundColor = 'transparent';
             } else {
-                statusIndicator.textContent = `inactive`;
+                statusIndicator.textContent = `Inactive`;
                 statusIndicator.style.color = '#b2b2b2';
                 statusIndicator.style.backgroundColor = 'transparent';
             }
+            /*SRS
+            Added toggle here to support multiple browser instances correctly updating
+            */
+            toggleIsDetectingStatus(d.live_detection_running);
             item.querySelector('#cameraPreview').src = `/camera/feed/${d.camera_uuid}`;
         }
     });
@@ -260,6 +269,7 @@ function removeCamera(cameraUUID) {
 }
 
 function updatePolledDetectionData(d) {
+    console.warn('updatePolledDetectionData for:', d.nickname, 'with last time data:', d.last_time);
     if ('camera_uuid' in d && d.camera_uuid == cameraUUID) {
         updateSelectedCameraData(d);
     }
@@ -278,6 +288,7 @@ function updatePolledPrinterData(d) {
 }
 
 function fetchAndUpdateMetricsForCamera(cameraUUID) {
+    console.warn('Fetching metrics for camera:', cameraUUID);
     if (!cameraUUID) {
         console.warn('Cannot fetch metrics: invalid camera UUID provided:', cameraUUID);
         return;
@@ -289,6 +300,7 @@ function fetchAndUpdateMetricsForCamera(cameraUUID) {
     })
     .then(response => {
         if (!response.ok) {
+            console.warn(`Failed to fetch camera state for camera ${cameraUUID}. Status: ${response.status} ${response.statusText}`);   
             return response.json().then(errData => {
                 throw new Error(`Failed to fetch camera state for camera ${cameraUUID}: ${errData.detail || response.statusText}`);
             }).catch(() => {
@@ -298,6 +310,7 @@ function fetchAndUpdateMetricsForCamera(cameraUUID) {
         return response.json();
     })
     .then(data => {
+        console.warn('Setting metricsData', data.last_time);   
         const metricsData = {
             camera_uuid: cameraUUID,
             start_time: data.start_time,
@@ -375,10 +388,11 @@ camDetectionToggleButton.addEventListener('click', function() {
     }
 });
 
-render_ascii_title(asciiTitle, 'duetPrintGuard');
+render_ascii_title(asciiTitle, 'PrintGuard');
 
 cameraItems.forEach(item => {
     item.addEventListener('click', function() {
+        console.warn('Camera item clicked:', this.dataset.cameraId);
         cameraItems.forEach(i => i.classList.remove('selected'));
         this.classList.add('selected');
         const cameraId = this.dataset.cameraId;
@@ -391,17 +405,39 @@ cameraItems.forEach(item => {
             stopPrinterStatusPolling();
             fetchAndUpdateMetricsForCamera(cameraId);
         } else {
+            console.warn('No camera ID found for selected item');
             cameraUUID = null;
             settingsCameraUUID.value = '';
             updateCameraTitle(null);
         }
     });
 
-    const removeButton = item.querySelector('.remove-camera-btn');
-    removeButton.addEventListener('click', function(event) {
+    /*SRS
+    Replaced old remove camera action to instead by detection start stop
+    */
+    const startstopcameraButton = item.querySelector('.start-stop-camera-btn');
+    startstopcameraButton.addEventListener('click', function(event) {
         event.stopPropagation();
         const cameraId = item.dataset.cameraId;
-        removeCamera(cameraId);
+        /*SRS
+        Assignment here to ensure correct camera is targeted even if user clicks
+        start/stop without selecting camera first
+        */
+        cameraUUID = cameraId;
+        /*SRS
+        Added toggle here to support multiple instances showing correct state
+        */
+        if (startstopcameraButton.textContent === startDetectionBtnLabel) {
+            startstopcameraButton.textContent = stopDetectionBtnLabel;
+            startstopcameraButton.style.backgroundColor = 'red';
+            sendDetectionRequest(true);
+            toggleIsDetectingStatus(true);
+        } else {
+            startstopcameraButton.textContent = startDetectionBtnLabel;
+            startstopcameraButton.style.backgroundColor = 'green';
+            sendDetectionRequest(false);
+            toggleIsDetectingStatus(false);
+    }
     });
 });
 
@@ -604,7 +640,7 @@ function updateAsciiTitle() {
     if (isSettingsVisible) {
         render_ascii_title(asciiTitle, 'Settings');
     } else {
-        const title = 'duetPrintGuard';
+        const title = 'PrintGuard';
         render_ascii_title(asciiTitle, title);
 
         if (isMobileView()) {

@@ -1,0 +1,483 @@
+{
+  "version": "1.0.0",
+  "vapid_public_key": "BBkYalFE41hUM_o3UL-G1c0mBj6k9IrinksL5uOJfMYAtMpcZd9NfwmxHSo1yEyUIv4hbAm5yrUOFbkyVzZuBEM=",
+  "vapid_subject": "mailto:stuartofmt@gmail.com",
+  "startup_mode": "local",
+  "site_domain": "localhost",
+  "tunnel_provider": null,
+  "push_subscriptions": [],
+  "camera_states": {
+    "bfd7c8a9-6055-4f94-a19b-7e17348873f2": {
+      "nickname": "usb",
+      "source": "/dev/video2",
+      "current_alert_id": null,
+      "detection_history": [
+        [
+          1771865536.5429368,
+          "success"
+        ],
+        [
+          1771865536.7626047,
+          "success"
+        ],
+        [
+          1771865536.964239,
+          "success"
+        ],
+        [
+          1771865537.1774814,
+          "success"
+        ],
+        [
+          1771865537.3997009,
+          "success"
+        ],
+        [
+          1771865537.5980844,
+          "success"
+        ],
+        [
+          1771865537.7617297,
+          "success"
+        ],
+        [
+          1771865537.9095483,
+          "success"
+        ],
+        [
+          1771865538.196283,
+          "success"
+        ],
+        [
+          1771865538.4392695,
+          "success"
+        ],
+        [
+          1771865538.6567307,
+          "success"
+        ],
+        [
+          1771865538.9078016,
+          "success"
+        ],
+        [
+          1771865539.132761,
+          "success"
+        ],
+        [
+          1771865539.3022788,
+          "success"
+        ],
+        [
+          1771865539.521598,
+          "success"
+        ],
+        [
+          1771865539.6957195,
+          "success"
+        ],
+        [
+          1771865539.870034,
+          "success"
+        ],
+        [
+          1771865540.0562487,
+          "success"
+        ],
+        [
+          1771865540.2390077,
+          "success"
+        ],
+        [
+          1771865540.4894927,
+          "success"
+        ],
+        [
+          1771865540.7579093,
+          "success"
+        ],
+        [
+          1771865540.953901,
+          "success"
+        ],
+        [
+          1771865541.1572578,
+          "success"
+        ],
+        [
+          1771865541.3248553,
+          "success"
+        ],
+        [
+          1771865541.622233,
+          "success"
+        ],
+        [
+          1771865541.7906168,
+          "success"
+        ],
+        [
+          1771865542.0772803,
+          "success"
+        ],
+        [
+          1771865542.2923315,
+          "success"
+        ],
+        [
+          1771865542.5397766,
+          "success"
+        ],
+        [
+          1771865542.788849,
+          "success"
+        ],
+        [
+          1771865542.969543,
+          "success"
+        ],
+        [
+          1771865543.2063851,
+          "success"
+        ],
+        [
+          1771865543.4820209,
+          "success"
+        ],
+        [
+          1771865543.8075297,
+          "success"
+        ],
+        [
+          1771865544.0911984,
+          "success"
+        ],
+        [
+          1771865544.2891116,
+          "success"
+        ],
+        [
+          1771865544.5084496,
+          "success"
+        ],
+        [
+          1771865544.6998992,
+          "success"
+        ],
+        [
+          1771865544.9123883,
+          "success"
+        ],
+        [
+          1771865545.0986857,
+          "success"
+        ],
+        [
+          1771865545.3444786,
+          "success"
+        ],
+        [
+          1771865545.6097522,
+          "success"
+        ],
+        [
+          1771865545.834714,
+          "success"
+        ],
+        [
+          1771865546.07729,
+          "success"
+        ],
+        [
+          1771865546.3304946,
+          "success"
+        ],
+        [
+          1771865546.5520928,
+          "success"
+        ],
+        [
+          1771865546.779832,
+          "success"
+        ],
+        [
+          1771865546.9519672,
+          "success"
+        ],
+        [
+          1771865547.1341693,
+          "success"
+        ],
+        [
+          1771865547.338829,
+          "success"
+        ],
+        [
+          1771865547.5473444,
+          "success"
+        ],
+        [
+          1771865547.7277555,
+          "success"
+        ],
+        [
+          1771865548.0128815,
+          "success"
+        ],
+        [
+          1771865548.245134,
+          "success"
+        ],
+        [
+          1771865548.4560363,
+          "success"
+        ],
+        [
+          1771865548.694361,
+          "success"
+        ],
+        [
+          1771865548.8983653,
+          "success"
+        ],
+        [
+          1771865549.0976527,
+          "success"
+        ],
+        [
+          1771865549.3157692,
+          "success"
+        ],
+        [
+          1771865549.5265007,
+          "success"
+        ],
+        [
+          1771865549.7400665,
+          "success"
+        ],
+        [
+          1771865549.948156,
+          "success"
+        ],
+        [
+          1771865550.1845322,
+          "success"
+        ],
+        [
+          1771865550.4069357,
+          "success"
+        ],
+        [
+          1771865550.589302,
+          "success"
+        ],
+        [
+          1771865550.8006139,
+          "success"
+        ],
+        [
+          1771865551.001907,
+          "success"
+        ],
+        [
+          1771865551.1450896,
+          "success"
+        ],
+        [
+          1771865551.3214004,
+          "success"
+        ],
+        [
+          1771865551.5238373,
+          "success"
+        ],
+        [
+          1771865551.7761428,
+          "success"
+        ],
+        [
+          1771865551.967371,
+          "success"
+        ],
+        [
+          1771865552.176513,
+          "success"
+        ],
+        [
+          1771865552.3641388,
+          "success"
+        ],
+        [
+          1771865552.5636897,
+          "success"
+        ],
+        [
+          1771865552.794022,
+          "success"
+        ],
+        [
+          1771865553.0125434,
+          "success"
+        ],
+        [
+          1771865553.2174206,
+          "success"
+        ],
+        [
+          1771865553.4171667,
+          "success"
+        ],
+        [
+          1771865553.6276934,
+          "success"
+        ],
+        [
+          1771865553.7994187,
+          "success"
+        ],
+        [
+          1771865554.047735,
+          "success"
+        ],
+        [
+          1771865554.2597532,
+          "success"
+        ],
+        [
+          1771865554.4442854,
+          "success"
+        ],
+        [
+          1771865554.6369882,
+          "success"
+        ],
+        [
+          1771865554.7999637,
+          "success"
+        ],
+        [
+          1771865555.009114,
+          "success"
+        ]
+      ],
+      "live_detection_running": false,
+      "last_result": "success",
+      "last_time": 1771865555.009114,
+      "start_time": null,
+      "error": null,
+      "brightness": 1.0,
+      "contrast": 1.0,
+      "focus": 1.0,
+      "sensitivity": 1.0,
+      "countdown_time": 60.0,
+      "countdown_action": "dismiss",
+      "majority_vote_threshold": 2,
+      "majority_vote_window": 5,
+      "printer_id": null,
+      "printer_config": null
+    },
+    "685d2416-7dbf-4de0-998f-a6e4b44ab380": {
+      "nickname": "Stream",
+      "source": "http://192.168.30.41:8090/stream",
+      "current_alert_id": null,
+      "detection_history": [
+        [
+          1771865540.4402547,
+          "success"
+        ],
+        [
+          1771865540.6321616,
+          "success"
+        ],
+        [
+          1771865540.8105872,
+          "success"
+        ],
+        [
+          1771865541.019366,
+          "success"
+        ],
+        [
+          1771865541.2817035,
+          "success"
+        ],
+        [
+          1771865541.4871056,
+          "success"
+        ],
+        [
+          1771865541.7544475,
+          "success"
+        ],
+        [
+          1771865541.953723,
+          "success"
+        ],
+        [
+          1771865542.1444077,
+          "success"
+        ],
+        [
+          1771865542.3451118,
+          "success"
+        ],
+        [
+          1771865542.648507,
+          "success"
+        ],
+        [
+          1771865542.908911,
+          "success"
+        ],
+        [
+          1771865543.147834,
+          "success"
+        ],
+        [
+          1771865543.3565943,
+          "success"
+        ],
+        [
+          1771865543.65537,
+          "success"
+        ],
+        [
+          1771865543.9375644,
+          "success"
+        ],
+        [
+          1771865544.1396928,
+          "success"
+        ],
+        [
+          1771865544.3514028,
+          "success"
+        ],
+        [
+          1771865544.5385077,
+          "success"
+        ],
+        [
+          1771865544.7609892,
+          "success"
+        ]
+      ],
+      "live_detection_running": false,
+      "last_result": "success",
+      "last_time": 1771865544.7609892,
+      "start_time": null,
+      "error": null,
+      "brightness": 1.0,
+      "contrast": 1.0,
+      "focus": 1.0,
+      "sensitivity": 1.0,
+      "countdown_time": 60.0,
+      "countdown_action": "dismiss",
+      "majority_vote_threshold": 2,
+      "majority_vote_window": 5,
+      "printer_id": null,
+      "printer_config": null
+    }
+  }
+}
