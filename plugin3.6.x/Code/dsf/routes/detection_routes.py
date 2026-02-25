@@ -1,5 +1,5 @@
 import asyncio
-import logging
+from logger_module import logger
 import time
 
 from fastapi import APIRouter, Body, File, HTTPException, Request, UploadFile
@@ -57,13 +57,13 @@ async def stop_live_detection(request: Request, camera_uuid: str = Body(..., emb
     if live_detection_task:
         try:
             await asyncio.wait_for(live_detection_task, timeout=0.25)
-            logging.debug("Live detection task for camera %s finished successfully.", camera_uuid)
+            logger.debug("Live detection task for camera %s finished successfully.", camera_uuid)
         except asyncio.TimeoutError:
-            logging.debug("Live detection task for camera %s did not finish in time.", camera_uuid)
+            logger.debug("Live detection task for camera %s did not finish in time.", camera_uuid)
             if live_detection_task:
                 live_detection_task.cancel()
         except Exception as e:
-            logging.error("Error stopping live detection task for camera %s: %s", camera_uuid, e)
+            logger.error("Error stopping live detection task for camera %s: %s", camera_uuid, e)
         finally:
             live_detection_task = None
     await update_camera_state(camera_uuid, {"start_time": None,

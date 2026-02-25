@@ -1,5 +1,5 @@
 import os
-import logging
+from logger_module import logger
 from typing import Optional, Dict, Any
 from pathlib import Path
 
@@ -91,7 +91,7 @@ class ModelDownloader:
             True if download was successful
         """
         try:
-            logging.info("Downloading %s from %s", filename, self.model_repo)
+            logger.info("Downloading %s from %s", filename, self.model_repo)
             downloaded_path = hf_hub_download(
                 repo_id=self.model_repo,
                 filename=filename,
@@ -100,10 +100,10 @@ class ModelDownloader:
             )
             if downloaded_path != local_path:
                 os.rename(downloaded_path, local_path)
-            logging.info("Successfully downloaded %s to %s", filename, local_path)
+            logger.info("Successfully downloaded %s to %s", filename, local_path)
             return True
         except (OSError, ValueError, RuntimeError) as e:
-            logging.error("Failed to download %s: %s", filename, e)
+            logger.error("Failed to download %s: %s", filename, e)
             return False
 
     def download_model(self,
@@ -123,7 +123,7 @@ class ModelDownloader:
         model_file = self.backend_files[backend]["model"]
         local_path = self.get_model_path(backend)
         if not force and self._is_file_cached(local_path):
-            logging.info("Model %s already cached at %s", model_file, local_path)
+            logger.info("Model %s already cached at %s", model_file, local_path)
             return True
         return self._download_file(model_file, local_path)
 
@@ -138,7 +138,7 @@ class ModelDownloader:
         """
         local_path = self.get_options_path()
         if not force and self._is_file_cached(local_path):
-            logging.info("Options file already cached at %s", local_path)
+            logger.info("Options file already cached at %s", local_path)
             return True
         return self._download_file("opt.json", local_path)
 
@@ -157,7 +157,7 @@ class ModelDownloader:
         cache_dir.mkdir(exist_ok=True)
         local_path = self.get_prototypes_cache_file()
         if not force and self._is_file_cached(local_path):
-            logging.info("Prototypes already cached at %s", local_path)
+            logger.info("Prototypes already cached at %s", local_path)
             return True
         return self._download_file("prototypes.pkl", local_path)
 
@@ -175,17 +175,17 @@ class ModelDownloader:
         """
         if backend is None:
             backend = _detect_backend()
-        logging.info("Downloading all model files for %s backend", backend.value)
+        logger.info("Downloading all model files for %s backend", backend.value)
         success = True
         success &= self.download_model(backend, force)
         success &= self.download_options(force)
         success &= self.download_prototypes(force)
         if success:
-            logging.info(
+            logger.info(
                 "All model files successfully downloaded/cached for %s backend",
                 backend.value)
         else:
-            logging.error(
+            logger.error(
                 "Failed to download some model files for %s backend",
                 backend.value)
         return success

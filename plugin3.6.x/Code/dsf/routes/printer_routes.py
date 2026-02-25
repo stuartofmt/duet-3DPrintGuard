@@ -1,4 +1,4 @@
-import logging
+from logger_module import logger
 
 from fastapi import APIRouter, HTTPException
 
@@ -32,7 +32,7 @@ async def add_printer_ep(camera_uuid: str, printer_config: PrinterConfigRequest)
         await set_printer(camera_uuid, printer_id, printer_config.model_dump())
         return {"success": True, "printer_id": printer_id}
     except Exception as e:
-        logging.error("Error adding printer: %s", e)
+        logger.error("Error adding printer: %s", e)
         raise HTTPException(status_code=500, detail=f"Failed to add printer: {str(e)}")
 
 @router.post("/printer/remove/{camera_uuid}", include_in_schema=False)
@@ -58,7 +58,7 @@ async def remove_printer_ep(camera_uuid: str):
         else:
             return {"success": False, "error": "No printer configured for this camera"}
     except Exception as e:
-        logging.error("Error removing printer from camera %s: %s", camera_uuid, e)
+        logger.error("Error removing printer from camera %s: %s", camera_uuid, e)
         raise HTTPException(status_code=500, detail=f"Failed to remove printer: {str(e)}")
 
 @router.post("/printer/cancel/{camera_uuid}", include_in_schema=False)

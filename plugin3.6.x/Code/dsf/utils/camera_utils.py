@@ -1,6 +1,6 @@
 import asyncio
 import concurrent.futures
-import logging
+from logger_module import logger
 import uuid
 import sys
 import glob
@@ -60,15 +60,15 @@ def find_available_serial_cameras() -> list[str]:
                    path (on Linux) or a camera index. An empty list is
                    returned if no cameras are found.
     """
-    logging.debug("INFO: Running on platform: %s", sys.platform)
+    logger.debug("INFO: Running on platform: %s", sys.platform)
     if sys.platform.startswith('linux'):
-        logging.debug("INFO: Detected Linux platform. Searching for /dev/video* devices.")
+        logger.debug("INFO: Detected Linux platform. Searching for /dev/video* devices.")
         device_paths = glob.glob('/dev/video*')
         if device_paths:
-            logging.debug("INFO: Found device paths: %s", device_paths)
+            logger.debug("INFO: Found device paths: %s", device_paths)
             return sorted(device_paths)
         else:
-            logging.warning("WARN: No /dev/video* devices found. Falling back to index probing.")
+            logger.warning("WARN: No /dev/video* devices found. Falling back to index probing.")
     api_preference = cv2.CAP_ANY
     if sys.platform == "win32":
         api_preference = cv2.CAP_DSHOW
@@ -77,11 +77,11 @@ def find_available_serial_cameras() -> list[str]:
     while len(available_indices) < 10:
         cap = cv2.VideoCapture(index, api_preference)
         if cap.isOpened():
-            logging.debug("INFO: Camera found at index: %s", index)
+            logger.debug("INFO: Camera found at index: %s", index)
             available_indices.append(str(index))
             cap.release()
         else:
-            logging.debug("INFO: No camera found at index: %s", index)
+            logger.debug("INFO: No camera found at index: %s", index)
             cap.release()
             break
         index += 1
@@ -125,7 +125,7 @@ async def get_camera_state(camera_uuid, reset=False):
             return asyncio.run(manager.get_camera_state(camera_uuid, reset))
         return await asyncio.to_thread(sync_get_state)
     except Exception as e:
-        logging.error("Error in camera state access for camera %d: %s", camera_uuid, e)
+        logger.error("Error in camera state access for camera %d: %s", camera_uuid, e)
         return CameraState()
 
 def get_camera_state_sync(camera_uuid, reset=False):
@@ -149,7 +149,7 @@ def get_camera_state_sync(camera_uuid, reset=False):
         except RuntimeError:
             return asyncio.run(get_camera_state(camera_uuid, reset))
     except Exception as e:
-        logging.error("Error in synchronous camera state access for camera %d: %s", camera_uuid, e)
+        logger.error("Error in synchronous camera state access for camera %d: %s", camera_uuid, e)
         return CameraState()
 
 async def update_camera_detection_history(camera_uuid, pred, time_val):

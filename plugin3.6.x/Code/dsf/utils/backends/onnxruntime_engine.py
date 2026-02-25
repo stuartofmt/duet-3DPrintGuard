@@ -1,5 +1,5 @@
 import json
-import logging
+from logger_module import logger
 import os
 import pickle
 from typing import Any, List, Tuple, Dict, Optional
@@ -12,7 +12,7 @@ try:
     import onnxruntime as ort
 except ImportError:
     ort = None
-    logging.warning("ONNX Runtime not available. Install with: pip install onnxruntime")
+    logger.warning("ONNX Runtime not available. Install with: pip install onnxruntime")
 
 
 class ONNXRuntimeInferenceEngine(BaseInferenceEngine):
@@ -54,11 +54,11 @@ class ONNXRuntimeInferenceEngine(BaseInferenceEngine):
             self._input_name = self._session.get_inputs()[0].name
             self._output_name = self._session.get_outputs()[0].name
             self._input_shape = self._session.get_inputs()[0].shape
-            logging.info("ONNX model loaded successfully. Input: %s, Output: %s, Shape: %s",
+            logger.info("ONNX model loaded successfully. Input: %s, Output: %s, Shape: %s",
                         self._input_name, self._output_name, self._input_shape)
             return self._session, x_dim
         except Exception as e:
-            logging.error("Failed to load ONNX model from %s: %s", model_path, e)
+            logger.error("Failed to load ONNX model from %s: %s", model_path, e)
             raise
 
     def _compute_prototype_from_embeddings(self, embeddings: Any) -> Any:
@@ -184,11 +184,11 @@ class ONNXRuntimeInferenceEngine(BaseInferenceEngine):
         else:
             device = 'cpu'
             if requested_device != 'cpu':
-                logging.warning(
+                logger.warning(
                     "%s requested but not available. Available providers: %s. Falling back to CPU.",
                     requested_device,
                     available_providers)
-        logging.debug("Using device: %s", device)
+        logger.debug("Using device: %s", device)
         return device
 
     def _get_execution_providers(self, device: str) -> List[str]:
@@ -210,7 +210,7 @@ class ONNXRuntimeInferenceEngine(BaseInferenceEngine):
             providers.append('CPUExecutionProvider')
         if not providers:
             raise RuntimeError("No compatible execution providers available")
-        logging.debug("Using execution providers: %s", providers)
+        logger.debug("Using execution providers: %s", providers)
         return providers
 
     def _run_inference(self, session: Any, input_array: np.ndarray) -> np.ndarray:
@@ -227,7 +227,7 @@ class ONNXRuntimeInferenceEngine(BaseInferenceEngine):
             outputs = session.run([self._output_name], {self._input_name: input_array})
             return outputs[0].flatten()
         except Exception as e:
-            logging.error("Error during ONNX inference: %s", e)
+            logger.error("Error during ONNX inference: %s", e)
             raise
 
     def _save_prototypes(self, prototypes: np.ndarray, class_names: List[str], 
@@ -250,9 +250,9 @@ class ONNXRuntimeInferenceEngine(BaseInferenceEngine):
             }
             with open(cache_file, 'wb') as f:
                 pickle.dump(cache_data, f)
-            logging.debug("Prototypes saved to cache: %s", cache_file)
+            logger.debug("Prototypes saved to cache: %s", cache_file)
         except (OSError, pickle.PickleError) as e:
-            logging.warning("Failed to save prototypes to cache: %s", e)
+            logger.warning("Failed to save prototypes to cache: %s", e)
 
     def _load_prototypes(self, cache_file: str,
                          device: Optional[str] = None) -> Tuple[Optional[np.ndarray],
@@ -275,10 +275,10 @@ class ONNXRuntimeInferenceEngine(BaseInferenceEngine):
             prototypes = cache_data['prototypes']
             class_names = cache_data['class_names']
             defect_idx = cache_data['defect_idx']
-            logging.debug("Prototypes loaded from cache: %s", cache_file)
+            logger.debug("Prototypes loaded from cache: %s", cache_file)
             return prototypes, class_names, defect_idx
         except (OSError, pickle.PickleError, KeyError) as e:
-            logging.warning("Failed to load prototypes from cache: %s", e)
+            logger.warning("Failed to load prototypes from cache: %s", e)
             return None, None, -1
 
     def get_model_info(self) -> Dict[str, Any]:

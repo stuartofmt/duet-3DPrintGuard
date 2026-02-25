@@ -1,6 +1,6 @@
 import asyncio
 import uuid
-import logging
+from logger_module import logger
 import cv2
 
 from .alert_utils import (dismiss_alert, alert_to_response_json,
@@ -115,7 +115,7 @@ async def _live_detection_loop(app_state, camera_uuid):
             update_functions
         )
     except Exception as e:
-        logging.error("Error in optimized detection loop for camera %s: %s", camera_uuid, e)
+        logger.error("Error in optimized detection loop for camera %s: %s", camera_uuid, e)
         await update_camera_state(camera_uuid, {
             "error": f"Detection loop error: {str(e)}",
             "live_detection_running": False

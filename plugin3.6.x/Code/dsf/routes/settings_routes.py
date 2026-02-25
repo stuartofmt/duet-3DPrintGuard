@@ -1,5 +1,5 @@
 import time
-import logging
+from logger_module import logger
 
 from fastapi import Form, Request, APIRouter
 from fastapi.exceptions import HTTPException
@@ -32,7 +32,7 @@ async def serve_index(request: Request):
     camera_state_manager = get_camera_state_manager()
     camera_uuids = await camera_state_manager.get_all_camera_uuids()
     if not camera_uuids:
-        logging.warning("No camera UUIDs found, attempting to initialize cameras...")
+        logger.warning("No camera UUIDs found, attempting to initialize cameras...")
         camera_uuids = await camera_state_manager.get_all_camera_uuids()
     camera_states = {}
     for cam_uuid in camera_uuids:

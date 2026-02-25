@@ -1,5 +1,5 @@
 import hashlib
-import logging
+from logger_module import logger
 import os
 import shutil
 from abc import ABC, abstractmethod
@@ -38,11 +38,11 @@ class BaseInferenceEngine(InferenceEngine, ABC):
         if os.path.exists(cache_dir):
             try:
                 shutil.rmtree(cache_dir)
-                logging.debug("Prototype cache cleared for support directory: %s", support_dir)
+                logger.debug("Prototype cache cleared for support directory: %s", support_dir)
             except OSError as e:
-                logging.error("Failed to clear prototype cache: %s", e)
+                logger.error("Failed to clear prototype cache: %s", e)
         else:
-            logging.debug("No cache directory found for support directory: %s", support_dir)
+            logger.debug("No cache directory found for support directory: %s", support_dir)
 
     def _get_support_dir_hash(self, support_dir: str) -> str:
         """Generate a hash of the support directory contents for caching.
@@ -88,7 +88,7 @@ class BaseInferenceEngine(InferenceEngine, ABC):
             imgs = [os.path.join(cls_dir, f) for f in os.listdir(cls_dir)
                    if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
             if not imgs:
-                logging.warning("No images found for class '%s' in %s", cls, cls_dir)
+                logger.warning("No images found for class '%s' in %s", cls, cls_dir)
                 continue
             processed_tensors = []
             for img_path in imgs:
@@ -96,9 +96,9 @@ class BaseInferenceEngine(InferenceEngine, ABC):
                     img = Image.open(img_path).convert('RGB')
                     processed_tensors.append(transform(img))
                 except Exception as e:
-                    logging.error("Error processing support image %s: %s", img_path, e)
+                    logger.error("Error processing support image %s: %s", img_path, e)
             if not processed_tensors:
-                logging.warning(
+                logger.warning(
                     "Could not load any valid images for class '%s'. Skipping this class.",
                     cls)
                 continue
@@ -125,23 +125,23 @@ class BaseInferenceEngine(InferenceEngine, ABC):
                                    if name != success_label]
                 if len(defect_candidates) == 1:
                     defect_idx = defect_candidates[0]
-                    logging.debug("Identified '%s' as the defect class (index %d).",
+                    logger.debug("Identified '%s' as the defect class (index %d).",
                                  class_names[defect_idx], defect_idx)
                 elif len(defect_candidates) > 1:
-                    logging.warning(
+                    logger.warning(
                         "Multiple non-'%s' classes found: %s. Sensitivity adjustment requires exactly one defect class. Adjustment disabled.",
                         success_label,
                         [class_names[i] for i in defect_candidates])
                 else:
-                    logging.warning(
+                    logger.warning(
                         "Only found the '%s' class. Cannot apply sensitivity adjustment.",
                         success_label)
             except IndexError:
-                logging.warning(
+                logger.warning(
                     "Could not identify a distinct defect class, though '%s' was present. Sensitivity adjustment disabled.",
                     success_label)
         else:
-            logging.warning(
+            logger.warning(
                 "'%s' class not found in loaded support set %s. Cannot apply sensitivity adjustment.",
                 success_label, class_names)
         return defect_idx
@@ -168,7 +168,7 @@ class BaseInferenceEngine(InferenceEngine, ABC):
                 device)
             if prototypes is not None:
                 return prototypes, class_names, defect_idx
-        logging.debug("Computing prototypes from scratch for support directory: %s", support_dir)
+        logger.debug("Computing prototypes from scratch for support directory: %s", support_dir)
         support_dir_hash = self._get_support_dir_hash(support_dir)
         cache_file = os.path.join(support_dir, 'cache', f"prototypes_{support_dir_hash}.pkl")
         class_names, processed_images = self._process_support_images(support_dir, transform)
@@ -178,7 +178,7 @@ class BaseInferenceEngine(InferenceEngine, ABC):
             prototype = self._compute_prototype_from_embeddings(embeddings)
             prototypes.append(prototype)
         prototypes = self._stack_prototypes(prototypes)
-        logging.debug("Prototypes built for classes: %s", class_names)
+        logger.debug("Prototypes built for classes: %s", class_names)
         defect_idx = self._determine_defect_idx(class_names, success_label)
         if use_cache:
             self._save_prototypes(prototypes, class_names, defect_idx, cache_file)
@@ -260,10 +260,10 @@ class BaseInferenceEngine(InferenceEngine, ABC):
             True if valid, False otherwise
         """
         if batch_tensors is None:
-            logging.warning("Received None batch for prediction.")
+            logger.warning("Received None batch for prediction.")
             return False
         if self._is_empty_batch(batch_tensors):
-            logging.warning("Received empty batch for prediction.")
+            logger.warning("Received empty batch for prediction.")
             return False
         return True
 
@@ -327,23 +327,23 @@ class BaseInferenceEngine(InferenceEngine, ABC):
             return None, None, -1
         downloaded_prototypes_file = os.path.join(cache_dir, "prototypes.pkl")
         if os.path.exists(downloaded_prototypes_file):
-            logging.debug(
+            logger.debug(
                 "Attempting to load prototypes from downloaded file: %s",
                 downloaded_prototypes_file)
             prototypes, class_names, defect_idx = self._load_prototypes(
                 downloaded_prototypes_file,
                 device)
             if prototypes is not None:
-                logging.debug(
+                logger.debug(
                     "Successfully loaded prototypes from downloaded file: %s",
                     downloaded_prototypes_file)
                 return prototypes, class_names, defect_idx
         for filename in os.listdir(cache_dir):
             if filename.startswith("prototypes_") and filename.endswith(".pkl"):
                 cache_file = os.path.join(cache_dir, filename)
-                logging.debug("Attempting to load prototypes from cache: %s", cache_file)
+                logger.debug("Attempting to load prototypes from cache: %s", cache_file)
                 prototypes, class_names, defect_idx = self._load_prototypes(cache_file, device)
                 if prototypes is not None:
-                    logging.debug("Successfully loaded prototypes from cache: %s", cache_file)
+                    logger.debug("Successfully loaded prototypes from cache: %s", cache_file)
                     return prototypes, class_names, defect_idx
         return None, None, -1

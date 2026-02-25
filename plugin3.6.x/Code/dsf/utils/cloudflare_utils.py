@@ -1,4 +1,4 @@
-import logging
+from logger_module import logger
 import subprocess
 from typing import Any, Dict, List, Optional
 
@@ -397,25 +397,25 @@ def start_cloudflare_tunnel() -> bool:
         if not tunnel_token:
             raise ValueError("Tunnel token not found. Please complete tunnel setup first.")
         start_command = CloudflareOSCommands.get_start_command(current_os, "", tunnel_token, 8000)
-        logging.debug("Starting Cloudflare tunnel with command: %s", start_command)
+        logger.debug("Starting Cloudflare tunnel with command: %s", start_command)
         result = subprocess.run(start_command, shell=True,
                              capture_output=True, text=True,
                              timeout=30, check=False)
         if result.returncode == 0:
-            logging.debug("Cloudflare tunnel started successfully")
+            logger.debug("Cloudflare tunnel started successfully")
             return True
         else:
-            logging.warning("Non-privileged start failed: %s", result.stderr)
-            logging.info("User may need to manually run command with elevated privileges")
+            logger.warning("Non-privileged start failed: %s", result.stderr)
+            logger.info("User may need to manually run command with elevated privileges")
             return True
     except subprocess.TimeoutExpired:
-        logging.error("Timeout starting Cloudflare tunnel")
+        logger.error("Timeout starting Cloudflare tunnel")
         return False
     except (OSError, ValueError) as e:
-        logging.error("Error starting Cloudflare tunnel: %s", e)
+        logger.error("Error starting Cloudflare tunnel: %s", e)
         return False
     except Exception as e:
-        logging.error("Unexpected error starting Cloudflare tunnel: %s", e)
+        logger.error("Unexpected error starting Cloudflare tunnel: %s", e)
         return False
 
 def stop_cloudflare_tunnel() -> bool:
@@ -429,23 +429,23 @@ def stop_cloudflare_tunnel() -> bool:
         if not current_os:
             raise ValueError("Current OS not set in config.")
         stop_command = CloudflareOSCommands.get_stop_command(current_os)
-        logging.debug("Stopping Cloudflare tunnel with command: %s", stop_command)
+        logger.debug("Stopping Cloudflare tunnel with command: %s", stop_command)
         result = subprocess.run(stop_command, shell=True,
                              capture_output=True, text=True,
                              timeout=30, check=False)
         if result.returncode == 0:
-            logging.debug("Cloudflare tunnel stopped successfully")
+            logger.debug("Cloudflare tunnel stopped successfully")
             return True
         else:
-            logging.warning("Non-privileged stop failed: %s", result.stderr)
-            logging.info("User may need to manually run command with elevated privileges")
+            logger.warning("Non-privileged stop failed: %s", result.stderr)
+            logger.info("User may need to manually run command with elevated privileges")
             return True
     except subprocess.TimeoutExpired:
-        logging.error("Timeout stopping Cloudflare tunnel")
+        logger.error("Timeout stopping Cloudflare tunnel")
         return False
     except (OSError, ValueError) as e:
-        logging.error("Error stopping Cloudflare tunnel: %s", e)
+        logger.error("Error stopping Cloudflare tunnel: %s", e)
         return False
     except Exception as e:
-        logging.error("Unexpected error stopping Cloudflare tunnel: %s", e)
+        logger.error("Unexpected error stopping Cloudflare tunnel: %s", e)
         return False

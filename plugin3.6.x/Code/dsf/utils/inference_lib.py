@@ -1,4 +1,4 @@
-import logging
+from logger_module import logger
 from typing import Optional
 from .inference_engine import UniversalInferenceEngine, InferenceBackend
 
@@ -9,18 +9,18 @@ def _detect_backend() -> InferenceBackend:
     # Check for ONNX Runtime (optimized backend)
     try:
         import onnxruntime
-        logging.info("ONNX Runtime detected, using ONNX Runtime backend")
+        logger.info("ONNX Runtime detected, using ONNX Runtime backend")
         return InferenceBackend.ONNXRUNTIME
     except ImportError:
         pass
     # Check for PyTorch (fallback backend)
     try:
         import torch
-        logging.info("PyTorch detected, using PyTorch backend")
+        logger.info("PyTorch detected, using PyTorch backend")
         return InferenceBackend.PYTORCH
     except ImportError:
         pass
-    logging.warning("No specific backend detected, defaulting to PyTorch")
+    logger.warning("No specific backend detected, defaulting to PyTorch")
     return InferenceBackend.PYTORCH
 
 
@@ -34,9 +34,9 @@ def get_inference_engine() -> UniversalInferenceEngine:
         backend = _detect_backend()
         try:
             if not ensure_model_files(backend):
-                logging.warning("Failed to download model files for %s backend", backend.value)
+                logger.warning("Failed to download model files for %s backend", backend.value)
         except ImportError:
-            logging.warning("Model downloader not available, assuming models are present")
+            logger.warning("Model downloader not available, assuming models are present")
         _inference_engine = UniversalInferenceEngine(backend)
-        logging.info("Created inference engine with %s backend", backend.value)
+        logger.info("Created inference engine with %s backend", backend.value)
     return _inference_engine

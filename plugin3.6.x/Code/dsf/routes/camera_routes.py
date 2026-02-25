@@ -1,4 +1,4 @@
-import logging
+from logger_module import logger
 import time
 import uuid
 
@@ -26,7 +26,7 @@ async def get_camera_state_ep(request: Request, camera_uuid: str = Body(..., emb
         dict: Dictionary containing comprehensive camera state information including
               detection history, settings, error status, and printer configuration.
     """
-    logging.warning('entered get_camera_state_ep with camera_uuid: %s', camera_uuid)
+    logger.warning('entered get_camera_state_ep with camera_uuid: %s', camera_uuid)
     camera_state = await get_camera_state(camera_uuid)
     detection_times = [t for t, _ in camera_state.detection_history] if (
         camera_state.detection_history
@@ -114,12 +114,12 @@ def generate_preview_frames(source: str):
             time.sleep(0.1)
             wait_count += 1
         if not stream.is_frame_available():
-            logging.error("Failed to get initial frame from source: %s", source)
+            logger.error("Failed to get initial frame from source: %s", source)
             return
         while True:
             frame = stream.get_frame()
             if frame is None:
-                logging.warning("Failed to get frame from source: %s", source)
+                logger.warning("Failed to get frame from source: %s", source)
                 time.sleep(0.1)
                 continue
             _, buffer = cv2.imencode('.jpg', frame)
@@ -127,12 +127,12 @@ def generate_preview_frames(source: str):
             yield (b'--frame\r\nContent-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
             time.sleep(0.2) 
     except (cv2.error, OSError, RuntimeError) as e:
-        logging.error("Error in preview frame generation for source %s: %s", source, e)
+        logger.error("Error in preview frame generation for source %s: %s", source, e)
     finally:
         try:
             manager.release_stream(preview_uuid)
         except (AttributeError, RuntimeError) as cleanup_error:
-            logging.error("Error cleaning up preview stream %s: %s", preview_uuid, cleanup_error)
+            logger.error("Error cleaning up preview stream %s: %s", preview_uuid, cleanup_error)
 
 @router.get('/camera/preview', include_in_schema=False)
 async def camera_preview(source: str):

@@ -1,5 +1,11 @@
+"""SRS
+Refactored so that nothing is run on import and all initialization is done through explicit function calls.
+This allows for better control of when and how the configuration is loaded,
+especially in the context of DWC where we want to aet paths etc based on a passed argument.
+"""
+
 import json
-import logging
+from logger_module import logger
 import os
 import tempfile
 import fcntl
@@ -20,29 +26,44 @@ from models import AlertAction, SavedKey, SavedConfig
 # Config version - increment this when the config structure changes
 CONFIG_VERSION = "1.0.0"
 
+_config_lock = threading.RLock()
+_file_lock = None
+
 def is_running_in_docker():
     """Check if the application is running inside a Docker container."""
     return os.path.exists('/.dockerenv')
 
-if is_running_in_docker():
-    APP_DATA_DIR = "/data"
-else:
-    APP_DATA_DIR = user_data_dir("printguard", "printguard")
+def config_set_paths_and_initialize(dwc,file_path):
+    global BASE_DIR, APP_DATA_DIR, CONFIG_FILE, SECRETS_FILE, LOCK_FILE, SSL_CERT_FILE, SSL_CA_FILE,DWC,KEYRING_SERVICE_NAME
+    DWC = dwc
 
-APP_DATA_DIR    = os.getcwd()
-logging.warning(f"Using app data directory: {APP_DATA_DIR}")
+    if not DWC:
+        if is_running_in_docker():
+            APP_DATA_DIR = "/data"
+        else:
+            APP_DATA_DIR = user_data_dir("printguard", "printguard")
 
-KEYRING_SERVICE_NAME = "printguard"
-os.makedirs(APP_DATA_DIR, exist_ok=True)
+        BASE_DIR = os.path.dirname(__file__)
+    else:
+        APP_DATA_DIR  = file_path
+        BASE_DIR = file_path
+    
+    logger.warning(f"Using app data directory: {APP_DATA_DIR}")
 
-CONFIG_FILE = os.path.join(APP_DATA_DIR, "config.json")
-SECRETS_FILE = os.path.join(APP_DATA_DIR, "secrets.json")
-LOCK_FILE = os.path.join(APP_DATA_DIR, "config.lock")
-SSL_CERT_FILE = os.path.join(APP_DATA_DIR, "cert.pem")
-SSL_CA_FILE = os.path.join(APP_DATA_DIR, "ca.pem")
+    KEYRING_SERVICE_NAME = "printguard"
 
-_config_lock = threading.RLock()
-_file_lock = None
+    os.makedirs(APP_DATA_DIR, exist_ok=True)
+
+    CONFIG_FILE = os.path.join(APP_DATA_DIR, "config.json")
+    SECRETS_FILE = os.path.join(APP_DATA_DIR, "secrets.json")
+    LOCK_FILE = os.path.join(APP_DATA_DIR, "config.lock")
+    SSL_CERT_FILE = os.path.join(APP_DATA_DIR, "cert.pem")
+    SSL_CA_FILE = os.path.join(APP_DATA_DIR, "ca.pem")
+ 
+    logger.info(f'lock file path: {LOCK_FILE}')
+    # continue with phase 2 of initialization which may depend on these paths being set
+    init_config()
+
 
 def acquire_lock():
     """Acquire a thread and file lock for safe configuration file access.
@@ -51,13 +72,14 @@ def acquire_lock():
     and a file-based lock at `LOCK_FILE`.
     """
     # pylint: disable=global-statement
-    global _file_lock
+    global _file_lock, LOCK_FILE
+    logger.info(f'acquire lock file path: {LOCK_FILE}')
     _config_lock.acquire()
     _file_lock = open(LOCK_FILE, 'w')
     try:
         fcntl.flock(_file_lock, fcntl.LOCK_EX)
     except IOError as e:
-        logging.warning("Failed to acquire file lock: %s", e)
+        logger.warning("Failed to acquire file lock: %s", e)
 
 
 def release_lock():
@@ -84,7 +106,7 @@ def _get_config_nolock():
             with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
                 return json.load(f)
         except Exception as e:
-            logging.error("Error loading config file: %s", e)
+            logger.error("Error loading config file: %s", e)
     return None
 
 def get_config():
@@ -131,24 +153,24 @@ def init_config():
             try:
                 existing_config = _get_config_nolock()
                 if existing_config is None:
-                    logging.info("Config file is corrupted or empty, recreating")
+                    logger.info("Config file is corrupted or empty, recreating")
                     config_needs_reset = True
                 else:
                     config_version = existing_config.get(SavedConfig.VERSION)
                     if config_version != CONFIG_VERSION:
-                        logging.info(
+                        logger.info(
                             "Config version mismatch (config: %s, expected: %s), recreating config",
                             config_version, CONFIG_VERSION)
                         config_needs_reset = True
             except Exception as e:
-                logging.warning("Error reading config file: %s, recreating", e)
+                logger.warning("Error reading config file: %s, recreating", e)
                 config_needs_reset = True
         else:
             config_needs_reset = True
         if config_needs_reset:
             if os.path.exists(CONFIG_FILE):
                 os.remove(CONFIG_FILE)
-                logging.info("Deleted old config file")
+                logger.info("Deleted old config file")
             default_config = {
                 SavedConfig.VERSION: CONFIG_VERSION,
                 SavedConfig.VAPID_PUBLIC_KEY: None,
@@ -161,7 +183,7 @@ def init_config():
             }
             with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
                 json.dump(default_config, f, indent=2)
-            logging.info("Created new config file with version %s at %s",
+            logger.info("Created new config file with version %s at %s",
                          CONFIG_VERSION,
                          CONFIG_FILE)
     finally:
@@ -204,7 +226,7 @@ def _get_secrets_nolock():
             else:
                 return json.loads(file_content)
         except Exception as e:
-            logging.error("Error loading secrets file: %s", e)
+            logger.error("Error loading secrets file: %s", e)
     return None
 
 def store_key(key: SavedKey, value: str):
@@ -327,9 +349,8 @@ def reset_all():
     reset_all_keys()
     reset_config()
     reset_ssl_files()
-    logging.debug("All saved keys, config, and SSL files have been reset")
+    logger.debug("All saved keys, config, and SSL files have been reset")
 
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 def get_model_path() -> str:
     """Get the model path for the detected backend."""

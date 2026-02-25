@@ -1,4 +1,4 @@
-import logging
+from logger_module import logger
 
 from fastapi import APIRouter, Request
 
@@ -18,7 +18,7 @@ async def get_public_key():
     config = get_config()
     vapid_public_key = config.get(SavedConfig.VAPID_PUBLIC_KEY, None)
     if not vapid_public_key:
-        logging.error("VAPID public key is not set in the configuration.")
+        logger.error("VAPID public key is not set in the configuration.")
         return {"error": "VAPID public key not configured"}
     return {"publicKey": vapid_public_key}
 
@@ -34,24 +34,24 @@ async def subscribe(request: Request):
     """
     try:
         subscription = await request.json()
-        logging.debug("Received subscription request: %s", subscription.get('endpoint', 'no endpoint'))
+        logger.debug("Received subscription request: %s", subscription.get('endpoint', 'no endpoint'))
         if not subscription.get('endpoint') or not subscription.get('keys'):
-            logging.error("Invalid subscription format - missing endpoint or keys")
+            logger.error("Invalid subscription format - missing endpoint or keys")
             return {"success": False, "error": "Invalid subscription format"}
         for existing_sub in request.app.state.subscriptions:
             if existing_sub.get('endpoint') == subscription.get('endpoint'):
                 request.app.state.subscriptions.remove(existing_sub)
-                logging.debug("Removed existing subscription for same endpoint")
+                logger.debug("Removed existing subscription for same endpoint")
                 break
         request.app.state.subscriptions.append(subscription)
         config = get_config() or {}
         config[SavedConfig.PUSH_SUBSCRIPTIONS] = request.app.state.subscriptions
         update_config(config)
-        logging.debug("Successfully added subscription. Total subscriptions: %d", len(request.app.state.subscriptions))
+        logger.debug("Successfully added subscription. Total subscriptions: %d", len(request.app.state.subscriptions))
         return {"success": True}
     # pylint: disable=W0718
     except Exception as e:
-        logging.error("Subscription error: %s", str(e))
+        logger.error("Subscription error: %s", str(e))
         return {"success": False, "error": f"Server error: {str(e)}"}
 
 @router.post("/notification/unsubscribe")
@@ -68,7 +68,7 @@ async def unsubscribe(request: Request):
     config = get_config() or {}
     config[SavedConfig.PUSH_SUBSCRIPTIONS] = []
     update_config(config)
-    logging.debug("All push subscriptions cleared and persisted.")
+    logger.debug("All push subscriptions cleared and persisted.")
     return {"success": True}
 
 @router.get("/notification/debug")

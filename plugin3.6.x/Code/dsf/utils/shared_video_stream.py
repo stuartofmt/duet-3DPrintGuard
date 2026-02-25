@@ -1,4 +1,4 @@
-import logging
+from logger_module import logger
 import threading
 import time
 from typing import Dict, Optional, List, Callable
@@ -31,7 +31,7 @@ class SharedVideoStream:
         self.is_running = True
         self.thread = threading.Thread(target=self._capture_loop, daemon=True)
         self.thread.start()
-        logging.debug("Started shared video stream for camera %s", self.camera_uuid)
+        logger.debug("Started shared video stream for camera %s", self.camera_uuid)
 
     def stop(self):
         """Stop the video stream capture thread."""
@@ -40,7 +40,7 @@ class SharedVideoStream:
             self.thread.join(timeout=1.0)
         if self.cap and self.cap.isOpened():
             self.cap.release()
-        logging.debug("Stopped shared video stream for camera %s", self.camera_uuid)
+        logger.debug("Stopped shared video stream for camera %s", self.camera_uuid)
 
     def _capture_loop(self):
         """Main capture loop that runs in a separate thread."""
@@ -51,7 +51,7 @@ class SharedVideoStream:
                 source = int(source)
             self.cap = cv2.VideoCapture(source, cv2.CAP_ANY)
             if not self.cap.isOpened():
-                logging.error("Failed to open camera source %s for shared stream", source)
+                logger.error("Failed to open camera source %s for shared stream", source)
                 return
             self.cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
             if isinstance(source, str) and source.startswith('rtp://'):
@@ -62,10 +62,10 @@ class SharedVideoStream:
                 ret, frame = self.cap.read()
                 if not ret:
                     consecutive_failures += 1
-                    logging.warning("Failed to read frame from camera %s (failure %d/%d)",
+                    logger.warning("Failed to read frame from camera %s (failure %d/%d)",
                                   self.camera_uuid, consecutive_failures, max_consecutive_failures)
                     if consecutive_failures >= max_consecutive_failures:
-                        logging.error(
+                        logger.error(
                             "Too many consecutive failures for camera %s, stopping stream",
                             self.camera_uuid)
                         break
@@ -79,7 +79,7 @@ class SharedVideoStream:
                     self.frame_count += 1
                 time.sleep(0.001)
         except (cv2.error, OSError, ValueError) as e:
-            logging.error("Error in shared video stream for camera %s: %s", self.camera_uuid, e)
+            logger.error("Error in shared video stream for camera %s: %s", self.camera_uuid, e)
         finally:
             if self.cap and self.cap.isOpened():
                 self.cap.release()
@@ -125,7 +125,7 @@ class SharedVideoStreamManager:
                 if (not existing_stream.is_running
                     or not existing_stream.thread
                     or not existing_stream.thread.is_alive()):
-                    logging.info("Restarting shared video stream for camera %s", camera_uuid)
+                    logger.info("Restarting shared video stream for camera %s", camera_uuid)
                     existing_stream.stop()
                     self.streams[camera_uuid] = SharedVideoStream(camera_uuid, source)
             stream = self.streams[camera_uuid]
@@ -175,5 +175,5 @@ def get_shared_camera_frame(camera_uuid: str) -> Optional[np.ndarray]:
             wait_count += 1
         return stream.get_frame()
     except (ImportError, AttributeError) as e:
-        logging.error("Error getting shared camera frame for %s: %s", camera_uuid, e)
+        logger.error("Error getting shared camera frame for %s: %s", camera_uuid, e)
         return None

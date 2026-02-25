@@ -1,5 +1,5 @@
 import json
-import logging
+from logger_module import logger
 import os
 import pickle
 from typing import Any, List, Tuple
@@ -143,9 +143,9 @@ class PyTorchInferenceEngine(BaseInferenceEngine):
         else:
             device = 'cpu'
             if requested_device != 'cpu':
-                logging.warning("%s requested but not available. Falling back to CPU.", 
+                logger.warning("%s requested but not available. Falling back to CPU.", 
                                requested_device)
-        logging.debug("Using device: %s", device)
+        logger.debug("Using device: %s", device)
         return device
     
     def _save_prototypes(self, prototypes: torch.Tensor, class_names: List[str], 
@@ -168,9 +168,9 @@ class PyTorchInferenceEngine(BaseInferenceEngine):
             }
             with open(cache_file, 'wb') as f:
                 pickle.dump(cache_data, f)
-            logging.debug("Prototypes saved to cache: %s", cache_file)
+            logger.debug("Prototypes saved to cache: %s", cache_file)
         except (OSError, pickle.PickleError) as e:
-            logging.warning("Failed to save prototypes to cache: %s", e)
+            logger.warning("Failed to save prototypes to cache: %s", e)
     
     def _load_prototypes(self, cache_file: str, device: str = None) -> Tuple[Any, List[str], int]:
         """Load prototypes from a cache file.
@@ -194,8 +194,8 @@ class PyTorchInferenceEngine(BaseInferenceEngine):
                 prototypes = cache_data['prototypes']
             class_names = cache_data['class_names']
             defect_idx = cache_data['defect_idx']
-            logging.debug("Prototypes loaded from cache: %s", cache_file)
+            logger.debug("Prototypes loaded from cache: %s", cache_file)
             return prototypes, class_names, defect_idx
         except (OSError, pickle.PickleError, KeyError) as e:
-            logging.warning("Failed to load prototypes from cache: %s", e)
+            logger.warning("Failed to load prototypes from cache: %s", e)
             return None, None, -1

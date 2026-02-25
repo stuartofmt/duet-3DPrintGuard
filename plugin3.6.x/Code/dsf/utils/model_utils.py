@@ -1,6 +1,6 @@
 import asyncio
 from typing import Any
-import logging
+from logger_module import logger
 
 from .config import SENSITIVITY
 from .inference_lib import get_inference_engine
@@ -41,5 +41,5 @@ async def _run_inference(model: Any,
         )
         return results
     except Exception as e:
-        logging.error("Error during inference execution: %s", e)
+        logger.error("Error during inference execution: %s", e)
         raise RuntimeError(f"Inference execution failed: {e}") from e

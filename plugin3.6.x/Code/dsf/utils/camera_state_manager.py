@@ -1,5 +1,5 @@
 import asyncio
-import logging
+from logger_module import logger
 from typing import Dict, Optional
 from pydantic import ValidationError
 from models import CameraState
@@ -36,12 +36,12 @@ class CameraStateManager:
             try:
                 self._states[camera_uuid] = CameraState(**state_data)
             except (ValueError, TypeError, ValidationError) as e:
-                logging.warning("Failed to load camera state for UUID %s: %s", camera_uuid, e)
+                logger.warning("Failed to load camera state for UUID %s: %s", camera_uuid, e)
                 try:
                     self._states[camera_uuid] = CameraState()
-                    logging.info("Created fresh camera state for UUID %s", camera_uuid)
+                    logger.info("Created fresh camera state for UUID %s", camera_uuid)
                 except Exception as ex:
-                    logging.error("Failed to create fresh camera state for UUID %s: %s", camera_uuid, ex)
+                    logger.error("Failed to create fresh camera state for UUID %s: %s", camera_uuid, ex)
 
     def _save_states_to_config(self):
         """Saves the current camera states to the application's configuration file."""
@@ -54,7 +54,7 @@ class CameraStateManager:
                 states_data[camera_uuid] = state_dict
             update_config({SavedConfig.CAMERA_STATES: states_data})
         except Exception as e:
-            logging.error("Failed to save camera states to config: %s", e)
+            logger.error("Failed to save camera states to config: %s", e)
 
     async def get_camera_state(self, camera_uuid: str, reset: bool = False) -> CameraState:
         """Get camera state for the given UUID, creating if it doesn't exist
@@ -98,7 +98,7 @@ class CameraStateManager:
                     if hasattr(camera_state_ref, key):
                         setattr(camera_state_ref, key, value)
                     else:
-                        logging.warning("Key '%s' not found in camera state for UUID %s.",
+                        logger.warning("Key '%s' not found in camera state for UUID %s.",
                                         key, camera_uuid)
             self._save_states_to_config()
             return camera_state_ref
@@ -153,9 +153,9 @@ class CameraStateManager:
                 await self.cleanup_camera_resources(camera_uuid)
                 del self._states[camera_uuid]
                 self._save_states_to_config()
-                logging.info("Successfully removed camera %s.", camera_uuid)
+                logger.info("Successfully removed camera %s.", camera_uuid)
                 return True
-            logging.warning("Attempted to remove non-existent camera %s.", camera_uuid)
+            logger.warning("Attempted to remove non-existent camera %s.", camera_uuid)
             return False
 
     async def cleanup_camera_resources(self, camera_uuid: str):
@@ -175,7 +175,7 @@ class CameraStateManager:
             manager = get_shared_stream_manager()
             manager.release_stream(camera_uuid)
         except (ImportError, AttributeError) as e:
-            logging.warning("Error cleaning up shared video stream for camera %s: %s", camera_uuid, e)
+            logger.warning("Error cleaning up shared video stream for camera %s: %s", camera_uuid, e)
 
     async def cleanup_all_resources(self):
         """Clean up all camera resources including shared video streams."""
@@ -184,7 +184,7 @@ class CameraStateManager:
             manager = get_shared_stream_manager()
             manager.cleanup_all()
         except (ImportError, AttributeError) as e:
-            logging.warning("Error cleaning up all shared video streams: %s", e)
+            logger.warning("Error cleaning up all shared video streams: %s", e)
 
 _camera_state_manager = None
 

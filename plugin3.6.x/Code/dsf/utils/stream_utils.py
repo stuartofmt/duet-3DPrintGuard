@@ -1,5 +1,5 @@
 import asyncio
-import logging
+from logger_module import logger
 import time
 from typing import Dict, Tuple
 
@@ -155,11 +155,11 @@ class StreamOptimizer:
         settings = self._get_current_settings()
         mode_info = f"tunnel ({settings['tunnel_provider']})" if (
             settings['is_tunnel_mode']) else "local"
-        logging.debug("Stream optimization settings for %s mode:", mode_info)
-        logging.debug("  Max FPS: %d", settings['max_fps'])
-        logging.debug("  JPEG Quality: %d", settings['jpeg_quality'])
-        logging.debug("  Max Width: %d", settings['max_width'])
-        logging.debug("  Detection Interval: %dms", settings['detection_interval_ms'])
+        logger.debug("Stream optimization settings for %s mode:", mode_info)
+        logger.debug("  Max FPS: %d", settings['max_fps'])
+        logger.debug("  JPEG Quality: %d", settings['jpeg_quality'])
+        logger.debug("  Max Width: %d", settings['max_width'])
+        logger.debug("  Detection Interval: %dms", settings['detection_interval_ms'])
 
 stream_optimizer = StreamOptimizer()
 
@@ -190,7 +190,7 @@ def create_optimized_frame_generator(camera_uuid: str, camera_state_getter):
             focus = camera_state.focus
             frame = get_shared_camera_frame(camera_uuid)
             if frame is None:
-                logging.warning("Failed to get frame from shared camera stream %s", camera_uuid)
+                logger.warning("Failed to get frame from shared camera stream %s", camera_uuid)
                 time.sleep(0.1)
                 continue
             frame = cv2.convertScaleAbs(frame, alpha=contrast, beta=int((brightness - 1.0) * 255))
@@ -204,11 +204,11 @@ def create_optimized_frame_generator(camera_uuid: str, camera_state_getter):
             yield (b'--frame\r\nContent-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
             if frame_count % 300 == 0:
                 settings = stream_optimizer.get_stream_settings()
-                logging.debug("Camera %s: Streamed %d frames, mode: %s",
+                logger.debug("Camera %s: Streamed %d frames, mode: %s",
                             camera_uuid, frame_count,
                             "tunnel" if settings['is_tunnel_mode'] else "local")
     except Exception as e:
-        logging.error("Error in optimized frame generation for camera %s: %s", camera_uuid, e)
+        logger.error("Error in optimized frame generation for camera %s: %s", camera_uuid, e)
 
 async def create_optimized_detection_loop(app_state, camera_uuid, get_camera_state_sync_func,
                                           update_functions):
@@ -232,7 +232,7 @@ async def create_optimized_detection_loop(app_state, camera_uuid, get_camera_sta
                 break
             frame = get_shared_camera_frame(camera_uuid)
             if frame is None:
-                logging.warning("Failed to get frame from shared camera stream %s", camera_uuid)
+                logger.warning("Failed to get frame from shared camera stream %s", camera_uuid)
                 await update_functions['update_camera_state'](camera_uuid, {
                     "error": "Failed to get frame from shared stream",
                     "live_detection_running": False
@@ -256,7 +256,7 @@ async def create_optimized_detection_loop(app_state, camera_uuid, get_camera_sta
                                                 app_state.device)
                 numeric = prediction[0] if isinstance(prediction, list) else prediction
             except Exception as e:
-                logging.debug("Detection inference error for camera %s: %s", camera_uuid, e)
+                logger.debug("Detection inference error for camera %s: %s", camera_uuid, e)
                 numeric = None
             label = app_state.class_names[numeric] if (
                 isinstance(numeric, int)
@@ -290,7 +290,7 @@ async def create_optimized_detection_loop(app_state, camera_uuid, get_camera_sta
             await asyncio.sleep(detection_interval)
             if detection_count % 100 == 0:
                 settings = stream_optimizer.get_stream_settings()
-                logging.debug("Camera %s: Completed %d detections, interval: %.3fs, mode: %s",
+                logger.debug("Camera %s: Completed %d detections, interval: %.3fs, mode: %s",
                             camera_uuid, detection_count, detection_interval,
                             "tunnel" if settings['is_tunnel_mode'] else "local")
     finally:
@@ -310,7 +310,7 @@ def generate_frames(camera_uuid: str):
             yield frame_data
     # pylint: disable=E1101
     except Exception as e:
-        logging.error("Error in optimized frame generation for camera %s: %s", camera_uuid, e)
+        logger.error("Error in optimized frame generation for camera %s: %s", camera_uuid, e)
         try:
             while True:
                 camera_state = get_camera_state_sync(camera_uuid)
@@ -319,7 +319,7 @@ def generate_frames(camera_uuid: str):
                 focus = camera_state.focus
                 frame = get_shared_camera_frame(camera_uuid)
                 if frame is None:
-                    logging.warning("Failed to get frame from shared camera stream %s", camera_uuid)
+                    logger.warning("Failed to get frame from shared camera stream %s", camera_uuid)
                     time.sleep(0.1)
                     continue
                 frame = cv2.convertScaleAbs(frame,
@@ -332,6 +332,6 @@ def generate_frames(camera_uuid: str):
                 frame_bytes = buffer.tobytes()
                 yield (b'--frame\r\nContent-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
         except Exception as fallback_e:
-            logging.error("Error in fallback frame generation for camera %s: %s",
+            logger.error("Error in fallback frame generation for camera %s: %s",
                           camera_uuid,
                           fallback_e)

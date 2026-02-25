@@ -1,4 +1,4 @@
-import logging
+from logger_module import logger
 
 from models import SavedConfig, SavedKey, SiteStartupMode
 from .config import SSL_CERT_FILE, get_config, get_key
@@ -34,7 +34,7 @@ def setup_ngrok_tunnel(close: bool = False) -> bool:
         else:
             return False
     except Exception as e:
-        logging.error("Failed to start ngrok tunnel. Error: %s", e)
+        logger.error("Failed to start ngrok tunnel. Error: %s", e)
         return False
 
 def check_ssl_certificates_exist() -> bool:

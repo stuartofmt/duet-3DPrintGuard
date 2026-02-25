@@ -1,5 +1,5 @@
 import asyncio
-import logging
+from logger_module import logger
 
 import requests
 
@@ -88,9 +88,9 @@ async def poll_printer_state_func(client, interval, stop_event):
             await sse_update_printer_state(current_printer_state)
         except (requests.exceptions.RequestException, ConnectionError,
                 TimeoutError, ValueError) as e:
-            logging.warning("Error polling printer state: %s", str(e))
+            logger.warning("Error polling printer state: %s", str(e))
         except Exception as e:
-            logging.error("Unexpected error polling printer state: %s", str(e))
+            logger.error("Unexpected error polling printer state: %s", str(e))
         await asyncio.sleep(interval)
 
 async def start_printer_state_polling(camera_uuid):
@@ -102,7 +102,7 @@ async def start_printer_state_polling(camera_uuid):
     stop_event = asyncio.Event()
     camera_printer_config = get_printer_config(camera_uuid)
     if not camera_printer_config:
-        logging.warning("No printer configuration found for camera UUID %s", camera_uuid)
+        logger.warning("No printer configuration found for camera UUID %s", camera_uuid)
         return
     config = get_config()
     printer_polling_rate = float(config.get(
@@ -114,7 +114,7 @@ async def start_printer_state_polling(camera_uuid):
     )
     task = asyncio.create_task(poll_printer_state_func(client, printer_polling_rate, stop_event))
     add_polling_task(camera_uuid, PollingTask(task=task, stop_event=stop_event))
-    logging.debug("Started printer state polling for camera UUID %s", camera_uuid)
+    logger.debug("Started printer state polling for camera UUID %s", camera_uuid)
 
 def suspend_print_job(camera_uuid, action: AlertAction):
     """Pause or cancel an ongoing print job based on an alert action.
@@ -140,21 +140,21 @@ def suspend_print_job(camera_uuid, action: AlertAction):
                 match action:
                     case AlertAction.CANCEL_PRINT:
                         client.cancel_job()
-                        logging.debug("Print cancelled for printer %s on camera %s",
+                        logger.debug("Print cancelled for printer %s on camera %s",
                                         printer_config['name'], camera_uuid)
                         return True
                     case AlertAction.PAUSE_PRINT:
                         client.pause_job()
-                        logging.debug("Print paused for printer %s on camera %s",
+                        logger.debug("Print paused for printer %s on camera %s",
                                         printer_config['name'], camera_uuid)
                         return True
                     case _:
-                        logging.debug("No action taken for printer %s on camera %s as %s",
+                        logger.debug("No action taken for printer %s on camera %s as %s",
                                         printer_config['name'], camera_uuid, action)
                         return True
             except Exception as e:
-                logging.error("Error suspending print job for printer %s on camera %s: %s",
+                logger.error("Error suspending print job for printer %s on camera %s: %s",
                                 printer_config['name'], camera_uuid, e)
                 return False
-    logging.error("No printer configuration found for camera UUID %s", camera_uuid)
+    logger.error("No printer configuration found for camera UUID %s", camera_uuid)
     return False

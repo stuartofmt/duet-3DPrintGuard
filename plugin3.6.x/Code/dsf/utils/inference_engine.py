@@ -1,4 +1,4 @@
-import logging
+from logger_module import logger
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Tuple
 from enum import Enum
@@ -181,7 +181,7 @@ class UniversalInferenceEngine:
             cv2.putText(frame, text, text_pos, font, font_scale,
                         (255, 255, 255), thickness, cv2.LINE_AA)
         except Exception as e:
-            logging.error("Error drawing label: %s. Frame shape: %s, Label: %s",
+            logger.error("Error drawing label: %s. Frame shape: %s, Label: %s",
                          e, frame.shape, label)
         return frame
 

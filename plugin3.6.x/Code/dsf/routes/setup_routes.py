@@ -1,5 +1,5 @@
 import base64
-import logging
+from logger_module import logger
 
 import trustme
 from cryptography.hazmat.primitives import serialization
@@ -64,7 +64,7 @@ async def generate_vapid_keys():
             "subject": "mailto:",
         }
     except Exception as e:
-        logging.error("Error generating VAPID keys: %s", e)
+        logger.error("Error generating VAPID keys: %s", e)
         raise HTTPException(
             status_code=500,
             detail=f"Failed to generate VAPID keys: {str(e)}"
@@ -100,7 +100,7 @@ async def save_vapid_settings(settings: VapidSettings):
         update_config(config_data)
         return {"success": True}
     except Exception as e:
-        logging.error("Error saving VAPID settings: %s", e)
+        logger.error("Error saving VAPID settings: %s", e)
         raise HTTPException(
             status_code=500,
             detail=f"Failed to save VAPID settings: {str(e)}"
@@ -133,10 +133,10 @@ async def generate_ssl_cert():
         with open(SSL_CA_FILE, "wb") as f:
             f.write(ca.cert_pem.bytes())
         store_key(SavedKey.SSL_PRIVATE_KEY, server_cert.private_key_pem.bytes().decode('utf-8'))
-        logging.debug("SSL certificate and key generated successfully.")
+        logger.debug("SSL certificate and key generated successfully.")
         return {"success": True, "message": "SSL certificate and key saved."}
     except Exception as e:
-        logging.error("Error generating SSL certificate: %s", e)
+        logger.error("Error generating SSL certificate: %s", e)
         raise HTTPException(status_code=500, detail=f"Failed to generate SSL certificate: {str(e)}")
 
 @router.post("/setup/upload-ssl-cert", include_in_schema=False)
@@ -163,10 +163,10 @@ async def upload_ssl_cert(request: Request):
             f.write(cert_content)
         key_content = await key_file.read()
         store_key(SavedKey.SSL_PRIVATE_KEY, key_content.decode('utf-8'))
-        logging.debug("SSL certificate and key uploaded successfully.")
+        logger.debug("SSL certificate and key uploaded successfully.")
         return {"success": True, "message": "SSL certificate and key uploaded successfully."}
     except Exception as e:
-        logging.error("Error uploading SSL certificate: %s", e)
+        logger.error("Error uploading SSL certificate: %s", e)
         raise HTTPException(status_code=500, detail=f"Failed to upload SSL certificate: {str(e)}")
 
 @router.post("/setup/save-tunnel-settings", include_in_schema=False)
@@ -191,10 +191,10 @@ async def save_tunnel_settings(settings: TunnelSettings):
             config_data[SavedConfig.CLOUDFLARE_EMAIL] = settings.email
         store_key(SavedKey.TUNNEL_API_KEY, settings.token)
         update_config(config_data)
-        logging.debug("Tunnel settings saved successfully.")
+        logger.debug("Tunnel settings saved successfully.")
         return {"success": True, "message": "Tunnel settings saved successfully."}
     except Exception as e:
-        logging.error("Error saving tunnel settings: %s", e)
+        logger.error("Error saving tunnel settings: %s", e)
         raise HTTPException(status_code=500, detail=f"Failed to save tunnel settings: {str(e)}")
 
 @router.post("/setup/initialize-ngrok-tunnel", include_in_schema=False)
@@ -247,10 +247,10 @@ async def complete_setup(completion: SetupCompletion):
         if completion.tunnel_provider:
             config_data[SavedConfig.TUNNEL_PROVIDER] = completion.tunnel_provider
         update_config(config_data)
-        logging.debug("Setup completed successfully with startup mode: %s", completion.startup_mode)
+        logger.debug("Setup completed successfully with startup mode: %s", completion.startup_mode)
         return {"success": True, "message": "Setup completed successfully"}
     except Exception as e:
-        logging.error("Error completing setup: %s", e)
+        logger.error("Error completing setup: %s", e)
         raise HTTPException(status_code=500, detail=f"Failed to complete setup: {str(e)}")
 
 @router.get("/setup/cloudflare/accounts-zones", include_in_schema=False)
@@ -285,7 +285,7 @@ async def get_cloudflare_accounts_zones():
     except HTTPException:
         raise
     except Exception as e:
-        logging.error("Error fetching Cloudflare accounts and zones: %s", e)
+        logger.error("Error fetching Cloudflare accounts and zones: %s", e)
         raise HTTPException(
             status_code=500,
             detail=f"Failed to fetch Cloudflare accounts and zones: {str(e)}"
@@ -331,7 +331,7 @@ async def create_cloudflare_tunnel(config: CloudflareTunnelConfig):
             "tunnel_token": tunnel_token
         }
     except Exception as e:
-        logging.error(
+        logger.error(
             "Error creating Cloudflare tunnel. Ensure the DNS record and tunnel do not already exist: %s",
             e)
         raise HTTPException(
@@ -382,7 +382,7 @@ async def save_cloudflare_os(config: CloudflareDownloadConfig):
             "setup_commands": setup_commands
         }
     except Exception as e:
-        logging.error("Error saving operating system selection: %s", e)
+        logger.error("Error saving operating system selection: %s", e)
         raise HTTPException(
             status_code=500,
             detail=f"Failed to save operating system selection: {str(e)}"
@@ -411,7 +411,7 @@ async def serve_cloudflare_add_device(request: Request):
             "site_domain": site_domain
         })
     except Exception as e:
-        logging.error("Error serving WARP device enrollment page: %s", e)
+        logger.error("Error serving WARP device enrollment page: %s", e)
         raise HTTPException(
             status_code=500,
             detail=f"Failed to serve WARP device enrollment page: {str(e)}"
@@ -472,14 +472,14 @@ async def get_cloudflare_organisation(request: Request):
                     "site_domain": site_domain
                 }
         except Exception as api_error:
-            logging.warning("Could not fetch team name from Cloudflare API: %s", api_error)
+            logger.warning("Could not fetch team name from Cloudflare API: %s", api_error)
             return {
                 "success": False,
                 "team_name": "your-organization",
                 "site_domain": site_domain
             }
     except Exception as e:
-        logging.error("Error fetching Cloudflare team name: %s", e)
+        logger.error("Error fetching Cloudflare team name: %s", e)
         return {
             "success": False,
             "team_name": "your-organization",

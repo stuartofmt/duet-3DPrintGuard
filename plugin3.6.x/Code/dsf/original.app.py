@@ -1,5 +1,5 @@
 import asyncio
-import logging
+from logger_module import logger
 import os
 from contextlib import asynccontextmanager
 
@@ -38,20 +38,20 @@ async def lifespan(app_instance: FastAPI):
     startup_mode = startup_mode_requirements_met()
     inference_engine = get_inference_engine()
     if startup_mode is SiteStartupMode.SETUP:
-        logging.warning("Starting in setup mode. Detection model and device will not be initialized.")
+        logger.warning("Starting in setup mode. Detection model and device will not be initialized.")
         yield
         return
-    logging.debug("Setting up device...")
+    logger.debug("Setting up device...")
     app_instance.state.device = inference_engine.setup_device(DEVICE_TYPE)
-    logging.debug("Using device: %s", app_instance.state.device)
+    logger.debug("Using device: %s", app_instance.state.device)
     try:
-        logging.debug("Loading model...")
+        logger.debug("Loading model...")
         app_instance.state.model, _ = inference_engine.load_model(get_model_path(),
                                                 get_model_options_path(),
                                                 app_instance.state.device)
         app_instance.state.transform = inference_engine.get_transform()
-        logging.debug("Model loaded successfully.")
-        logging.debug("Building prototypes...")
+        logger.debug("Model loaded successfully.")
+        logger.debug("Building prototypes...")
         try:
             prototypes, class_names, defect_idx = inference_engine.compute_prototypes(
                 app_instance.state.model, get_prototypes_dir(), app_instance.state.transform,
@@ -60,25 +60,25 @@ async def lifespan(app_instance: FastAPI):
             app_instance.state.prototypes = prototypes
             app_instance.state.class_names = class_names
             app_instance.state.defect_idx = defect_idx
-            logging.debug("Prototypes built successfully.")
+            logger.debug("Prototypes built successfully.")
         except NameError:
-            logging.warning("Skipping prototype building.")
+            logger.warning("Skipping prototype building.")
         except ValueError as e:
-            logging.error("Error building prototypes: %s", e)
+            logger.error("Error building prototypes: %s", e)
     except RuntimeError as e:
-        logging.error("Error during startup: %s", e)
+        logger.error("Error during startup: %s", e)
         app_instance.state.model = None
         raise
-    logging.debug("Camera indices set up successfully.")
+    logger.debug("Camera indices set up successfully.")
     yield
-    logging.debug("Cleaning up resources on shutdown...")
+    logger.debug("Cleaning up resources on shutdown...")
     try:
         from utils.camera_state_manager import get_camera_state_manager
         manager = get_camera_state_manager()
         await manager.cleanup_all_resources()
-        logging.debug("Cleaned up camera resources successfully.")
+        logger.debug("Cleaned up camera resources successfully.")
     except Exception as e:
-        logging.error("Error during cleanup: %s", e)
+        logger.error("Error during cleanup: %s", e)
 
 app = FastAPI(
     title="PrintGuard",
@@ -108,7 +108,7 @@ app.state.subscriptions = config.get(SavedConfig.PUSH_SUBSCRIPTIONS, [])
 app.state.polling_tasks = {}
 
 if app.debug:
-    logging.basicConfig(level=logging.DEBUG)
+    logger.basicConfig(level=logger.DEBUG)
 
 base_dir = os.path.dirname(__file__)
 static_dir = os.path.join(base_dir, "static")
@@ -157,10 +157,10 @@ def run():
     stop_cloudflare_tunnel()
     match startup_mode:
         case SiteStartupMode.SETUP:
-            logging.warning("Starting in setup mode. Available at http://localhost:8000/setup")
+            logger.warning("Starting in setup mode. Available at http://localhost:8000/setup")
             uvicorn.run(app, host="0.0.0.0", port=8000)
         case SiteStartupMode.LOCAL:
-            logging.warning("Starting in local mode. Available at %s", site_domain)
+            logger.warning("Starting in local mode. Available at %s", site_domain)
             ssl_private_key_path = get_ssl_private_key_temporary_path()
             uvicorn.run(app,
                         host="0.0.0.0",
@@ -170,23 +170,23 @@ def run():
         case SiteStartupMode.TUNNEL:
             match tunnel_provider:
                 case TunnelProvider.NGROK:
-                    logging.warning(
+                    logger.warning(
                         "Starting in tunnel mode with ngrok. Available at %s",
                         site_domain)
                     tunnel_setup = setup_ngrok_tunnel(close=False)
                     if not tunnel_setup:
-                        logging.error("Failed to establish ngrok tunnel. Starting in SETUP mode.")
+                        logger.error("Failed to establish ngrok tunnel. Starting in SETUP mode.")
                         update_config({SavedConfig.STARTUP_MODE: SiteStartupMode.SETUP})
                         run()
                     else:
                         uvicorn.run(app, host="0.0.0.0", port=8000)
                 case TunnelProvider.CLOUDFLARE:
-                    logging.warning("Starting in tunnel mode with Cloudflare.")
+                    logger.warning("Starting in tunnel mode with Cloudflare.")
                     if start_cloudflare_tunnel():
-                        logging.warning("Cloudflare tunnel started. Available at %s", site_domain)
+                        logger.warning("Cloudflare tunnel started. Available at %s", site_domain)
                         uvicorn.run(app, host="0.0.0.0", port=8000)
                     else:
-                        logging.error("Failed to start Cloudflare tunnel. Starting in SETUP mode.")
+                        logger.error("Failed to start Cloudflare tunnel. Starting in SETUP mode.")
                         update_config({SavedConfig.STARTUP_MODE: SiteStartupMode.SETUP})
                         run()
 

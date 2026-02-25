@@ -1,5 +1,5 @@
 import time
-import logging
+from logger_module import logger
 
 from fastapi import Form, Request, APIRouter
 from fastapi.exceptions import HTTPException
@@ -43,10 +43,10 @@ async def save_feed_settings(settings: FeedSettings):
         }
         update_config(config_data)
         stream_optimizer.invalidate_cache()
-        logging.debug("Feed settings saved successfully.")
+        logger.debug("Feed settings saved successfully.")
         return {"success": True, "message": "Feed settings saved successfully."}
     except Exception as e:
-        logging.error("Error saving feed settings: %s", e)
+        logger.error("Error saving feed settings: %s", e)
         raise HTTPException(
             status_code=500,
             detail=f"Failed to save feed settings: {str(e)}"
@@ -78,7 +78,7 @@ async def get_feed_settings():
         settings["detections_per_second"] = round(1000 / settings["detection_interval_ms"])
         return {"success": True, "settings": settings}
     except Exception as e:
-        logging.error("Error loading feed settings: %s", e)
+        logger.error("Error loading feed settings: %s", e)
         raise HTTPException(
             status_code=500,
             detail=f"Failed to load feed settings: {str(e)}"
