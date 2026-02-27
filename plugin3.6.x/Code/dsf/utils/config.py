@@ -34,19 +34,21 @@ def is_running_in_docker():
     return os.path.exists('/.dockerenv')
 
 def config_set_paths_and_initialize(dwc,file_path):
-    global BASE_DIR, APP_DATA_DIR, CONFIG_FILE, SECRETS_FILE, LOCK_FILE, SSL_CERT_FILE, SSL_CA_FILE,DWC,KEYRING_SERVICE_NAME
+    global BASE_DIR, APP_DATA_DIR, SSL_DATA_DIR,CONFIG_FILE, SECRETS_FILE, LOCK_FILE, SSL_CERT_FILE, SSL_CA_FILE,DWC,KEYRING_SERVICE_NAME
     DWC = dwc
 
     if not DWC:
         if is_running_in_docker():
             APP_DATA_DIR = "/data"
+            SSL_DATA_DIR = APP_DATA_DIR
         else:
             APP_DATA_DIR = user_data_dir("printguard", "printguard")
-
-        BASE_DIR = os.path.dirname(__file__)
+            SSL_DATA_DIR = APP_DATA_DIR
     else:
-        APP_DATA_DIR  = file_path
-        BASE_DIR = file_path
+        APP_DATA_DIR = user_data_dir("duetprintguard", "duetprintguard")
+        SSL_DATA_DIR = file_path
+
+    BASE_DIR = os.path.dirname(__file__)
     
     logger.warning(f"Using app data directory: {APP_DATA_DIR}")
 
@@ -73,7 +75,6 @@ def acquire_lock():
     """
     # pylint: disable=global-statement
     global _file_lock, LOCK_FILE
-    logger.info(f'acquire lock file path: {LOCK_FILE}')
     _config_lock.acquire()
     _file_lock = open(LOCK_FILE, 'w')
     try:

@@ -12,12 +12,12 @@ import sys
 import os
 
 
-def setup_logfile(file_path, logfilename, debug_mode,logname="duetPrintGuard.log", progName="duetPrintGuard"):  
+def setup_logfile(file_path, logfilename, debug_mode, progName="duetPrintGuard"):  
 	global logger
 	logfile = os.path.join(file_path, logfilename)
 	if os.path.exists(logfile):
 		os.remove(logfile)
-	progName = progName + 'File'
+	progName = progName
 
 	if debug_mode:
 		logging.basicConfig(filename=logfile, encoding='utf-8',level=logging.DEBUG)

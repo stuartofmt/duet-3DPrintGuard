@@ -22,12 +22,12 @@ Version 0.1 - Initial release
 
 import sys
 import os
-import configparser
 import socket
 
 sys.path.append(os.path.dirname(__file__))
 
 from logger_module import setup_logfile
+from duet_config import get_DWC_config
 
 global progName, progVersion
 progName = 'duetPrintGuard'
@@ -38,23 +38,6 @@ pythonMinor = 8
 
 CONFIGFILENAME = 'duetPrintGuard.config'
 LOGFILENAME = 'duetPrintGuard.log'
-
-
-def get_DWC_config(file_path):
-    global PORT, DEBUG, HOST
-    config_file = os.path.join(file_path, CONFIGFILENAME)
-    print(f"Looking for config file at {config_file}")
-    if os.path.exists(file_path):
-        config = configparser.ConfigParser()
-        config.read(config_file)
-        DWC = config["DWC"]
-
-        # Access values
-        PORT = int(DWC["PORT"])
-        DEBUG = DWC["DEBUG"]
-        HOST = str(DWC["HOST"])
-        return True
-    return False
 
 def checkIP(host,port):
     #  Check to see if the requested IP and Port are available for use
@@ -92,12 +75,13 @@ def force_quit(code):
     logger.critical(f'''Terminating the program with exit code {code}''')
     sys.exit(code)
 
-def init(file_path):
+def start(file_path):
 
     global logger
     #from logger_module import logger # Need to import after setup_logging is called
 
-    if not get_DWC_config(file_path):
+    print(f"Calling config with {file_path}")
+    if not get_DWC_config(file_path, CONFIGFILENAME):
         print(f"Failed to load configuration from {file_path}. Please ensure the file exists and is properly formatted.")
         force_quit(1)
     
@@ -116,4 +100,5 @@ def init(file_path):
 
 
 if __name__ == '__main__':
-    init(sys.argv[1])
+    print(f' passed in {sys.argv[]}')
+    #start(sys.argv[1])
