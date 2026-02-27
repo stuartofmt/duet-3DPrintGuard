@@ -186,8 +186,8 @@ def init_routes_and_modules():
 		return response
 
 def appstartup():
-
 	global SSL_CERT_FILE, DEVICE_TYPE, SUCCESS_LABEL
+	port = str(DUET.PORT)  #unicorn looks for strings
 	"""
 	Run the FastAPI application with uvicorn, handling different startup modes.
 	"""
@@ -217,8 +217,8 @@ def appstartup():
 	
 	match startup_mode:
 		case SiteStartupMode.SETUP:
-			logger.warning(f'Starting in setup mode. Available at http://localhost:{PORT}/setup')
-			uvicorn.run(app, '0.0.0.0', port=DUET.PORT)
+			logger.warning(f'Starting in setup mode. Available at http://localhost:{port}/setup')
+			uvicorn.run(app, host='0.0.0.0', port=DUET.PORT)
 			"""/SRS"""
 		case SiteStartupMode.LOCAL:
 			logger.warning("Starting in local mode. Available at %s", site_domain)

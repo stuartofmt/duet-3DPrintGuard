@@ -2,3 +2,80 @@ INFO:duetPrintGuard:Logging started at /home/stuart/DWC/Plugins/duetPrintGuard/p
 INFO:duetPrintGuard:Debug mode set to True
 INFO:duetPrintGuard:duetPrintGuard -- 0.0.0
 INFO:duetPrintGuard:IP address 192.168.30.41 with port 8002 is available
+WARNING:duetPrintGuard:Using app data directory: /home/stuart/.local/share/duetprintguard
+INFO:duetPrintGuard:lock file path: /home/stuart/.local/share/duetprintguard/config.lock
+WARNING:duetPrintGuard:Startup mode: SiteStartupMode.SETUP
+ERROR:duetPrintGuard:Error stopping Cloudflare tunnel: Current OS not set in config.
+WARNING:duetPrintGuard:Starting in setup mode. Available at http://localhost:8002/setup
+INFO:duetPrintGuard:ONNX Runtime detected, using ONNX Runtime backend
+INFO:duetPrintGuard:Downloading all model files for onnxruntime backend
+INFO:duetPrintGuard:Downloading model.onnx from oliverbravery/printguard
+DEBUG:filelock:Attempting to acquire lock 140735040729984 on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/.gitignore.lock
+DEBUG:filelock:Lock 140735040729984 acquired on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/.gitignore.lock
+DEBUG:filelock:Attempting to release lock 140735040729984 on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/.gitignore.lock
+DEBUG:filelock:Lock 140735040729984 released on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/.gitignore.lock
+DEBUG:filelock:Attempting to acquire lock 140735037758096 on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/model.onnx.lock
+DEBUG:filelock:Lock 140735037758096 acquired on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/model.onnx.lock
+DEBUG:filelock:Attempting to release lock 140735037758096 on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/model.onnx.lock
+DEBUG:filelock:Lock 140735037758096 released on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/model.onnx.lock
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): huggingface.co:443
+DEBUG:urllib3.connectionpool:https://huggingface.co:443 "HEAD /oliverbravery/printguard/resolve/main/model.onnx HTTP/1.1" 307 0
+DEBUG:urllib3.connectionpool:https://huggingface.co:443 "HEAD /oliverbravery/PrintGuard/resolve/main/model.onnx HTTP/1.1" 302 0
+DEBUG:filelock:Attempting to acquire lock 140735037761296 on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/model.onnx.lock
+DEBUG:filelock:Lock 140735037761296 acquired on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/model.onnx.lock
+DEBUG:urllib3.connectionpool:https://huggingface.co:443 "GET /api/models/oliverbravery/PrintGuard/xet-read-token/010941f8d96e491771d784d8b82abee214e2ea77 HTTP/1.1" 200 365
+DEBUG:filelock:Attempting to release lock 140735037761296 on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/model.onnx.lock
+DEBUG:filelock:Lock 140735037761296 released on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/model.onnx.lock
+DEBUG:filelock:Attempting to acquire lock 140735037160672 on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/model.onnx.lock
+DEBUG:filelock:Lock 140735037160672 acquired on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/model.onnx.lock
+DEBUG:filelock:Attempting to release lock 140735037160672 on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/model.onnx.lock
+DEBUG:filelock:Lock 140735037160672 released on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/model.onnx.lock
+INFO:duetPrintGuard:Successfully downloaded model.onnx to /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/model.onnx
+INFO:duetPrintGuard:Downloading opt.json from oliverbravery/printguard
+DEBUG:filelock:Attempting to acquire lock 140735037160064 on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/opt.json.lock
+DEBUG:filelock:Lock 140735037160064 acquired on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/opt.json.lock
+DEBUG:filelock:Attempting to release lock 140735037160064 on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/opt.json.lock
+DEBUG:filelock:Lock 140735037160064 released on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/opt.json.lock
+DEBUG:urllib3.connectionpool:https://huggingface.co:443 "HEAD /oliverbravery/printguard/resolve/main/opt.json HTTP/1.1" 307 0
+DEBUG:urllib3.connectionpool:https://huggingface.co:443 "HEAD /oliverbravery/PrintGuard/resolve/main/opt.json HTTP/1.1" 307 0
+DEBUG:urllib3.connectionpool:https://huggingface.co:443 "HEAD /api/resolve-cache/models/oliverbravery/PrintGuard/010941f8d96e491771d784d8b82abee214e2ea77/opt.json HTTP/1.1" 200 0
+DEBUG:filelock:Attempting to acquire lock 140735037783024 on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/opt.json.lock
+DEBUG:filelock:Lock 140735037783024 acquired on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/opt.json.lock
+DEBUG:urllib3.connectionpool:https://huggingface.co:443 "GET /api/resolve-cache/models/oliverbravery/PrintGuard/010941f8d96e491771d784d8b82abee214e2ea77/opt.json HTTP/1.1" 200 795
+DEBUG:filelock:Attempting to release lock 140735037783024 on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/opt.json.lock
+DEBUG:filelock:Lock 140735037783024 released on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/opt.json.lock
+DEBUG:filelock:Attempting to acquire lock 140735037094592 on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/opt.json.lock
+DEBUG:filelock:Lock 140735037094592 acquired on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/opt.json.lock
+DEBUG:filelock:Attempting to release lock 140735037094592 on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/opt.json.lock
+DEBUG:filelock:Lock 140735037094592 released on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/opt.json.lock
+INFO:duetPrintGuard:Successfully downloaded opt.json to /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/opt.json
+INFO:duetPrintGuard:Downloading prototypes.pkl from oliverbravery/printguard
+DEBUG:filelock:Attempting to acquire lock 140735016863408 on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/prototypes.pkl.lock
+DEBUG:filelock:Lock 140735016863408 acquired on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/prototypes.pkl.lock
+DEBUG:filelock:Attempting to release lock 140735016863408 on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/prototypes.pkl.lock
+DEBUG:filelock:Lock 140735016863408 released on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/prototypes.pkl.lock
+DEBUG:urllib3.connectionpool:https://huggingface.co:443 "HEAD /oliverbravery/printguard/resolve/main/prototypes.pkl HTTP/1.1" 307 0
+DEBUG:urllib3.connectionpool:https://huggingface.co:443 "HEAD /oliverbravery/PrintGuard/resolve/main/prototypes.pkl HTTP/1.1" 302 0
+DEBUG:filelock:Attempting to acquire lock 140735016852816 on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/prototypes.pkl.lock
+DEBUG:filelock:Lock 140735016852816 acquired on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/prototypes.pkl.lock
+DEBUG:urllib3.connectionpool:https://huggingface.co:443 "GET /api/models/oliverbravery/PrintGuard/xet-read-token/010941f8d96e491771d784d8b82abee214e2ea77 HTTP/1.1" 200 365
+DEBUG:filelock:Attempting to release lock 140735016852816 on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/prototypes.pkl.lock
+DEBUG:filelock:Lock 140735016852816 released on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/prototypes.pkl.lock
+DEBUG:filelock:Attempting to acquire lock 140735016852560 on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/prototypes.pkl.lock
+DEBUG:filelock:Lock 140735016852560 acquired on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/prototypes.pkl.lock
+DEBUG:filelock:Attempting to release lock 140735016852560 on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/prototypes.pkl.lock
+DEBUG:filelock:Lock 140735016852560 released on /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/.cache/huggingface/download/prototypes.pkl.lock
+INFO:duetPrintGuard:Successfully downloaded prototypes.pkl to /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/prototypes/cache/prototypes.pkl
+INFO:duetPrintGuard:All model files successfully downloaded/cached for onnxruntime backend
+INFO:duetPrintGuard:Created inference engine with onnxruntime backend
+WARNING:duetPrintGuard:Starting in setup mode. Detection model and device will not be initialized.
+WARNING:duetPrintGuard:No camera UUIDs found, attempting to initialize cameras...
+DEBUG:keyring.backend:Loading KWallet
+DEBUG:keyring.backend:Loading SecretService
+DEBUG:keyring.backend:Loading Windows
+DEBUG:keyring.backend:Loading chainer
+DEBUG:keyring.backend:Loading libsecret
+DEBUG:keyring.backend:Loading macOS
+DEBUG:sse_starlette.sse:Got event: http.disconnect. Stop streaming.
+WARNING:duetPrintGuard:No camera UUIDs found, attempting to initialize cameras...
+DEBUG:sse_starlette.sse:Got event: http.disconnect. Stop streaming.
