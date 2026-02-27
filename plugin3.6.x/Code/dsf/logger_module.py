@@ -11,11 +11,13 @@ import logging
 import sys
 import os
 
+global logger
 
 def setup_logfile(file_path, logfilename, debug_mode, progName="duetPrintGuard"):  
 	global logger
 	logfile = os.path.join(file_path, logfilename)
 	if os.path.exists(logfile):
+		print(f'Removing old logfile {logfile}')
 		os.remove(logfile)
 	progName = progName
 
@@ -24,9 +26,9 @@ def setup_logfile(file_path, logfilename, debug_mode, progName="duetPrintGuard")
 	else:
 		logging.basicConfig(filename=logfile, encoding='utf-8',level=logging.INFO)
 	logger = logging.getLogger(progName)
-	logger.addHandler(logging.StreamHandler(sys.stdout))
+	#logger.addHandler(logging.StreamHandler(sys.stdout))
 
-	logger.info(f'''File logging started at {logfile}''')
+	logger.info(f'''Logging started at {logfile}''')
 	logger.info(f'''debug mode set to {debug_mode}''')
 	logger.debug(f'''Debug logging enabled''')
 

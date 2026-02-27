@@ -68,7 +68,7 @@ def checkIP(host,port):
         logger.critical('No port number was provided - terminating the program')
         force_quit(1)
     ip_address = '0.0.0.0'
-    logger.info(f'''IP address {ip_address} with port {PORT} is available and will be used for the server''')
+    logger.info(f'''IP address {ip_address} with port {DUET.PORT} is available and will be used for the server''')
     return ip_address
 
 def force_quit(code):
@@ -78,27 +78,32 @@ def force_quit(code):
 def start(file_path):
 
     global logger
-    #from logger_module import logger # Need to import after setup_logging is called
 
-    print(f"Calling config with {file_path}")
+    #from logger_module import logger # Need to import after setup_logging is called
     if not get_DWC_config(file_path, CONFIGFILENAME):
         print(f"Failed to load configuration from {file_path}. Please ensure the file exists and is properly formatted.")
         force_quit(1)
-    
+
+    # Can now get config parameters
+
+    from duet_config import DUET
+    print(DUET.PORT)
+    print(DUET.DEBUG)
+
+
+
     # Add in logfile and set logging level based on config
-    setup_logfile(file_path,LOGFILENAME,DEBUG,progName)
+    setup_logfile(file_path,LOGFILENAME,DUET.DEBUG,progName)
     from logger_module import logger # Need to import after setup_logging is called
     logger.info(f'''{progName} -- {progVersion}''')
+    sys.exit(1)
 
     # Exit if invalid  IP and Port combination is provided
-    ip_address = checkIP(HOST, PORT)
-
-    # DWC is used to modify the UI and some of the functionality of the original PrintGuard app
-    DWC = True 
+    ip_address = checkIP(DUET.HOST, DUET.PORT)
+ 
     from app import appstartup
-    appstartup(DWC, HOST, PORT, file_path)
+   #appstartup()
 
 
 if __name__ == '__main__':
-    print(f' passed in {sys.argv[]}')
-    #start(sys.argv[1])
+    start(sys.argv[1])
