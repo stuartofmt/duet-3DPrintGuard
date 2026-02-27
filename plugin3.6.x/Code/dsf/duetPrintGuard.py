@@ -39,21 +39,26 @@ pythonMinor = 8
 CONFIGFILENAME = 'duetPrintGuard.config'
 LOGFILENAME = 'duetPrintGuard.log'
 
-def checkIP(host,port):
+def checkIP(ip_address,port):
     #  Check to see if the requested IP and Port are available for use
-    ip_address = '0.0.0.0'
+    this_ip_address = ''
     if port != 0:
         #  Get the local ip address
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         try:
             s.connect(('10.255.255.255', 1))  # doesn't even have to be reachable
-            ip_address = s.getsockname()[0]
+            this_ip_address = s.getsockname()[0]
+            print(f'we have an ip {this_ip_address}')
         except Exception as e:
             logger.warning(f'''Make sure IP address {ip_address} is reachable and unique''')
             logger.warning(f'''{e}''')
         finally:
             s.close()
+            if ip_address != this_ip_address:
+                logger.critical(f'''The ip address in the configuration file {ip_address}\ndoes not match the ip address of this machine {this_ip_address}''')
+                force_quit(1)
 
+        # Check that the port is available
         try:
             sock = socket.socket()
         except Exception as e:
@@ -61,14 +66,14 @@ def checkIP(host,port):
             logger.critical(f'''{e}''')
             force_quit(1)  
         finally:
-            if sock.connect_ex((host, port)) == 0:
+            if sock.connect_ex((ip_address, port)) == 0:
                 logger.critical(f'''Port {port} is already in use.''')
                 force_quit(1)
     else:
         logger.critical('No port number was provided - terminating the program')
         force_quit(1)
-    ip_address = '0.0.0.0'
-    logger.info(f'''IP address {ip_address} with port {DUET.PORT} is available and will be used for the server''')
+    
+    logger.info(f'''IP address {ip_address} with port {port} is available''')
     return ip_address
 
 def force_quit(code):
@@ -85,24 +90,18 @@ def start(file_path):
         force_quit(1)
 
     # Can now get config parameters
-
     from duet_config import DUET
-    print(DUET.PORT)
-    print(DUET.DEBUG)
-
-
 
     # Add in logfile and set logging level based on config
     setup_logfile(file_path,LOGFILENAME,DUET.DEBUG,progName)
     from logger_module import logger # Need to import after setup_logging is called
     logger.info(f'''{progName} -- {progVersion}''')
-    sys.exit(1)
 
     # Exit if invalid  IP and Port combination is provided
-    ip_address = checkIP(DUET.HOST, DUET.PORT)
+    checkIP(DUET.DUET_IP, DUET.PORT)
  
     from app import appstartup
-   #appstartup()
+    appstartup()
 
 
 if __name__ == '__main__':

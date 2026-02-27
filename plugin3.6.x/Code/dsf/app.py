@@ -19,6 +19,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+from duet_config import DUET
 
 from utils.config import (get_ssl_private_key_temporary_path,
 						   get_prototypes_dir,
@@ -184,9 +185,9 @@ def init_routes_and_modules():
 		response = await call_next(request)
 		return response
 
-def appstartup(DWC, HOST, PORT,FILE_PATH):
+def appstartup():
+
 	global SSL_CERT_FILE, DEVICE_TYPE, SUCCESS_LABEL
-	logger.info(f'appstartup called with DWC={DWC}, HOST={HOST}, PORT={PORT}, FILE_PATH={FILE_PATH}')
 	"""
 	Run the FastAPI application with uvicorn, handling different startup modes.
 	"""
@@ -195,7 +196,7 @@ def appstartup(DWC, HOST, PORT,FILE_PATH):
 
 	"""SRS"""
 	# Allow config to first set paths for config file etc
-	config_set_paths_and_initialize(DWC,FILE_PATH)
+	config_set_paths_and_initialize()
 
 	# following need config to have done its work
 	global SSL_CERT_FILE, DEVICE_TYPE, SUCCESS_LABEL
@@ -217,21 +218,21 @@ def appstartup(DWC, HOST, PORT,FILE_PATH):
 	match startup_mode:
 		case SiteStartupMode.SETUP:
 			logger.warning(f'Starting in setup mode. Available at http://localhost:{PORT}/setup')
-			uvicorn.run(app, host=HOST, port=PORT)
+			uvicorn.run(app, '0.0.0.0', port=DUET.PORT)
 			"""/SRS"""
 		case SiteStartupMode.LOCAL:
 			logger.warning("Starting in local mode. Available at %s", site_domain)
 			"""SRS"""
-			if DWC:
+			if DUET.DWC:
 				uvicorn.run(app,
-							host=HOST,
-							port=PORT
+							host='0.0.0.0',
+							port=DUET.PORT
 							)
 			else:
 				ssl_private_key_path = get_ssl_private_key_temporary_path()
 				uvicorn.run(app,
-							host=HOST,
-							port=PORT,
+							host='0.0.0.0',
+							port=DUET.PORT,
 							ssl_certfile=SSL_CERT_FILE,
 							ssl_keyfile=ssl_private_key_path
 							)
@@ -246,18 +247,18 @@ def appstartup(DWC, HOST, PORT,FILE_PATH):
 					if not tunnel_setup:
 						logger.error("Failed to establish ngrok tunnel. Starting in SETUP mode.")
 						update_config({SavedConfig.STARTUP_MODE: SiteStartupMode.SETUP})
-						appstartup(DWC, HOST, PORT,FILE_PATH)
+						appstartup()
 					else:
-						uvicorn.run(app, host="0.0.0.0", port=8000)
+						uvicorn.run(app, host="0.0.0.0", port=DUET.PORT)
 				case TunnelProvider.CLOUDFLARE:
 					logger.warning("Starting in tunnel mode with Cloudflare.")
 					if start_cloudflare_tunnel():
 						logger.warning("Cloudflare tunnel started. Available at %s", site_domain)
-						uvicorn.run(app, host="0.0.0.0", port=8000)
+						uvicorn.run(app, host="0.0.0.0", port=DUET.PORT)
 					else:
 						logger.error("Failed to start Cloudflare tunnel. Starting in SETUP mode.")
 						update_config({SavedConfig.STARTUP_MODE: SiteStartupMode.SETUP})
-						appstartup(DWC, HOST, PORT,FILE_PATH)
+						appstartup()
 
 #if __name__ == "__main__":
 #	run()

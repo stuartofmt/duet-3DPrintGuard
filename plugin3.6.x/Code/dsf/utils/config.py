@@ -23,6 +23,8 @@ from platformdirs import user_data_dir
 from .model_downloader import get_model_downloader
 from models import AlertAction, SavedKey, SavedConfig
 
+from duet_config import DUET
+
 # Config version - increment this when the config structure changes
 CONFIG_VERSION = "1.0.0"
 
@@ -33,11 +35,10 @@ def is_running_in_docker():
     """Check if the application is running inside a Docker container."""
     return os.path.exists('/.dockerenv')
 
-def config_set_paths_and_initialize(dwc,file_path):
-    global BASE_DIR, APP_DATA_DIR, SSL_DATA_DIR,CONFIG_FILE, SECRETS_FILE, LOCK_FILE, SSL_CERT_FILE, SSL_CA_FILE,DWC,KEYRING_SERVICE_NAME
-    DWC = dwc
+def config_set_paths_and_initialize():
+    global BASE_DIR, APP_DATA_DIR, SSL_DATA_DIR,CONFIG_FILE, SECRETS_FILE, LOCK_FILE, SSL_CERT_FILE, SSL_CA_FILE,KEYRING_SERVICE_NAME
 
-    if not DWC:
+    if not DUET.DWC:
         if is_running_in_docker():
             APP_DATA_DIR = "/data"
             SSL_DATA_DIR = APP_DATA_DIR
@@ -46,7 +47,7 @@ def config_set_paths_and_initialize(dwc,file_path):
             SSL_DATA_DIR = APP_DATA_DIR
     else:
         APP_DATA_DIR = user_data_dir("duetprintguard", "duetprintguard")
-        SSL_DATA_DIR = file_path
+        SSL_DATA_DIR = DUET.FILE_PATH
 
     BASE_DIR = os.path.dirname(__file__)
     
@@ -59,8 +60,8 @@ def config_set_paths_and_initialize(dwc,file_path):
     CONFIG_FILE = os.path.join(APP_DATA_DIR, "config.json")
     SECRETS_FILE = os.path.join(APP_DATA_DIR, "secrets.json")
     LOCK_FILE = os.path.join(APP_DATA_DIR, "config.lock")
-    SSL_CERT_FILE = os.path.join(APP_DATA_DIR, "cert.pem")
-    SSL_CA_FILE = os.path.join(APP_DATA_DIR, "ca.pem")
+    SSL_CERT_FILE = os.path.join(SSL_DATA_DIR, "cert.pem")
+    SSL_CA_FILE = os.path.join(SSL_DATA_DIR, "ca.pem")
  
     logger.info(f'lock file path: {LOCK_FILE}')
     # continue with phase 2 of initialization which may depend on these paths being set

@@ -1,4 +1,4 @@
 INFO:duetPrintGuard:Logging started at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/sd/sys/duetPrintGuard/duetPrintGuard.log
-INFO:duetPrintGuard:debug mode set to True
-DEBUG:duetPrintGuard:Debug logging enabled
+INFO:duetPrintGuard:Debug mode set to True
 INFO:duetPrintGuard:duetPrintGuard -- 0.0.0
+INFO:duetPrintGuard:IP address 192.168.30.41 with port 8002 is available

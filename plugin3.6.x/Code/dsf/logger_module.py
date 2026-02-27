@@ -26,10 +26,9 @@ def setup_logfile(file_path, logfilename, debug_mode, progName="duetPrintGuard")
 	else:
 		logging.basicConfig(filename=logfile, encoding='utf-8',level=logging.INFO)
 	logger = logging.getLogger(progName)
-	#logger.addHandler(logging.StreamHandler(sys.stdout))
+	logger.addHandler(logging.StreamHandler(sys.stdout))
 
 	logger.info(f'''Logging started at {logfile}''')
-	logger.info(f'''debug mode set to {debug_mode}''')
-	logger.debug(f'''Debug logging enabled''')
+	logger.info(f'''Debug mode set to {debug_mode}''')
 
 	return logger
