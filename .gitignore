@@ -1,5 +1,5 @@
 venv
-__pycache__
+/__pycache__/*
 success
 failure
 build
@@ -7,7 +7,6 @@ build
 !.github
 /models
 *.pte
-model/
 data/
 .vscode/
 .DS_Store
