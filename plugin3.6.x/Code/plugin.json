@@ -8,8 +8,8 @@
 	"sbcRequired": true,
 	"dwcVersion": "3.6",
     "sbcDsfVersion": "3.6",
-	"sbcExecutable": "duetPrintGuard.py",
-	"sbcExecutableArguments": "/home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/sd/sys/duetPrintGuard",
+	"sbcExecutable": "/opt/dsf/plugins/duetPrintGuard/dsf/duetPrintGuard.py",
+	"sbcExecutableArguments": "/opt/dsf/sd/sys/duetPrintGuard",
 	"sbcOutputRedirected": false,
 	"sbcPermissions": ["commandExecution", "objectModelReadWrite", "objectModelRead","networkAccess", "webcamAccess", "readSystem", "writeSystem", "fileSystemAccess","launchProcesses", "managePlugins"],
 	"sbcPythonDependencies": ["requirements.txt"]

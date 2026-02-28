@@ -38,7 +38,12 @@ def is_running_in_docker():
 def config_set_paths_and_initialize():
     global BASE_DIR, APP_DATA_DIR, SSL_DATA_DIR,CONFIG_FILE, SECRETS_FILE, LOCK_FILE, SSL_CERT_FILE, SSL_CA_FILE,KEYRING_SERVICE_NAME
 
-    if not DUET.DWC:
+    KEYRING_SERVICE_NAME = ""
+    APP_DATA_DIR = ""
+    BASE_DIR = os.path.dirname(os.path.abspath(__name__))
+
+    if not DUET.DWC: #Original code
+        KEYRING_SERVICE_NAME = "printguard"
         if is_running_in_docker():
             APP_DATA_DIR = "/data"
             SSL_DATA_DIR = APP_DATA_DIR
@@ -47,13 +52,17 @@ def config_set_paths_and_initialize():
             SSL_DATA_DIR = APP_DATA_DIR
     else:
         APP_DATA_DIR = user_data_dir("duetprintguard", "duetprintguard")
-        SSL_DATA_DIR = DUET.FILE_PATH
+        if  not APP_DATA_DIR.startswith('/home') :  # Likely running as plugin user_data_dir will not resolve
+            # So we put it where dsf has permissions
+            KEYRING_SERVICE_NAME = "sbcprintguard"
+            APP_DATA_DIR = os.path.join(BASE_DIR, '.sbc')
+        else: # used for local testing
+            KEYRING_SERVICE_NAME = "duetprintguard"
+            APP_DATA_DIR = user_data_dir("duetprintguard", "duetprintguard")
 
-    BASE_DIR = os.path.dirname(__file__)
+        SSL_DATA_DIR = DUET.FILE_PATH
     
     logger.warning(f"Using app data directory: {APP_DATA_DIR}")
-
-    KEYRING_SERVICE_NAME = "printguard"
 
     os.makedirs(APP_DATA_DIR, exist_ok=True)
 
