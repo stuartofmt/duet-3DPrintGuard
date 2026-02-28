@@ -107,7 +107,6 @@ function toggleIsDetectingStatus(isActive) {
 }
 
 function updateDetectionButton(isActive) {
-    console.warn('Updating detection button, isActive:', isActive);
     if (isActive) {
         camDetectionToggleButton.textContent = stopDetectionBtnLabel;
     } else {
@@ -142,7 +141,6 @@ function updateSelectedCameraSettings(d) {
     updateSliderFill(settingsMajorityVoteWindow);
     settingsCountdownAction.value = d.countdown_action;
     currentCameraPrinterConfig = d.printer_config;
-    console.warn('updateSelectedCameraSettings: live_detection_running ==>', d.live_detection_running);
 
     const hasPrinter = d.printer_id !== null && d.printer_id !== undefined;
     for (const option of settingsCountdownAction.options) {
@@ -189,7 +187,7 @@ function updateSelectedCameraData(d) {
     updateTotalDetectionsCount(d.total_detections, camTotalDetectionsDisplay);
     updateFrameRate(d.frame_rate, camFrameRateDisplay);
     toggleIsDetectingStatus(d.live_detection_running);
-    console.warn('updateSelectedCameraData:  With live detection status:', d.live_detection_running);
+    //console.warn('updateSelectedCameraData:  With live detection status:', d.live_detection_running);
     updateDetectionButton(d.live_detection_running);
     printerTileStyle(d.printer_id !== undefined && d.printer_id !== null);
 }
@@ -198,7 +196,6 @@ function updateCameraSelectionListData(d) {
     cameraItems.forEach(item => {
         const cameraId = item.dataset.cameraId;
         if (cameraId == d.camera_uuid) {
-            console.warn('updateCameraSelectionListData:', d.nickname, 'with last time data:', d.last_time);
             item.querySelector('.camera-prediction').textContent = d.last_result;
             item.querySelector('#lastTimeValue').textContent = d.last_time ? new Date(d.last_time * 1000).toLocaleTimeString() : '-';
             item.querySelector('.camera-prediction').style.color = d.last_result === 'success' ? 'green' : 'red';
@@ -269,7 +266,6 @@ function removeCamera(cameraUUID) {
 }
 
 function updatePolledDetectionData(d) {
-    console.warn('updatePolledDetectionData for:', d.nickname, 'with last time data:', d.last_time);
     if ('camera_uuid' in d && d.camera_uuid == cameraUUID) {
         updateSelectedCameraData(d);
     }
@@ -288,7 +284,7 @@ function updatePolledPrinterData(d) {
 }
 
 function fetchAndUpdateMetricsForCamera(cameraUUID) {
-    console.warn('Fetching metrics for camera:', cameraUUID);
+    //console.warn('Fetching metrics for camera:', cameraUUID);
     if (!cameraUUID) {
         console.warn('Cannot fetch metrics: invalid camera UUID provided:', cameraUUID);
         return;
@@ -309,8 +305,7 @@ function fetchAndUpdateMetricsForCamera(cameraUUID) {
         }
         return response.json();
     })
-    .then(data => {
-        console.warn('Setting metricsData', data.last_time);   
+    .then(data => { 
         const metricsData = {
             camera_uuid: cameraUUID,
             start_time: data.start_time,
@@ -392,7 +387,6 @@ render_ascii_title(asciiTitle, 'PrintGuard');
 
 cameraItems.forEach(item => {
     item.addEventListener('click', function() {
-        console.warn('Camera item clicked:', this.dataset.cameraId);
         cameraItems.forEach(i => i.classList.remove('selected'));
         this.classList.add('selected');
         const cameraId = this.dataset.cameraId;
@@ -464,12 +458,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 addCameraModalOverlay.style.display = 'flex';
             }
         }
-    } else {
+    }/*SRS else {
         const noCamerasMessage = document.getElementById('noCamerasMessage');
         if (noCamerasMessage && addCameraModalOverlay) {
             addCameraModalOverlay.style.display = 'flex';
         }
-    }
+    }*/
 });
 
 addCameraBtn?.addEventListener('click', function(e) {

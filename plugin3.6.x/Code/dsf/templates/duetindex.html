@@ -61,11 +61,11 @@ Uses original index.js and modified stylesheet to facilitate reformattingfor DWC
                 {% endfor %}
             </ul>
             {% if not camera_states %}
-            <div id="noCamerasMessage" class="no-cameras-container">
+            <div id="noCamerasMessage" class="no-cameras-container" >
                 <div class="no-cameras-content">
                     <h3>No cameras configured</h3>
-                    <p>Get started by adding your first camera</p>
-                    <button id="addFirstCameraBtn" class="start-stop-btn">Add Camera</button>
+                    <p>Go to Settings page to add your first camera</p>
+                    <button id="addFirstCameraBtn" class="start-stop-btn" style="display: none;">Add Camera</button>
                 </div>
             </div>
             {% endif %}

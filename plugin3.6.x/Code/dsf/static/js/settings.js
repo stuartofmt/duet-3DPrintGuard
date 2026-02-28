@@ -446,12 +446,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 addCameraModalOverlay.style.display = 'flex';
             }
         }
-    } else {
+    }/*SRS else {
         const noCamerasMessage = document.getElementById('noCamerasMessage');
         if (noCamerasMessage && addCameraModalOverlay) {
             addCameraModalOverlay.style.display = 'flex';
         }
-    }
+    }*/
 });
 
 addCameraBtn?.addEventListener('click', function(e) {
