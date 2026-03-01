@@ -9,7 +9,7 @@ from utils.config import (STREAM_MAX_FPS, STREAM_TUNNEL_FPS,
                             STREAM_JPEG_QUALITY, STREAM_MAX_WIDTH,
                             DETECTION_INTERVAL_MS, PRINTER_STAT_POLLING_RATE_MS,
                             MIN_SSE_DISPATCH_DELAY_MS,
-                            update_config, get_config)
+                            update_config, get_config, reset_all)
 from utils.camera_utils import update_camera_state
 from utils.camera_state_manager import get_camera_state_manager
 from utils.stream_utils import stream_optimizer
@@ -33,7 +33,9 @@ async def serve_index(request: Request):
     camera_uuids = await camera_state_manager.get_all_camera_uuids()
     if not camera_uuids:
         logger.warning("No camera UUIDs found, attempting to initialize cameras...")
-        camera_uuids = await camera_state_manager.get_all_camera_uuids()
+        #SRS - Assume startup or bad state - reset all keys config etc
+        reset_all()
+        #camera_uuids = await camera_state_manager.get_all_camera_uuids()
     camera_states = {}
     for cam_uuid in camera_uuids:
         camera_states[cam_uuid] = await camera_state_manager.get_camera_state(cam_uuid)

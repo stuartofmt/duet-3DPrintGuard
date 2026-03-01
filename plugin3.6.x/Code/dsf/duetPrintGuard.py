@@ -39,7 +39,7 @@ pythonMinor = 8
 CONFIGFILENAME = 'duetPrintGuard.config'
 LOGFILENAME = 'duetPrintGuard.log'
 
-def checkIP(ip_address,port):
+def checkIP(ip_address, port):
     #  Check to see if the requested IP and Port are available for use
     this_ip_address = ''
     if port != 0:
@@ -48,7 +48,6 @@ def checkIP(ip_address,port):
         try:
             s.connect(('10.255.255.255', 1))  # doesn't even have to be reachable
             this_ip_address = s.getsockname()[0]
-            print(f'we have an ip {this_ip_address}')
         except Exception as e:
             logger.warning(f'''Make sure IP address {ip_address} is reachable and unique''')
             logger.warning(f'''{e}''')
@@ -62,7 +61,7 @@ def checkIP(ip_address,port):
         try:
             sock = socket.socket()
         except Exception as e:
-            logger.critical(f'''Unknown error trying to open Port {port}''')
+            logger.critical(f'''Unknown error trying to open a socket''')
             logger.critical(f'''{e}''')
             force_quit(1)  
         finally:
@@ -98,7 +97,7 @@ def start(file_path):
     logger.info(f'''{progName} -- {progVersion}''')
 
     # Exit if invalid  IP and Port combination is provided
-    checkIP(DUET.DUET_IP, DUET.PORT)
+    checkIP(DUET.DUETIP, DUET.PORT)
  
     from app import appstartup
     appstartup()

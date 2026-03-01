@@ -9,6 +9,7 @@ pillow==11.3.0
 opencv-python-headless==4.12.0.88
 python-multipart==0.0.20
 keyring==25.6.0
+keyrings.alt>=5.0.2
 trustme==1.2.1
 platformdirs==4.3.8
 sse-starlette==2.4.1

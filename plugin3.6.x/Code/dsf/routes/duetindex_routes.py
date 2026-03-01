@@ -32,8 +32,9 @@ async def serve_index(request: Request):
     camera_state_manager = get_camera_state_manager()
     camera_uuids = await camera_state_manager.get_all_camera_uuids()
     if not camera_uuids:
-        logger.warning("No camera UUIDs found, attempting to initialize cameras...")
-        camera_uuids = await camera_state_manager.get_all_camera_uuids()
+        logger.warning("No camera UUIDs found, Check Settings...")
+        #SRS - dont initialize in this UI
+        #camera_uuids = await camera_state_manager.get_all_camera_uuids()
     camera_states = {}
     for cam_uuid in camera_uuids:
         camera_states[cam_uuid] = await camera_state_manager.get_camera_state(cam_uuid)
