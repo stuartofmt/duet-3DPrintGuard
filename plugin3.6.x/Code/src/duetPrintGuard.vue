@@ -32,9 +32,9 @@ const pluginName = 'duetPrintGuard';
 const configFile = pluginName + '/' + pluginName + '.config';
 // -->
 window.onmessage = function(event){
-    if (event.data == 'reply') {
-        console('Reply received!');
-    }
+	if (event.data == 'reply') {
+		console('Reply received!');
+	}
 };
 export default {
 	data() { 
@@ -44,28 +44,45 @@ export default {
 		}
 	},
 	methods: {		
-        //Modified file load from @mintyTrebor 
+		//Modified file load from @mintyTrebor 
 		async loadSettingsFromFile() {
+			let content ='';
 			try {
 				const setFileName = Path.combine(this.systemDirectory, configFile);
 				const response = await store.dispatch("machine/download", { filename: setFileName, type: 'text', showSuccess: false, showError: false});
-				this.fileContent = await response;
-				//get the ip address start of line, one or more spaces = one of more spaces - group 1 to EOL no case
-				let pattern = /^\s*DUETIP\s*=\s*(.*)$/i;
-				let match = this.fileContent.match(pattern);
-				this.topurl = "http://"+ match[1].trim();
-				// get the port
-				pattern = /^\s*PORT\s*=\s*(.*)$/i
-				match = this.fileContent.match(pattern);
-				this.myurl = this.topurl + ":" + match[1].trim() + "/duetindex.html";
-				console.log('duetPrintGuard url is ' + this.myurl);
- 
-			} catch (e) {
-				if (!(e instanceof DisconnectedError) && !(e instanceof OperationCancelledError)) {
-					console.warn(e);
-					console.warn("File Does Not Exist");
+				content = await response;
+				} catch (e) {
+					if (!(e instanceof DisconnectedError) && !(e instanceof OperationCancelledError)) {
+						console.warn(e);
+						console.warn("File Does Not Exist or Network error");
+					}
 				}
+			
+			try {
+				const lines = content.split(/\r?\n/);
+				let ip = '';
+				let port = ''
+				let line = ''
+				for (line of lines) {
+					let key = line.split('=');
+					if (key[0].trim() == 'DUETIP'){
+						ip = key[1].trim();
+					}
+					if (key[0].trim() == 'PORT'){
+						port = key[1].trim();
+					}
+				}
+				//console.log(ip);
+				//console.log(port);
+
+				this.myurl = 'http://' + ip + ":" + port + "/duetindex";
+				console.log('duetPrintGuard url is ' + this.myurl);
+			
+			} catch (e) {
+				console.warn(e);
+				console.warn("Error parsing config file");				
 			}
+			
 		},
 		// Set the screen height - from @MintyTrebor
 		getAvailScreenHeight(){
@@ -79,18 +96,18 @@ export default {
 		return tmpHeight;
 		},
 		// Check to see if the sbcExecutable is running - if not close the DWC side of the plugin
-		checkExecutable(){
+		checkExecutable() {
 		let self = this;
 		setInterval(function() {self.checkRunning();},5000); // Check every 5 seconds
 		},
-		checkRunning(){
+		checkRunning() {
 		let self = this;
 		if (self.isrunning()){
 			return;
 		}
 		self.stopthePlugin();
 		},
-		async stopthePlugin(){
+		async stopthePlugin() {
 			// console.log('Stopping the plugin');
 			store.dispatch("machine/unloadDwcPlugin", pluginName); // Unload the plugin
 		},
@@ -98,7 +115,7 @@ export default {
 		isrunning() {
 		const allplugins = store.state.machine.model.plugins;
 		for (let [key, value] of allplugins) {
-    		//console.log(key, value);
+			//console.log(key, value);
 			if (key == pluginName){
 				//console.log('Pid = ' + value.pid);
 				if (value.pid > 0){
