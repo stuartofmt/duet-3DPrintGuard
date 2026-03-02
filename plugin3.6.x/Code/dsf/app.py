@@ -65,7 +65,7 @@ def init_routes_and_modules():
 		"""
 		# pylint: disable=C0415
 		from utils.setup_utils import startup_mode_requirements_met
-		startup_mode = startup_mode_requirements_met()
+		startup_mode = startup_mode_requirements_met() #Currently forced to local mode
 
 		inference_engine = get_inference_engine()
 		if startup_mode is SiteStartupMode.SETUP:
@@ -207,8 +207,8 @@ def appstartup():
 	init_routes_and_modules()
 	
 	startup_mode = startup_mode_requirements_met()
-	#SRS
 	logger.warning(f'Startup mode: {startup_mode}')
+
 	app_config = get_config()
 	site_domain = app_config.get(SavedConfig.SITE_DOMAIN, "")
 	tunnel_provider = app_config.get(SavedConfig.TUNNEL_PROVIDER, None)

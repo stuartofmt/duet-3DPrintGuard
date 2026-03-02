@@ -103,6 +103,7 @@ async def _live_detection_loop(app_state, camera_uuid):
     """
     # pylint: disable=C0415
     from .stream_utils import create_optimized_detection_loop
+    
     update_functions = {
         'update_camera_state': update_camera_state,
         'update_camera_detection_history': update_camera_detection_history,

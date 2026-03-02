@@ -103,7 +103,11 @@ def startup_mode_requirements_met() -> SiteStartupMode:
     Returns:
         SiteStartupMode: The site startup mode if requirements are met, SETUP otherwise.
     """
-    startup_mode = get_config().get(SavedConfig.STARTUP_MODE, None)
+    """SRS fix mode to local"""
+    #startup_mode = get_config().get(SavedConfig.STARTUP_MODE, None)
+
+    return SiteStartupMode.LOCAL
+    """
     match startup_mode:
         case SiteStartupMode.SETUP:
             return SiteStartupMode.SETUP
@@ -114,3 +118,4 @@ def startup_mode_requirements_met() -> SiteStartupMode:
             if check_vapid_keys_exist() and check_tunnel_requirements_met():
                 return SiteStartupMode.TUNNEL
     return SiteStartupMode.SETUP
+    """

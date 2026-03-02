@@ -187,7 +187,7 @@ function updateSelectedCameraData(d) {
     updateTotalDetectionsCount(d.total_detections, camTotalDetectionsDisplay);
     updateFrameRate(d.frame_rate, camFrameRateDisplay);
     toggleIsDetectingStatus(d.live_detection_running);
-    //console.warn('updateSelectedCameraData:  With live detection status:', d.live_detection_running);
+    console.warn('updateSelectedCameraData:  With live detection status:', d.live_detection_running);
     updateDetectionButton(d.live_detection_running);
     printerTileStyle(d.printer_id !== undefined && d.printer_id !== null);
 }
@@ -212,7 +212,7 @@ function updateCameraSelectionListData(d) {
             /*SRS
             Added toggle here to support multiple browser instances correctly updating
             */
-            toggleIsDetectingStatus(d.live_detection_running);
+            //toggleIsDetectingStatus(d.live_detection_running);
             item.querySelector('#cameraPreview').src = `/camera/feed/${d.camera_uuid}`;
         }
     });
@@ -284,7 +284,7 @@ function updatePolledPrinterData(d) {
 }
 
 function fetchAndUpdateMetricsForCamera(cameraUUID) {
-    //console.warn('Fetching metrics for camera:', cameraUUID);
+    console.warn('Fetching metrics for camera:', cameraUUID);
     if (!cameraUUID) {
         console.warn('Cannot fetch metrics: invalid camera UUID provided:', cameraUUID);
         return;
@@ -344,6 +344,7 @@ function fetchAndUpdateMetricsForCamera(cameraUUID) {
 }
 
 function sendDetectionRequest(isStart) {
+    console.warn('Sending Detection Request' + isStart)
     if (cameraUUID === null || cameraUUID === undefined) {
         console.warn(`Cannot ${isStart ? 'start' : 'stop'} detection: no valid camera selected`);
         return;
@@ -357,6 +358,7 @@ function sendDetectionRequest(isStart) {
     })
     .then(response => {
         if (response.ok) {
+            console.warn('Got detection response' + cameraUUID)
             fetchAndUpdateMetricsForCamera(cameraUUID);
         } else {
             response.json().then(errData => {
