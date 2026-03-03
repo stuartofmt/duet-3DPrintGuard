@@ -1,0 +1,52 @@
+INFO:duetPrintGuard:Logging started at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/sd/sys/duetPrintGuard/duetPrintGuard.log
+INFO:duetPrintGuard:Debug mode set to True
+INFO:duetPrintGuard:duetPrintGuard -- 0.0.2
+INFO:duetPrintGuard:IP address 192.168.30.41 with port 8002 is available
+DEBUG:keyring.backend:Loading Gnome
+DEBUG:keyring.backend:Loading Google
+DEBUG:keyring.backend:Loading Windows (alt)
+DEBUG:keyring.backend:Loading file
+DEBUG:keyring.backend:Loading keyczar
+DEBUG:keyring.backend:Loading multi
+DEBUG:keyring.backend:Loading KWallet
+DEBUG:keyring.backend:Loading SecretService
+DEBUG:keyring.backend:Loading Windows
+DEBUG:keyring.backend:Loading chainer
+DEBUG:keyring.backend:Loading libsecret
+DEBUG:keyring.backend:Loading macOS
+INFO:duetPrintGuard:Using Keyring keyring.backends.chainer.ChainerBackend (priority: 10)]
+WARNING:duetPrintGuard:Using app data directory: /home/stuart/.local/share/duetprintguard
+INFO:duetPrintGuard:lock file path: /home/stuart/.local/share/duetprintguard/config.lock
+WARNING:duetPrintGuard:Startup mode: SiteStartupMode.LOCAL
+ERROR:duetPrintGuard:Error stopping Cloudflare tunnel: Current OS not set in config.
+WARNING:duetPrintGuard:Starting in local mode. Available at None
+INFO:duetPrintGuard:ONNX Runtime detected, using ONNX Runtime backend
+INFO:duetPrintGuard:Downloading all model files for onnxruntime backend
+INFO:duetPrintGuard:Model model.onnx already cached at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/model.onnx
+INFO:duetPrintGuard:Options file already cached at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/opt.json
+INFO:duetPrintGuard:Prototypes already cached at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/prototypes/cache/prototypes.pkl
+INFO:duetPrintGuard:All model files successfully downloaded/cached for onnxruntime backend
+INFO:duetPrintGuard:Created inference engine with onnxruntime backend
+DEBUG:duetPrintGuard:Setting up device...
+DEBUG:duetPrintGuard:Using device: cpu
+DEBUG:duetPrintGuard:Using device: cpu
+DEBUG:duetPrintGuard:Loading model...
+INFO:duetPrintGuard:ONNX Runtime detected, using ONNX Runtime backend
+DEBUG:duetPrintGuard:Using execution providers: ['CPUExecutionProvider']
+INFO:duetPrintGuard:ONNX model loaded successfully. Input: input, Output: output, Shape: ['batch_size', 3, 224, 224]
+DEBUG:duetPrintGuard:Model loaded successfully.
+DEBUG:duetPrintGuard:Building prototypes...
+DEBUG:duetPrintGuard:Attempting to load prototypes from downloaded file: /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/prototypes/cache/prototypes.pkl
+DEBUG:duetPrintGuard:Prototypes loaded from cache: /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/prototypes/cache/prototypes.pkl
+DEBUG:duetPrintGuard:Successfully loaded prototypes from downloaded file: /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/prototypes/cache/prototypes.pkl
+DEBUG:duetPrintGuard:Prototypes built successfully.
+DEBUG:duetPrintGuard:Camera indices set up successfully.
+WARNING:duetPrintGuard:No polling task found for camera UUID 858f6eac-4e84-4de7-a282-778dd9d76554 to stop.
+WARNING:duetPrintGuard:entered get_camera_state_ep with camera_uuid: 858f6eac-4e84-4de7-a282-778dd9d76554
+DEBUG:duetPrintGuard:Stream optimization settings for local mode:
+DEBUG:duetPrintGuard:  Max FPS: 30
+DEBUG:duetPrintGuard:  JPEG Quality: 85
+DEBUG:duetPrintGuard:  Max Width: 1280
+DEBUG:duetPrintGuard:  Detection Interval: 66ms
+DEBUG:duetPrintGuard:Started shared video stream for camera 858f6eac-4e84-4de7-a282-778dd9d76554
+DEBUG:sse_starlette.sse:Got event: http.disconnect. Stop streaming.

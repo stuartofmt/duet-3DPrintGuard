@@ -142,6 +142,7 @@ function updateSelectedCameraSettings(d) {
     settingsCountdownAction.value = d.countdown_action;
     currentCameraPrinterConfig = d.printer_config;
 
+    /* SRS
     const hasPrinter = d.printer_id !== null && d.printer_id !== undefined;
     for (const option of settingsCountdownAction.options) {
         if (option.value === 'cancel_print' || option.value === 'pause_print') {
@@ -152,8 +153,10 @@ function updateSelectedCameraSettings(d) {
         settingsCountdownAction.value = 'dismiss';
         saveSetting(settingsCountdownAction);
     }
+    */
 }
 
+/*
 function printerTileStyle(linked) {
     const printerConfigBtn = document.getElementById('printerConfigBtn');
     const linkPrinterBtn = document.getElementById('linkPrinterBtn');
@@ -180,7 +183,7 @@ function updateSelectedCamerasPrinterModal(printerStatus, printerTemperature, pr
         printerBedTemperatureLbl.textContent = printerBedTemperature;
     }
 }
-
+*/
 function updateSelectedCameraData(d) {
     updateRecentDetectionResult(d.last_result, camPredictionDisplay);
     updateRecentDetectionTime(d.last_time, camPredictionTimeDisplay);
@@ -189,7 +192,7 @@ function updateSelectedCameraData(d) {
     toggleIsDetectingStatus(d.live_detection_running);
     console.warn('updateSelectedCameraData:  With live detection status:', d.live_detection_running);
     updateDetectionButton(d.live_detection_running);
-    printerTileStyle(d.printer_id !== undefined && d.printer_id !== null);
+    //printerTileStyle(d.printer_id !== undefined && d.printer_id !== null);
 }
 
 function updateCameraSelectionListData(d) {

@@ -149,7 +149,7 @@ function updateSelectedCameraSettings(d) {
     currentCameraPrinterConfig = d.printer_config;
     console.warn('updateSelectedCameraSettings: live_detection_running ==>', d.live_detection_running);
     /*updateDetectionButton(d.live_detection_running);*/
-
+    /* SRS
     const hasPrinter = d.printer_id !== null && d.printer_id !== undefined;
     for (const option of settingsCountdownAction.options) {
         if (option.value === 'cancel_print' || option.value === 'pause_print') {
@@ -160,8 +160,10 @@ function updateSelectedCameraSettings(d) {
         settingsCountdownAction.value = 'dismiss';
         saveSetting(settingsCountdownAction);
     }
+    */
 }
 
+/*
 function printerTileStyle(linked) {
     const printerConfigBtn = document.getElementById('printerConfigBtn');
     const linkPrinterBtn = document.getElementById('linkPrinterBtn');
@@ -175,7 +177,8 @@ function printerTileStyle(linked) {
         linkPrinterBtn.style.display = 'block';
     }
 }
-
+*/
+/*
 function updateSelectedCamerasPrinterModal(printerStatus, printerTemperature, printerBedTemperature) {
     const printerStatusLbl = document.getElementById('modalPrinterStatus');
     const printerTemperatureLbl = document.getElementById('modalNozzleTemp');
@@ -188,7 +191,7 @@ function updateSelectedCamerasPrinterModal(printerStatus, printerTemperature, pr
         printerBedTemperatureLbl.textContent = printerBedTemperature;
     }
 }
-
+*/
 function updateSelectedCameraData(d) {
     updateRecentDetectionResult(d.last_result, camPredictionDisplay);
     updateRecentDetectionTime(d.last_time, camPredictionTimeDisplay);
@@ -197,7 +200,7 @@ function updateSelectedCameraData(d) {
     toggleIsDetectingStatus(d.live_detection_running);
     console.warn('updateSelectedCameraData:  With live detection status:', d.live_detection_running);
     updateDetectionButton(d.live_detection_running);
-    printerTileStyle(d.printer_id !== undefined && d.printer_id !== null);
+    //printerTileStyle(d.printer_id !== undefined && d.printer_id !== null);
 }
 
 function updateCameraSelectionListData(d) {
@@ -429,12 +432,13 @@ document.addEventListener('cameraStateUpdated', evt => {
     }
 });
 
+/* SRS Printer related to Dismiss
 document.addEventListener('printerStateUpdated', evt => {
     if (evt.detail) {
         updatePolledPrinterData(evt.detail);
     }
 });
-
+*/
 document.addEventListener('DOMContentLoaded', function() {
     const firstCameraItem = cameraItems[0];
     if (firstCameraItem) {
@@ -609,6 +613,7 @@ document.querySelectorAll('.settings-form input[type="range"]').forEach(slider =
 });
 
 document.getElementById('countdown_action').addEventListener('change', (e) => {
+    console.log('Countdown Settings now ' +e .target)
     saveSetting(e.target);
 });
 
