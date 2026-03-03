@@ -212,7 +212,7 @@ function updateCameraSelectionListData(d) {
             /*SRS
             Added toggle here to support multiple browser instances correctly updating
             */
-            //toggleIsDetectingStatus(d.live_detection_running);
+            toggleIsDetectingStatus(d.live_detection_running);
             item.querySelector('#cameraPreview').src = `/camera/feed/${d.camera_uuid}`;
         }
     });
@@ -422,6 +422,8 @@ cameraItems.forEach(item => {
         cameraUUID = cameraId;
         /*SRS
         Added toggle here to support multiple instances showing correct state
+        pull out the button label / color into fn then call from update toggle
+        this should sync visibility when changed from somewhere else
         */
         if (startstopcameraButton.textContent === startDetectionBtnLabel) {
             startstopcameraButton.textContent = stopDetectionBtnLabel;
