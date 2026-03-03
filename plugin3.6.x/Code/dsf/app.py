@@ -45,16 +45,16 @@ def init_routes_and_modules():
 
 	from routes.alert_routes import router as alert_router
 	from routes.detection_routes import router as detection_router
-	from routes.notification_routes import router as notification_router
+	#from routes.notification_routes import router as notification_router
 	from routes.sse_routes import router as sse_router
-	from routes.setup_routes import router as setup_router
-	from routes.index_routes import router as index_router
+	#from routes.setup_routes import router as setup_router
+	#from routes.index_routes import router as index_router
 	"""SRS"""
 	from routes.duetindex_routes import router as duetindex_router
 	from routes.settings_routes import router as settings_router
 	from routes.save_get_feedsettings_routes import router as feedsettings_router
 	from routes.camera_routes import router as camera_router
-	from routes.printer_routes import router as printer_router
+	#from routes.printer_routes import router as printer_router
 
 	@asynccontextmanager
 	async def lifespan(app_instance: FastAPI):
@@ -148,17 +148,17 @@ def init_routes_and_modules():
 
 	app.include_router(detection_router, tags=["detection"])
 	app.include_router(alert_router, tags=["alerts"])
-	app.include_router(notification_router, tags=["notifications"])
+	#app.include_router(notification_router, tags=["notifications"])
 	app.include_router(sse_router, tags=["sse"])
-	app.include_router(setup_router, tags=["setup"])
-	app.include_router(index_router, tags=["index"])
+	#app.include_router(setup_router, tags=["setup"])
+	#app.include_router(index_router, tags=["index"])
 	"""SRS"""
 	app.include_router(duetindex_router, tags=["duetindex"])
 	app.include_router(settings_router, tags=["settings"])
 	app.include_router(feedsettings_router, tags=["feedsettings"])	
 
 	app.include_router(camera_router, tags=["camera"])
-	app.include_router(printer_router, tags=["printer"])
+	#app.include_router(printer_router, tags=["printer"])
 
 
 	@app.middleware("http")

@@ -1,4 +1,4 @@
-import { registerPush, unsubscribeFromPush } from './notifications.js';
+//import { registerPush, unsubscribeFromPush } from './notifications.js';
 import { render_ascii_title } from './utils.js';
 
 const asciiTitle = document.getElementById('ascii-title');
@@ -498,6 +498,7 @@ settingsButton.addEventListener('click', function() {
     }
 });
 
+/*  SRS Notification code
 let notificationsEnabled = false;
 notificationsBtn.textContent = '';
 
@@ -565,7 +566,7 @@ notificationsBtn.addEventListener('click', async () => {
         notificationsBtn.disabled = false;
     }
 });
-
+*/
 function updateSliderFill(slider) {
     const min = slider.min || 0;
     const max = slider.max || 100;
