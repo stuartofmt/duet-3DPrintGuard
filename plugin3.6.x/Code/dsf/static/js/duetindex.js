@@ -204,7 +204,7 @@ function updateCameraSelectionListData(d) {
         if (cameraId == d.camera_uuid) {
             item.querySelector('.camera-prediction').textContent = d.last_result;
             item.querySelector('#lastTimeValue').textContent = d.last_time ? new Date(d.last_time * 1000).toLocaleTimeString() : '-';
-            item.querySelector('.camera-prediction').style.color = d.last_result === 'success' ? 'green' : 'red';
+            item.querySelector('.camera-prediction').style.color = d.last_result === 'Connected' ? 'green' : 'red';
             let statusIndicator = item.querySelector('.camera-status');
             if (d.live_detection_running) {
                 statusIndicator.textContent = `Detecting`;
@@ -338,7 +338,7 @@ function fetchAndUpdateMetricsForCamera(cameraUUID) {
         const emptyMetrics = {
             camera_uuid: cameraUUID,
             start_time: null,
-            last_result: '-',
+            last_result: 'Disconnected',
             last_time: null,
             total_detections: 0,
             frame_rate: null,

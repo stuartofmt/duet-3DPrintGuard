@@ -24,7 +24,7 @@ def get_DWC_config(file_path,file_name):
         # Source - https://stackoverflow.com/a/28990982
         config_dict = {s:dict(config.items(s)) for s in config.sections()}
 
-        # We only want the DUET section
+        # Get the various sections
         duet_section = config_dict["DUET"]
 
         #Change the keys to UPPER
