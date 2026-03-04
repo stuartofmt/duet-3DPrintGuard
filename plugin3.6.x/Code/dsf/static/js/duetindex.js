@@ -51,6 +51,7 @@ camVideoPreview.onerror = () => {
 const stopDetectionBtnLabel = 'Stop Detection';
 const startDetectionBtnLabel = 'Start Detection';
 
+//Effectively a global - let scope
 let cameraUUID = 0;
 let currentCameraPrinterConfig = null;
 
@@ -184,14 +185,16 @@ function updateSelectedCamerasPrinterModal(printerStatus, printerTemperature, pr
     }
 }
 */
+
+// This function refers to the shared buttons CAMERAUUID?
 function updateSelectedCameraData(d) {
     updateRecentDetectionResult(d.last_result, camPredictionDisplay);
     updateRecentDetectionTime(d.last_time, camPredictionTimeDisplay);
     updateTotalDetectionsCount(d.total_detections, camTotalDetectionsDisplay);
     updateFrameRate(d.frame_rate, camFrameRateDisplay);
     toggleIsDetectingStatus(d.live_detection_running);
-    console.warn('updateSelectedCameraData:  With live detection status:', d.live_detection_running);
-    updateDetectionButton(d.live_detection_running);
+    updateDetectionButton(d.live_detection_running); //SRS This is the shared detection button
+    
     //printerTileStyle(d.printer_id !== undefined && d.printer_id !== null);
 }
 
@@ -209,7 +212,7 @@ function updateCameraSelectionListData(d) {
                 statusIndicator.style.backgroundColor = 'transparent';
             } else {
                 statusIndicator.textContent = `Inactive`;
-                statusIndicator.style.color = '#b2b2b2';
+                statusIndicator.style.color = '#f30606';
                 statusIndicator.style.backgroundColor = 'transparent';
             }
             /*SRS
@@ -287,7 +290,6 @@ function updatePolledPrinterData(d) {
 }
 
 function fetchAndUpdateMetricsForCamera(cameraUUID) {
-    console.warn('Fetching metrics for camera:', cameraUUID);
     if (!cameraUUID) {
         console.warn('Cannot fetch metrics: invalid camera UUID provided:', cameraUUID);
         return;
@@ -347,7 +349,6 @@ function fetchAndUpdateMetricsForCamera(cameraUUID) {
 }
 
 function sendDetectionRequest(isStart) {
-    console.warn('Sending Detection Request' + isStart)
     if (cameraUUID === null || cameraUUID === undefined) {
         console.warn(`Cannot ${isStart ? 'start' : 'stop'} detection: no valid camera selected`);
         return;
@@ -361,7 +362,7 @@ function sendDetectionRequest(isStart) {
     })
     .then(response => {
         if (response.ok) {
-            console.warn('Got detection response' + cameraUUID)
+            //console.warn('Got detection response' + cameraUUID)
             fetchAndUpdateMetricsForCamera(cameraUUID);
         } else {
             response.json().then(errData => {
@@ -396,7 +397,7 @@ cameraItems.forEach(item => {
         this.classList.add('selected');
         const cameraId = this.dataset.cameraId;
         if (cameraId) {
-            const nickname = this.querySelector('.camera-header span:first-child').textContent;
+            const nickname = this.querySelector('.camera-header span:first-child').textContent;         
             changeLiveCameraFeed(cameraId);
             cameraUUID = cameraId;
             settingsCameraUUID.value = cameraId;
@@ -415,9 +416,21 @@ cameraItems.forEach(item => {
     Replaced old remove camera action to instead by detection start stop
     */
     const startstopcameraButton = item.querySelector('.start-stop-camera-btn');
+    update_start_stop_button_UI(startstopcameraButton, !(item.dataset.isLive.toLowerCase() === 'true'));
+
     startstopcameraButton.addEventListener('click', function(event) {
         event.stopPropagation();
         const cameraId = item.dataset.cameraId;
+        //const isLive = (item.dataset.isLive.toLowerCase() === 'true');  //convert string to boolean
+        let statusIndicator = item.querySelector('.camera-status');
+        let indicator = statusIndicator.textContent
+        let isLive = true;
+        if (indicator == `Detecting`) {
+            isLive = true;
+        } else if (indicator == `Inactive`) {
+            isLive = false;
+        }
+        
         /*SRS
         Assignment here to ensure correct camera is targeted even if user clicks
         start/stop without selecting camera first
@@ -425,23 +438,34 @@ cameraItems.forEach(item => {
         cameraUUID = cameraId;
         /*SRS
         Added toggle here to support multiple instances showing correct state
-        pull out the button label / color into fn then call from update toggle
-        this should sync visibility when changed from somewhere else
+        This should be changed based on setection value
         */
-        if (startstopcameraButton.textContent === startDetectionBtnLabel) {
-            startstopcameraButton.textContent = stopDetectionBtnLabel;
-            startstopcameraButton.style.backgroundColor = 'red';
-            sendDetectionRequest(true);
-            toggleIsDetectingStatus(true);
-        } else {
-            startstopcameraButton.textContent = startDetectionBtnLabel;
-            startstopcameraButton.style.backgroundColor = 'green';
+        update_start_stop_button_UI(startstopcameraButton,isLive);
+        if (isLive) {
             sendDetectionRequest(false);
             toggleIsDetectingStatus(false);
-    }
+         } else {
+            sendDetectionRequest(true);
+            toggleIsDetectingStatus(true);
+        }
+
     });
 });
 
+
+function update_start_stop_button_UI(startstopcameraButton, isLive) {
+    // logic looks reversed since this is based on immediate prior status
+    if (isLive) {
+        startstopcameraButton.textContent = startDetectionBtnLabel;
+        startstopcameraButton.style.backgroundColor = 'green';
+    } else {
+
+        startstopcameraButton.textContent = stopDetectionBtnLabel;
+        startstopcameraButton.style.backgroundColor = 'red';
+    }
+}
+
+//SRS If active - this is where its tracked
 document.addEventListener('cameraStateUpdated', evt => {
     if (evt.detail) {
         updatePolledDetectionData(evt.detail);
