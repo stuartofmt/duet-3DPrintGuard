@@ -26,7 +26,7 @@ import socket
 
 sys.path.append(os.path.dirname(__file__))
 
-from logger_module import setup_logfile
+from logger_module import (setup_logfile, set_log_level)
 from duet_config import get_DWC_config
 
 global progName, progVersion
@@ -83,18 +83,21 @@ def start(file_path):
 
     global logger
 
-    #from logger_module import logger # Need to import after setup_logging is called
-    if not get_DWC_config(file_path, CONFIGFILENAME):
+    # Create a logfile 
+    logger = setup_logfile(file_path,LOGFILENAME,progName)
+    # from logger_module import logger # Need to import after setup_logging is called
+    logger.info(f'''{progName} -- {progVersion}''')
+
+    if not get_DWC_config(file_path, CONFIGFILENAME,logger):
         print(f"Failed to load configuration from {file_path}. Please ensure the file exists and is properly formatted.")
         force_quit(1)
 
     # Can now get config parameters
     from duet_config import DUET
 
-    # Add in logfile and set logging level based on config
-    setup_logfile(file_path,LOGFILENAME,DUET.DEBUG,progName)
-    from logger_module import logger # Need to import after setup_logging is called
-    logger.info(f'''{progName} -- {progVersion}''')
+    # Set logging level
+    logger = set_log_level(DUET.LOGLEVEL,logger)
+
 
     # Exit if invalid  IP and Port combination is provided
     checkIP(DUET.DUETIP, DUET.PORT)
@@ -104,4 +107,8 @@ def start(file_path):
 
 
 if __name__ == '__main__':
-    start(sys.argv[1])
+    file_path = sys.argv[1]
+    if not os.path.exists(file_path):
+        print(f'File path {file_path} could not ebe found - Exiting')
+        sys.exit(1)
+    start(file_path)

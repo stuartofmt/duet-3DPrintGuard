@@ -11,10 +11,10 @@ class DictToClass:
                 value = DictToClass(value)
             setattr(self, key, value)
 
-def get_DWC_config(file_path,file_name):
+def get_DWC_config(file_path,file_name,logger):
     global DUET
     config_file = os.path.join(file_path, file_name)
-    print(f"Looking for config file at {config_file}")
+    logger.debug(f"Looking for config file at {config_file}")
 
     if os.path.exists(config_file):
         config = configparser.ConfigParser()
@@ -36,11 +36,12 @@ def get_DWC_config(file_path,file_name):
         # Adjust types and values
         DUET.PORT = int(DUET.PORT)
 
+        """  template for booleans 
         if DUET.DEBUG.lower() in ['true', '1', 't', 'y', 'yes']:
             DUET.DEBUG = True
         else:
             DUET.DEBUG = False
-
+        """
         # Default Values
         DUET.HOST = '0.0.0.0'
         DUET.DWC = True
