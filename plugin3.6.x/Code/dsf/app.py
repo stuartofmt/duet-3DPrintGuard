@@ -19,7 +19,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from duet_config import DUET
+from duet_config import (DUET, UI)
 
 from utils.config import (get_ssl_private_key_temporary_path,
 						   get_prototypes_dir,
@@ -187,7 +187,7 @@ def init_routes_and_modules():
 
 def appstartup():
 	global SSL_CERT_FILE, DEVICE_TYPE, SUCCESS_LABEL
-	port = str(DUET.PORT)  #unicorn looks for strings
+	port = str(UI.PORT)  #unicorn looks for strings
 	"""
 	Run the FastAPI application with uvicorn, handling different startup modes.
 	"""
@@ -218,21 +218,21 @@ def appstartup():
 	match startup_mode:
 		case SiteStartupMode.SETUP:
 			logger.warning(f'Starting in setup mode. Available at http://localhost:{port}/setup')
-			uvicorn.run(app, host='0.0.0.0', port=DUET.PORT)
+			uvicorn.run(app, host=UI.HOST, port=UI.PORT)
 			"""/SRS"""
 		case SiteStartupMode.LOCAL:
 			logger.warning("Starting in local mode. Available at %s", site_domain)
 			"""SRS"""
 			if DUET.DWC:
 				uvicorn.run(app,
-							host='0.0.0.0',
-							port=DUET.PORT
+							host=UI.HOST,
+							port=UI.PORT
 							)
 			else:
 				ssl_private_key_path = get_ssl_private_key_temporary_path()
 				uvicorn.run(app,
-							host='0.0.0.0',
-							port=DUET.PORT,
+							host=UI.HOST,
+							port=UI.PORT,
 							ssl_certfile=SSL_CERT_FILE,
 							ssl_keyfile=ssl_private_key_path
 							)
@@ -249,12 +249,12 @@ def appstartup():
 						update_config({SavedConfig.STARTUP_MODE: SiteStartupMode.SETUP})
 						appstartup()
 					else:
-						uvicorn.run(app, host="0.0.0.0", port=DUET.PORT)
+						uvicorn.run(app, host=UI.HOST, port=UI.PORT)
 				case TunnelProvider.CLOUDFLARE:
 					logger.warning("Starting in tunnel mode with Cloudflare.")
 					if start_cloudflare_tunnel():
 						logger.warning("Cloudflare tunnel started. Available at %s", site_domain)
-						uvicorn.run(app, host="0.0.0.0", port=DUET.PORT)
+						uvicorn.run(app, host=UI.HOST, port=UI.PORT)
 					else:
 						logger.error("Failed to start Cloudflare tunnel. Starting in SETUP mode.")
 						update_config({SavedConfig.STARTUP_MODE: SiteStartupMode.SETUP})

@@ -93,14 +93,15 @@ def start(file_path):
         force_quit(1)
 
     # Can now get config parameters
-    from duet_config import DUET
+    from duet_config import (DUET , UI)
 
     # Set logging level
-    logger = set_log_level(DUET.LOGLEVEL,logger)
+    logger = set_log_level(UI.LOGLEVEL,logger)
 
 
-    # Exit if invalid  IP and Port combination is provided
-    checkIP(DUET.DUETIP, DUET.PORT)
+    # Exit if valid Port is provided for UI
+    # On this SBC
+    checkIP(DUET.IP, UI.PORT)
  
     from app import appstartup
     appstartup()
