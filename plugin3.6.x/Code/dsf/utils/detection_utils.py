@@ -8,8 +8,11 @@ from .alert_utils import (dismiss_alert, alert_to_response_json,
 from .sse_utils import append_new_outbound_packet
 from .camera_utils import (get_camera_state, get_camera_state_sync,
                            update_camera_state, update_camera_detection_history)
-from .printer_utils import get_printer_config, suspend_print_job
-from .notification_utils import send_defect_notification
+# SRS
+#from .printer_utils import get_printer_config, suspend_print_job
+#from notification_utils import send_defect_notification
+from duet_printer import send_defect_notification, get_printer_config, suspend_print_job
+
 from models import Alert, AlertAction, SSEDataType
 
 def _passed_majority_vote(camera_state):

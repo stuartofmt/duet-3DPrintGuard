@@ -93,10 +93,10 @@ def start(file_path):
         force_quit(1)
 
     # Can now get config parameters
-    from duet_config import (DUET , UI)
+    from duet_config import (DUET, LOGGING, UI)
 
     # Set logging level
-    logger = set_log_level(UI.LOGLEVEL,logger)
+    logger = set_log_level(LOGGING.LEVEL,logger)
 
 
     # Exit if valid Port is provided for UI

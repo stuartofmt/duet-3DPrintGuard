@@ -1,7 +1,8 @@
 import configparser
 import os
+import sys
 
-global DUET, UI, LOGGING, ACTION, NOTIFICATION
+global DUET, UI, LOGGING, ACTION, MACRO, NTFY, PUSHOVER
 
 # From https://gist.github.com/laywill/63d75b53e8a7a801d77f0dd2b97de54d
 class DictToClass:
@@ -12,7 +13,7 @@ class DictToClass:
             setattr(self, key, value)
 
 def get_DWC_config(file_path,file_name,logger):
-    global DUET, UI, LOGGING, ACTION, NOTIFICATION
+    global DUET, UI, LOGGING, ACTION, MACRO, NTFY, PUSHOVER
     config_file = os.path.join(file_path, file_name)
     logger.debug(f"Looking for config file at {config_file}")
 
@@ -29,40 +30,75 @@ def get_DWC_config(file_path,file_name,logger):
         ui_section = config_dict["UI"]
         logging_section = config_dict["LOGGING"]
         action_section = config_dict["ACTION"]
-        notification_section = config_dict["NOTIFICATION"]
+        macro_section = config_dict["MACRO"]
+        ntfy_section = config_dict["NTFY"]
+        pushover_section = config_dict["PUSHOVER"]
 
+        """
         #Change the keys to UPPER
         config_dict_duet = {k.upper():v.upper() for k,v in duet_section.items()}
         config_dict_ui = {k.upper():v.upper() for k,v in ui_section.items()}
         config_dict_logging = {k.upper():v.upper() for k,v in logging_section.items()}
         config_dict_action = {k.upper():v.upper() for k,v in action_section.items()}
-        config_dict_notification = {k.upper():v.upper() for k,v in notification_section.items()}
+        config_dict_macro = {k.upper():v.upper() for k,v in macro_section.items()}
+        config_dict_ntfy = {k.upper():v.upper() for k,v in ntfy_section.items()}
+        config_dict_pushover = {k.upper():v.upper() for k,v in pushover_section.items()}
+        """
+        #Change the keys to UPPER
+        config_dict_duet = {k.upper():v for k,v in duet_section.items()}
+        config_dict_ui = {k.upper():v for k,v in ui_section.items()}
+        config_dict_logging = {k.upper():v for k,v in logging_section.items()}
+        config_dict_action = {k.upper():v for k,v in action_section.items()}
+        config_dict_macro = {k.upper():v for k,v in macro_section.items()}
+        config_dict_ntfy = {k.upper():v for k,v in ntfy_section.items()}
+        config_dict_pushover = {k.upper():v for k,v in pushover_section.items()}
 
         #Convert to dot dict
         DUET = DictToClass(config_dict_duet)
         UI = DictToClass(config_dict_ui)
         LOGGING = DictToClass(config_dict_logging)
         ACTION = DictToClass(config_dict_action)
-        NOTIFICATION = DictToClass(config_dict_notification)
+        MACRO = DictToClass(config_dict_macro)
+        NTFY = DictToClass(config_dict_ntfy)
+        PUSHOVER = DictToClass(config_dict_pushover)
 
         # Adjust types and values
         # DUET
-        
+        if not hasattr(DUET,'IP') :
+            logger.critical('DUET section required IP')
+            sys.exit(1)
+        if not hasattr(DUET,'PORT') : DUET.PORT = '80'
         if not hasattr(DUET,'PASSWORD') : DUET.PASSWORD = 'reprap'
-        UI.PORT = int(UI.PORT) or 80
         DUET.DWC = True
         DUET.FILE_PATH = file_path
 
         # UI
-        if not hasattr(UI,'LOGLEVEL') : UI.LOGLEVEL = 'INFO'
+        if not hasattr(UI,'PORT'):
+            logger.critical('UI section must have a PORT specified')
+            sys.exit(1)
+
         UI.HOST = '0.0.0.0'
 
         # LOGGING
+        if not hasattr(LOGGING,'LEVEL') : LOGGING.LEVEL = 'INFO'        
 
         # ACTION
+        if not hasattr(ACTION,'ONFAILURE') : ACTION.ONFAILURE = 'STOP'
+        if not hasattr(ACTION,'PAUSE') : ACTION.PAUSE = ''
+        if not hasattr(ACTION,'CANCEL') : ACTION.CANCEL = ''
+        if not hasattr(ACTION,'STOP') : ACTION.STOP = ''
 
-        # NOTIFICATION
+        # MACRO
+        if not hasattr(MACRO,'MACRO'): MACRO.MACRO = ''
+
+        # NTFY
+        if not hasattr(NTFY,'TOPIC'): NTFY.TOPIC = ''
+        if not hasattr(NTFY,'MESSAGE'): NTFY.MESSAGE = 'duetPrintGuard detected a Print Failure'
         
+        #PUSHOVER
+        if not hasattr(PUSHOVER,'URL') : PUSHOVER.URL = ''
+        if not hasattr(PUSHOVER,'USER') : PUSHOVER.USER = ''
+        if not hasattr(PUSHOVER,'PASSWORD') : PUSHOVER.PASSWORD = ''
         
 
         """  template for booleans 
