@@ -110,6 +110,6 @@ def start(file_path):
 if __name__ == '__main__':
     file_path = sys.argv[1]
     if not os.path.exists(file_path):
-        print(f'File path {file_path} could not ebe found - Exiting')
+        print(f'File path {file_path} could not be found - Exiting')
         sys.exit(1)
     start(file_path)

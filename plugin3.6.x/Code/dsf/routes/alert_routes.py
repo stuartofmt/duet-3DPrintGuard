@@ -3,7 +3,9 @@ from fastapi import APIRouter, Body, Request
 from models import AlertAction
 from utils.alert_utils import (alert_to_response_json, dismiss_alert,
                                  get_alert)
-from utils.printer_utils import suspend_print_job
+#SRS
+#from utils.printer_utils import suspend_print_job
+from duet_printer import suspend_print_job
 
 router = APIRouter()
 

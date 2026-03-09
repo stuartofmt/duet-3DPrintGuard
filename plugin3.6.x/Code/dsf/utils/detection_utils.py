@@ -10,8 +10,8 @@ from .camera_utils import (get_camera_state, get_camera_state_sync,
                            update_camera_state, update_camera_detection_history)
 # SRS
 #from .printer_utils import get_printer_config, suspend_print_job
-#from notification_utils import send_defect_notification
-from duet_printer import send_defect_notification, get_printer_config, suspend_print_job
+from .notification_utils import send_defect_notification
+from duet_printer import get_printer_config, suspend_print_job
 
 from models import Alert, AlertAction, SSEDataType
 

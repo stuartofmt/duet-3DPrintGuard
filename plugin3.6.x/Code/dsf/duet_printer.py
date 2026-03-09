@@ -6,6 +6,7 @@ import time
 import requests
 import json
 import time
+import sys
 
 def _urlCall(url, cmd, post):
 	# Makes all the calls to the printer
@@ -86,29 +87,11 @@ def _loginPrinter(printerUrl,duetPassword): #logon and get key parameters
 	logger.debug(msg)
 	return False
 
-def _duet_action(action):
-	if action  == 'PAUSE':
-		_duet_pause()
-	elif action  == 'CANCEL':
-		_duet_cancel()
-	else:
-		_duet_stop()
-
-def _duet_stop():
-	_duet_cancel() # pause then cancel
-	time.sleep(2)
-	msg = 'Stopping print'
-	_send_duet_code(f'''echo "{msg}"''')
-	if ACTION.STOP == '':
-		_send_duet_code('M98 P"stop.g"') 
-	else:
-		_send_duet_code(ACTION.STOP) # Emergency stop is M112 - possibility?
-
 def _duet_pause():
 	msg = 'Pausing print'
 	_send_duet_code(f'''echo "{msg}"''')
 	if ACTION.PAUSE == '':
-		_send_duet_code('M98 P"pause.g"')
+		_send_duet_code('M25')
 	else:
 		_send_duet_code(ACTION.PAUSE)	
 
@@ -119,47 +102,62 @@ def _duet_cancel():
 	msg = 'Cancelling print'
 	_send_duet_code(f'''echo "{msg}"''')
 	if ACTION.CANCEL == '':
-		_send_duet_code('M98 P"cancel.g"')
+		_send_duet_code('M2') # Currently equivalent of M0
 	else:
 		_send_duet_code(ACTION.CANCEL)		
 
 
-def send_defect_notification():
-	_send_macro()
-	_send_ntfy()
-	_send_pushover()
+def duet_send_notification(alert):
+	logger.critical(f'Defect notification {alert}')
+	_send_macro(alert)
+	_send_ntfy(alert)
+	_send_pushover(alert)
+	return True
 
 def get_printer_config(camera_uuid):
 	return None
 	
-def suspend_print_job(camera_uuid, countdown_action):
-	msg = f'Failure detected on printer'
-	action = ACTION.ONFAILURE
-	if action  == 'PAUSE':
+def suspend_print_job(camera_uuid, action):
+	msg = f'Failure detected on printer {camera_uuid} with countdown action {countdown_action}'
+	logger.critical(msg)
+	
+	#action = ACTION.ONFAILURE
+	if action  == 'pause_print':
 		_duet_pause()
 		_send_duet_code(f'''M291 S1 T0 P"Paused Printing"''')
-	elif action  == 'CANCEL':
+	elif action  == 'cancel_print':
 		_duet_cancel()
 		_send_duet_code(f'''M291 S1 T0 P"Cancelled Printing"''')
 	else:
-		_duet_stop()
-		_send_duet_code(f'''M291 S1 T0 P"Stopped the Printer"''')
+		logger.critical(f'Unknown action {action}')
 
-def _send_macro():
+
+def _send_macro(alert):
 	if MACRO.MACRO != '':
 		logger.debug(f'Sending macro {MACRO.MACRO}')
 		_send_duet_code(f'M98 {MACRO.MACRO}')
 
 
-def _send_ntfy():
+def _send_ntfy(alert):
 	if NTFY.TOPIC != '':
 		logger.debug(f'Sending NTFY with topic {NTFY.TOPIC}')
+		title = ''
+		message = ''
+		if NTFY.TITLE !='':
+			title = NTFY.TITLE
+		else:
+			title = alert.title
+
+		if NTFY.MESSAGE !='':
+			message = NTFY.MESSAGE
+		else:
+			message = alert.body		
 
 		data=json.dumps({
 			"Topic": NTFY.TOPIC,
-			"Title": "PRINT FAILURE",
+			"Title": title,
 			"Priority": 5,
-			"Message": NTFY.MESSAGE,
+			"Message": message,
 			})
 	
 	code, _ = _urlCall('https://ntfy.sh', data, True)
@@ -170,13 +168,12 @@ def _send_ntfy():
 		logger.debug(f'\n{data}\n')
 		return False
 	
-def _send_pushover():
+def _send_pushover(alert):
 		logger.debug(f'Sending PUSHOVER')
 		return
 
 
 if __name__ == "__main__":    # Test setup
-	import sys
 	import os
 	sys.path.append(os.path.dirname(__file__))
 	from logger_module import (setup_logfile, set_log_level)
@@ -198,19 +195,27 @@ if __name__ == "__main__":    # Test setup
 		sys.exit(1)
 
 	# Can now get config parameters
-	from duet_config import (DUET , LOGGING, UI)
+	from duet_config import DUET,ACTION,MACRO,NTFY,PUSHOVER
 
 	# Set logging level
 	logger = set_log_level(LOGGING.LEVEL,logger)
 
-	from duet_config import DUET,ACTION,MACRO,NTFY,PUSHOVER
 	printerURL = f'http://{DUET.IP}:{DUET.PORT}'
 	
 	_loginPrinter(printerURL,DUET.PASSWORD)
 	_send_duet_code('M115') # Just a comms test results should show in DWC console
 	suspend_print_job('test','test')
-	send_defect_notification()
+	duet_send_notification('test')
 else:
-	from duet_config import ACTION,MACRO,NTFY,PUSHOVER
+	# This is used when running as module
+	from duet_config import DUET,ACTION,MACRO,NTFY,PUSHOVER
 	from logger_module import logger
+	printerURL = f'http://{DUET.IP}:{DUET.PORT}'
+	
+	if _loginPrinter(printerURL,DUET.PASSWORD):
+		logger.info(f'Successful login to printer at {printerURL}')
+	else:
+		logger.critical(f'Failed to login to printer at {printerURL}')
+		sys.exit(1)
+
 

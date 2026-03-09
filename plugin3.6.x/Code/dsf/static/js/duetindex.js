@@ -415,6 +415,8 @@ cameraItems.forEach(item => {
     /*SRS
     Replaced old remove camera action to instead by detection start stop
     */
+
+
     const startstopcameraButton = item.querySelector('.start-stop-camera-btn');
     update_start_stop_button_UI(startstopcameraButton, !(item.dataset.isLive.toLowerCase() === 'true'));
 

@@ -67,7 +67,7 @@ def get_DWC_config(file_path,file_name,logger):
         if not hasattr(DUET,'IP') :
             logger.critical('DUET section required IP')
             sys.exit(1)
-        if not hasattr(DUET,'PORT') : DUET.PORT = '80'
+        if not hasattr(DUET,'PORT') : DUET.PORT = 80
         if not hasattr(DUET,'PASSWORD') : DUET.PASSWORD = 'reprap'
         DUET.DWC = True
         DUET.FILE_PATH = file_path
@@ -78,22 +78,23 @@ def get_DWC_config(file_path,file_name,logger):
             sys.exit(1)
 
         UI.HOST = '0.0.0.0'
+        UI.PORT = int(UI.PORT)
 
         # LOGGING
         if not hasattr(LOGGING,'LEVEL') : LOGGING.LEVEL = 'INFO'        
 
         # ACTION
-        if not hasattr(ACTION,'ONFAILURE') : ACTION.ONFAILURE = 'STOP'
+        if not hasattr(ACTION,'ONFAILURE') : ACTION.ONFAILURE = 'CANCEL'
         if not hasattr(ACTION,'PAUSE') : ACTION.PAUSE = ''
         if not hasattr(ACTION,'CANCEL') : ACTION.CANCEL = ''
-        if not hasattr(ACTION,'STOP') : ACTION.STOP = ''
 
         # MACRO
         if not hasattr(MACRO,'MACRO'): MACRO.MACRO = ''
 
         # NTFY
         if not hasattr(NTFY,'TOPIC'): NTFY.TOPIC = ''
-        if not hasattr(NTFY,'MESSAGE'): NTFY.MESSAGE = 'duetPrintGuard detected a Print Failure'
+        if not hasattr(NTFY,'TITLE'): NTFY.TITLE = ''
+        if not hasattr(NTFY,'MESSAGE'): NTFY.MESSAGE = ''
         
         #PUSHOVER
         if not hasattr(PUSHOVER,'URL') : PUSHOVER.URL = ''

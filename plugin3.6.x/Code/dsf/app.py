@@ -224,10 +224,13 @@ def appstartup():
 			logger.warning("Starting in local mode. Available at %s", site_domain)
 			"""SRS"""
 			if DUET.DWC:
+				logger.debug('Starting uvicorn')
 				uvicorn.run(app,
 							host=UI.HOST,
-							port=UI.PORT
+							port=UI.PORT,
+							log_config=None
 							)
+				# At this point we swtch to uvicorn world and never return until done
 			else:
 				ssl_private_key_path = get_ssl_private_key_temporary_path()
 				uvicorn.run(app,

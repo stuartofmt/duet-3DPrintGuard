@@ -6,6 +6,7 @@ from pywebpush import WebPushException, webpush
 from models import Notification, SavedKey, SavedConfig
 from utils.config import get_key, get_config
 from utils.alert_utils import get_alert
+from duet_printer import duet_send_notification
 
 def get_subscriptions():
     """Retrieve the list of current push notification subscriptions.
@@ -60,7 +61,30 @@ async def send_defect_notification(alert_id):
     else:
         logger.error("No alert found for ID: %s", alert_id)
 
+#SRS
 def send_notification(notification: Notification):
+    """Send a push notification to all current subscriptions.
+
+    Args:
+        notification (Notification): The notification object to send. Should have 'title' and 'body' fields at minimum.
+
+    Returns:
+        bool: True if at least one notification was sent successfully, False otherwise.
+    """
+    logger.info("Starting notification send process")
+    logger.debug(notification)
+
+    if duet_send_notification(notification):
+        logger.debug("Notification send completed")
+        return True
+    else:
+        logger.error("Unexpected error sending notification")
+        return False
+
+
+
+
+def xsend_notification(notification: Notification):
     """Send a push notification to all current subscriptions.
 
     Args:

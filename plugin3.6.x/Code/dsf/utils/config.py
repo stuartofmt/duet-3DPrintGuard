@@ -206,6 +206,9 @@ def init_config():
 						 CONFIG_VERSION,
 						 CONFIG_FILE)
 	finally:
+
+		#SRS - on first start of each application run - reset history and startup values
+		
 		release_lock()
 
 def _get_encryption_key(salt):

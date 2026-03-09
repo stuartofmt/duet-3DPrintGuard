@@ -11,34 +11,43 @@ import logging
 import sys
 import os
 
-global logger
+global logger, file_path, logfilename
 
-def setup_logfile(file_path, logfilename, progName="duetPrintGuard"):
-	global logger
-
-	logfile = os.path.join(file_path, logfilename)
-	if os.path.exists(logfile):
-		print(f'Removing old logfile {logfile}')
-		os.remove(logfile)
+def setup_logfile(path, name, progName="duetPrintGuard"):
+	global logger, file_path, logfilename
+	file_path = path
+	logfilename = name
 		
 	# Create logger    
 	logger = logging.getLogger(__name__)
 	logger.propagate = False
 	
 	# set initial logging level
-	logger.setLevel(logging.DEBUG)
+	logger.setLevel(logging.INFO)
 
 	# Create handler for console output - file output handler is created
 	c_handler = logging.StreamHandler(sys.stdout)
-	c_format = logging.Formatter(f'''{progName} "%(asctime)s [%(levelname)s] %(message)s"''')
+	format = f'{progName} "%(asctime)s [%(levelname)s] %(message)s"'
+	c_format = logging.Formatter(format)
 	c_handler.setFormatter(c_format)
 	logger.addHandler(c_handler)
+	create_log_file(logger)
+	return logger
+
+def create_log_file(console_logger):
+	global logger, file_path, logfilename
+	
+	logfile = os.path.join(file_path, logfilename)
+	if os.path.exists(logfile):
+		print(f'Removing old logfile {logfile}')
+		os.remove(logfile)
 
 	# Create handler for logfile
 	f_handler = logging.FileHandler(logfile, mode='w', encoding='utf-8')
-	f_format = logging.Formatter(f'''"%(asctime)s [%(levelname)s] %(message)s"''')
+	f_format = logging.Formatter("%(asctime)s %(module)s - %(funcName)s:[%(levelname)s] %(message)s","%m-%d %H:%M:%S")
 	f_handler.setFormatter(f_format)
-	logger.addHandler(f_handler)
+	console_logger.addHandler(f_handler)
+	logger = console_logger
 
 	logger.info(f'''Logging started at {logfile}''')
 

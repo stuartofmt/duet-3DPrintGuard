@@ -1,11 +1,51 @@
-"2026-03-07 14:34:40,125 [INFO] Logging started at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/sd/sys/duetPrintGuard/duetPrintGuard.log"
-"2026-03-07 14:34:40,125 [INFO] duetPrintGuard -- 0.0.2"
-"2026-03-07 14:34:40,125 [DEBUG] Looking for config file at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/sd/sys/duetPrintGuard/duetPrintGuard.config"
-"2026-03-07 14:34:40,126 [INFO] Log level changed to INFO"
-"2026-03-07 14:34:40,127 [INFO] IP address 192.168.30.41 with port 8002 is available"
-"2026-03-07 14:34:40,775 [INFO] Using Keyring keyring.backends.chainer.ChainerBackend (priority: 10)]"
-"2026-03-07 14:34:42,625 [WARNING] Using app data directory: /home/stuart/.local/share/duetprintguard"
-"2026-03-07 14:34:42,625 [INFO] lock file path: /home/stuart/.local/share/duetprintguard/config.lock"
-"2026-03-07 14:34:42,808 [WARNING] Startup mode: SiteStartupMode.LOCAL"
-"2026-03-07 14:34:42,809 [ERROR] Error stopping Cloudflare tunnel: Current OS not set in config."
-"2026-03-07 14:34:42,809 [WARNING] Starting in local mode. Available at None"
+03-09 16:19:34 logger_module - create_log_file:[INFO] Logging started at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/sd/sys/duetPrintGuard/duetPrintGuard.log
+03-09 16:19:34 duetPrintGuard - start:[INFO] duetPrintGuard -- 0.0.2
+03-09 16:19:34 logger_module - set_log_level:[INFO] Log level changed to INFO
+03-09 16:19:34 duetPrintGuard - checkIP:[INFO] IP address 192.168.30.41 with port 8002 is available
+03-09 16:19:35 config - <module>:[INFO] Using Keyring keyring.backends.chainer.ChainerBackend (priority: 10)]
+03-09 16:19:37 config - config_set_paths_and_initialize:[WARNING] Using app data directory: /home/stuart/.local/share/duetprintguard
+03-09 16:19:37 config - config_set_paths_and_initialize:[INFO] lock file path: /home/stuart/.local/share/duetprintguard/config.lock
+03-09 16:19:37 duet_printer - <module>:[INFO] Successful login to printer at http://192.168.30.41:80
+03-09 16:19:37 app - appstartup:[WARNING] Startup mode: SiteStartupMode.LOCAL
+03-09 16:19:37 cloudflare_utils - stop_cloudflare_tunnel:[ERROR] Error stopping Cloudflare tunnel: Current OS not set in config.
+03-09 16:19:37 app - appstartup:[WARNING] Starting in local mode. Available at None
+03-09 16:19:37 inference_lib - _detect_backend:[INFO] ONNX Runtime detected, using ONNX Runtime backend
+03-09 16:19:37 model_downloader - download_all:[INFO] Downloading all model files for onnxruntime backend
+03-09 16:19:37 model_downloader - download_model:[INFO] Model model.onnx already cached at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/model.onnx
+03-09 16:19:37 model_downloader - download_options:[INFO] Options file already cached at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/opt.json
+03-09 16:19:37 model_downloader - download_prototypes:[INFO] Prototypes already cached at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/prototypes/cache/prototypes.pkl
+03-09 16:19:37 model_downloader - download_all:[INFO] All model files successfully downloaded/cached for onnxruntime backend
+03-09 16:19:39 inference_lib - get_inference_engine:[INFO] Created inference engine with onnxruntime backend
+03-09 16:19:39 inference_lib - _detect_backend:[INFO] ONNX Runtime detected, using ONNX Runtime backend
+03-09 16:19:39 onnxruntime_engine - load_model:[INFO] ONNX model loaded successfully. Input: input, Output: output, Shape: ['batch_size', 3, 224, 224]
+03-09 16:19:47 sse_utils - stop_and_remove_polling_task:[WARNING] No polling task found for camera UUID 82db27c5-8ae9-4e7a-ab6e-15300f0b109a to stop.
+03-09 16:19:47 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 82db27c5-8ae9-4e7a-ab6e-15300f0b109a
+03-09 16:19:53 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 82db27c5-8ae9-4e7a-ab6e-15300f0b109a
+03-09 16:19:56 sse_utils - stop_and_remove_polling_task:[WARNING] No polling task found for camera UUID ddf14a4e-a70b-4461-b732-c29c770dc5f6 to stop.
+03-09 16:19:56 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: ddf14a4e-a70b-4461-b732-c29c770dc5f6
+03-09 16:19:58 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: ddf14a4e-a70b-4461-b732-c29c770dc5f6
+03-09 16:20:03 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 82db27c5-8ae9-4e7a-ab6e-15300f0b109a
+03-09 16:20:07 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: ddf14a4e-a70b-4461-b732-c29c770dc5f6
+03-09 16:27:07 notification_utils - send_notification:[INFO] Starting notification send process
+03-09 16:27:07 duet_printer - duet_send_notification:[CRITICAL] Defect notification title='Defect - Camera usb' body='Defect detected on camera usb' image_url=None icon_url=None badge_url=None actions=[]
+03-09 16:27:14 sse_utils - sse_update_camera_state:[WARNING] SSE camera state update timed out for camera 82db27c5-8ae9-4e7a-ab6e-15300f0b109a
+03-09 16:28:46 notification_utils - send_notification:[INFO] Starting notification send process
+03-09 16:28:46 duet_printer - duet_send_notification:[CRITICAL] Defect notification title='Defect - Camera Stream' body='Defect detected on camera Stream' image_url=None icon_url=None badge_url=None actions=[]
+03-09 16:28:52 notification_utils - send_notification:[INFO] Starting notification send process
+03-09 16:28:52 duet_printer - duet_send_notification:[CRITICAL] Defect notification title='Defect - Camera Stream' body='Defect detected on camera Stream' image_url=None icon_url=None badge_url=None actions=[]
+03-09 16:28:53 notification_utils - send_notification:[INFO] Starting notification send process
+03-09 16:28:53 duet_printer - duet_send_notification:[CRITICAL] Defect notification title='Defect - Camera usb' body='Defect detected on camera usb' image_url=None icon_url=None badge_url=None actions=[]
+03-09 16:29:01 notification_utils - send_notification:[INFO] Starting notification send process
+03-09 16:29:01 duet_printer - duet_send_notification:[CRITICAL] Defect notification title='Defect - Camera Stream' body='Defect detected on camera Stream' image_url=None icon_url=None badge_url=None actions=[]
+03-09 16:29:09 notification_utils - send_notification:[INFO] Starting notification send process
+03-09 16:29:09 duet_printer - duet_send_notification:[CRITICAL] Defect notification title='Defect - Camera Stream' body='Defect detected on camera Stream' image_url=None icon_url=None badge_url=None actions=[]
+03-09 16:29:14 notification_utils - send_notification:[INFO] Starting notification send process
+03-09 16:29:14 duet_printer - duet_send_notification:[CRITICAL] Defect notification title='Defect - Camera Stream' body='Defect detected on camera Stream' image_url=None icon_url=None badge_url=None actions=[]
+03-09 16:29:22 notification_utils - send_notification:[INFO] Starting notification send process
+03-09 16:29:22 duet_printer - duet_send_notification:[CRITICAL] Defect notification title='Defect - Camera Stream' body='Defect detected on camera Stream' image_url=None icon_url=None badge_url=None actions=[]
+03-09 16:29:28 notification_utils - send_notification:[INFO] Starting notification send process
+03-09 16:29:28 duet_printer - duet_send_notification:[CRITICAL] Defect notification title='Defect - Camera Stream' body='Defect detected on camera Stream' image_url=None icon_url=None badge_url=None actions=[]
+03-09 16:29:39 notification_utils - send_notification:[INFO] Starting notification send process
+03-09 16:29:39 duet_printer - duet_send_notification:[CRITICAL] Defect notification title='Defect - Camera Stream' body='Defect detected on camera Stream' image_url=None icon_url=None badge_url=None actions=[]
+03-09 16:29:41 notification_utils - send_notification:[INFO] Starting notification send process
+03-09 16:29:41 duet_printer - duet_send_notification:[CRITICAL] Defect notification title='Defect - Camera usb' body='Defect detected on camera usb' image_url=None icon_url=None badge_url=None actions=[]
