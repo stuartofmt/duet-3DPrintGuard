@@ -208,6 +208,16 @@ def init_config():
 	finally:
 
 		#SRS - on first start of each application run - reset history and startup values
+		startup_config = _get_config_nolock()
+		for k in startup_config['camera_states']:
+			startup_config['camera_states'][k]['current_alert_id'] = None
+			startup_config['camera_states'][k]['detection_history'] = []
+			startup_config['camera_states'][k]['live_detection_running'] = False
+			startup_config['camera_states'][k]['last_result'] = ''
+			startup_config['camera_states'][k]['last_time'] = None
+
+		with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
+			json.dump(startup_config, f, indent=2)
 		
 		release_lock()
 
