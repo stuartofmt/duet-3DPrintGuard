@@ -502,13 +502,14 @@ body, html {
 }
 /*SRS changed position from fixed to relative*/ 
 .notification-popup {
-    position: fixed;
+    position: relative;
     /*
     top: var(--spacing-md);
     right: var(--spacing-md);
     */
     top: 0;
     right: 0;
+    align-items: left;
     max-width: 350px;
     width: auto;
     z-index: 1000;

@@ -112,26 +112,23 @@ function updateAlertUI(data) {
     alertElement.style.borderBottom = '1px solid #dee2e6';
     let alertContent = `<p>${data.message}</p>`;
     alertContent += `<p id="countdown-${data.id}"></p>`;
-    /*SRS
+    //alertContent += `<p></p>`
+    /*
     if (data.snapshot) {
         alertContent = `<img src="data:image/jpeg;base64,${data.snapshot}" 
                             style="width:100%;margin-bottom:10px;" />` + alertContent;
     }
     */
-
-    /*SRS
-    const hasPrinter = data.has_printer === true;
-    */
-    const hasPrinter = True //since we are duet
-
-    
+    //const hasPrinter = data.has_printer === true;
+    hasPrinter = true
+    //SRS get rid of everything above += ==> =
     alertContent += `<div>
-        <button class="dismiss-btn" data-alert-id="${data.id}">Dismiss</button>
+        <button class="dismiss-btn"  style="background-color: #3d9918;" data-alert-id="${data.id}">Dismiss</button>
         <button class="suspend-print-btn${!hasPrinter ? ' disabled' : ''}" 
-                data-alert-id="${data.id}"
+                style="background-color: #f80419;" data-alert-id="${data.id}"
                 ${!hasPrinter ? 'disabled' : ''}>Cancel Print</button>
         <button class="suspend-print-btn${!hasPrinter ? ' disabled' : ''}" 
-                data-alert-id="${data.id}"
+                style="background-color: #f8bf04;" data-alert-id="${data.id}"
                 ${!hasPrinter ? 'disabled' : ''}>Pause Print</button>
     </div>`;
     
