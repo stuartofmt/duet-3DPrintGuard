@@ -196,18 +196,25 @@ def _send_pushover(alert):
 			title = PUSHOVER.TITLE
 		else:
 			title = alert.title
-
 		if PUSHOVER.MESSAGE !='':
 			message = PUSHOVER.MESSAGE
 		else:
-			message = alert.body	
+			message = alert.body
 
-		try:
-			client = Client(PUSHOVER.CLIENT, api_token=PUSHOVER.API)
-			client.send_message(message, title=title)
-		except Exception as e:
-			logger.info(f'PUSHOVER send failed with error {e}')
-		return False
+		data = {
+			"token": PUSHOVER.API,
+			"user": PUSHOVER.USER,
+			"title":title,
+			"message": message,
+			}
+
+		code, _ = _urlCall("https://api.pushover.net/1/messages.json", data, True)
+		if code in [200,204]:
+			return True
+		else:
+			logger.info(f'PUSHOVER send failed with code {code}')
+			logger.debug(f'\n{data}\n')
+			return False	
 
 
 if __name__ == "__main__":    # Test setup
@@ -232,7 +239,7 @@ if __name__ == "__main__":    # Test setup
 		sys.exit(1)
 
 	# Can now get config parameters
-	from duet_config import DUET,ACTION,MACRO,NTFY,PUSHOVER
+	from duet_config import DUET,LOGGING, ACTION,MACRO,NTFY,PUSHOVER
 
 	# Set logging level
 	logger = set_log_level(LOGGING.LEVEL,logger)
@@ -240,15 +247,16 @@ if __name__ == "__main__":    # Test setup
 	printerURL = f'http://{DUET.IP}:{DUET.PORT}'
 	
 	_loginPrinter(printerURL,DUET.PASSWORD)
-	_send_duet_code('M115') # Just a comms test results should show in DWC console
-	suspend_print_job('test','test')
-	duet_send_notification('test')
+
+	class test:
+		title = 'test'
+		body = 'test body'
+
+	duet_send_notification(test)
 else:
 	# This is used when running as module
 	from duet_config import DUET,ACTION,MACRO,NTFY,PUSHOVER
 	from logger_module import logger
-	if PUSHOVER.API != '':
-		from pushover import Client
 
 	printerURL = f'http://{DUET.IP}:{DUET.PORT}'
 	
