@@ -22,9 +22,9 @@ Uses original index.js and modified stylesheet to facilitate reformattingfor DWC
     <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="notificationPopup" class="notification-popup">
+    <!--<div id="notificationPopup" class="notification-popup">
         <div id="notificationsContainer"></div>
-    </div>
+    </div>-->
     <div class="grid-container">
         <div class="grid-item" style="display: none;">
             <pre id="ascii-title" style="display: none;"></pre>
@@ -55,6 +55,7 @@ Uses original index.js and modified stylesheet to facilitate reformattingfor DWC
                             <span class="camera-prediction">-</span>
                             <span class="camera-prediction-time">Last Active: <span id="lastTimeValue">-</span></span>
                         </div>
+                        <div id="notificationsContainer"></div>
                         <img src="{{ url_for('static', path='images/default_icon.png') }}" alt="Camera Icon" class="camera-video-preview" id="cameraPreview">
                         <button class="start-stop-camera-btn" title="start Stop Detection">Start Detection</button>
                     </li>

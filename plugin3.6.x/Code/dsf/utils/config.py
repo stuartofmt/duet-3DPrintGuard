@@ -22,8 +22,7 @@ this_keyring = keyring.get_keyring()
 if not this_keyring:
 	logger.warning('Missing Keyring - Changing to plain text')
 	keyring.core.set_keyring(keyring.core.load_keyring('keyrings.alt.file.PlaintextKeyring'))
-
-logger.info(f'Using Keyring {this_keyring}]')
+	logger.warning(f'Using Keyring {this_keyring}]')
 
 import torch
 from platformdirs import user_data_dir
@@ -67,10 +66,9 @@ def config_set_paths_and_initialize():
 		else: # used for local testing
 			KEYRING_SERVICE_NAME = "duetprintguard"
 			APP_DATA_DIR = user_data_dir("duetprintguard", "duetprintguard")
+			logger.warning(f"Using app data directory: {APP_DATA_DIR}")
 
 		SSL_DATA_DIR = DUET.FILE_PATH
-	
-	logger.warning(f"Using app data directory: {APP_DATA_DIR}")
 
 	os.makedirs(APP_DATA_DIR, exist_ok=True)
 
@@ -80,7 +78,7 @@ def config_set_paths_and_initialize():
 	SSL_CERT_FILE = os.path.join(SSL_DATA_DIR, "cert.pem")
 	SSL_CA_FILE = os.path.join(SSL_DATA_DIR, "ca.pem")
  
-	logger.info(f'lock file path: {LOCK_FILE}')
+	logger.debug(f'lock file path: {LOCK_FILE}')
 	# continue with phase 2 of initialization which may depend on these paths being set
 	init_config()
 

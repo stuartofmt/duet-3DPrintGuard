@@ -112,12 +112,19 @@ function updateAlertUI(data) {
     alertElement.style.borderBottom = '1px solid #dee2e6';
     let alertContent = `<p>${data.message}</p>`;
     alertContent += `<p id="countdown-${data.id}"></p>`;
-
+    /*SRS
     if (data.snapshot) {
         alertContent = `<img src="data:image/jpeg;base64,${data.snapshot}" 
                             style="width:100%;margin-bottom:10px;" />` + alertContent;
     }
+    */
+
+    /*SRS
     const hasPrinter = data.has_printer === true;
+    */
+    const hasPrinter = True //since we are duet
+
+    
     alertContent += `<div>
         <button class="dismiss-btn" data-alert-id="${data.id}">Dismiss</button>
         <button class="suspend-print-btn${!hasPrinter ? ' disabled' : ''}" 

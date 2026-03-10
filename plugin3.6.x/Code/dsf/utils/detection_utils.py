@@ -75,8 +75,12 @@ async def _create_alert_and_notify(camera_state_ref, camera_uuid, frame, timesta
     """
     alert_id = f"{camera_uuid}_{str(uuid.uuid4())}"
     # pylint: disable=E1101
+    """SRS
     _, img_buf = cv2.imencode('.jpg', frame)
     has_printer = get_printer_config(camera_uuid) is not None
+    """
+    img_buf = 0
+    has_printer = True
     alert = Alert(
         id=alert_id,
         camera_uuid=camera_uuid,

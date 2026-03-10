@@ -1,3 +1,11 @@
+
+/*This is to reset everything to top left*/
+*{
+    margin: 0;
+    padding: 0;
+}
+
+
 body, html {
     margin: 0;
     display: flex;
@@ -492,11 +500,15 @@ body, html {
     margin: 0;
     min-width: 120px;
 }
-
+/*SRS changed position from fixed to relative*/ 
 .notification-popup {
     position: fixed;
+    /*
     top: var(--spacing-md);
     right: var(--spacing-md);
+    */
+    top: 0;
+    right: 0;
     max-width: 350px;
     width: auto;
     z-index: 1000;
@@ -521,7 +533,8 @@ body, html {
 }
 
 #notificationsContainer {
-    padding: var(--spacing-sm);
+    /*padding: var(--spacing-sm);*/
+    padding: 0;
 }
 
 .alert-item {

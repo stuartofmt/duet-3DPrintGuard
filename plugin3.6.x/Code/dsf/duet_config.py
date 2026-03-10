@@ -97,9 +97,10 @@ def get_DWC_config(file_path,file_name,logger):
         if not hasattr(NTFY,'MESSAGE'): NTFY.MESSAGE = ''
         
         #PUSHOVER
-        if not hasattr(PUSHOVER,'URL') : PUSHOVER.URL = ''
+        if not hasattr(PUSHOVER,'API') : PUSHOVER.API = ''
         if not hasattr(PUSHOVER,'USER') : PUSHOVER.USER = ''
-        if not hasattr(PUSHOVER,'PASSWORD') : PUSHOVER.PASSWORD = ''
+        if not hasattr(PUSHOVER,'TITLE') : PUSHOVER.TITLE = ''
+        if not hasattr(PUSHOVER,'MESSAGE') : PUSHOVER.MESSAGE = ''
         
 
         """  template for booleans 

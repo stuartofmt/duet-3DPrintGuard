@@ -51,7 +51,7 @@ async def send_defect_notification(alert_id):
         camera_state = await get_camera_state(alert.camera_uuid)
         camera_nickname = camera_state.nickname if camera_state else alert.camera_uuid
         notification = Notification(
-            title=f"Defect - Camera {camera_nickname}",
+            title=f"duetPrintGuard",
             body=f"Defect detected on camera {camera_nickname}",
         )
         subscriptions = get_subscriptions() or []

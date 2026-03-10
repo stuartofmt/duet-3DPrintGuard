@@ -62,17 +62,19 @@ def _send_duet_code(command):
 	command = f'''/rr_gcode?gcode={command}'''  #Post includes command type in url
 	code, _ = _urlCall(printerURL, command, False) # Post form - sent blindly
 	if code in [200,204]:
-		return True
+		pass
 	else:
 		logger.info(f'Duet send failed with code {code}')
 		logger.debug(f'{command}')
-		return False
+		
+	return code
 		
 def _loginPrinter(printerUrl,duetPassword): #logon and get key parameters
-
+	global suspend_status
 	cmd = (f'''/rr_connect?sessionKey=yes&password={duetPassword}''') # using rr_ API
 	code, _ = _urlCall(printerUrl, cmd, False)
 	if code in [200,204]:
+		suspend_status = 'running'
 		return True
 	elif code == 403:
 		msg = 'Password is invalid'
@@ -88,27 +90,28 @@ def _loginPrinter(printerUrl,duetPassword): #logon and get key parameters
 	return False
 
 def _duet_pause():
-	msg = 'Pausing print'
-	_send_duet_code(f'''echo "{msg}"''')
-	if ACTION.PAUSE == '':
-		_send_duet_code('M25')
-	else:
-		_send_duet_code(ACTION.PAUSE)	
+	pause_command = 'M25'
 
+	if ACTION.PAUSE != '':
+		pause_command = ACTION.PAUSE
+
+	msg = f'Pausing  print with command {pause_command}'
+	_send_duet_code(f'''echo "{msg}"''')
+	return _send_duet_code(pause_command)
 
 def _duet_cancel():
-	_duet_pause()
-	time.sleep(2)
-	msg = 'Cancelling print'
+	cancel_command = 'M2'  # Currently equivalent to M0
+
+	if ACTION.CANCEL != '':
+		cancel_command = ACTION.CANCEL
+
+	msg = f'Cancelling print with command {cancel_command}'
 	_send_duet_code(f'''echo "{msg}"''')
-	if ACTION.CANCEL == '':
-		_send_duet_code('M2') # Currently equivalent of M0
-	else:
-		_send_duet_code(ACTION.CANCEL)		
+	return _send_duet_code(cancel_command)		
 
 
 def duet_send_notification(alert):
-	logger.critical(f'Defect notification {alert}')
+	logger.debug(f'Defect notification {alert}')
 	_send_macro(alert)
 	_send_ntfy(alert)
 	_send_pushover(alert)
@@ -116,18 +119,34 @@ def duet_send_notification(alert):
 
 def get_printer_config(camera_uuid):
 	return None
-	
+
+
 def suspend_print_job(camera_uuid, action):
-	msg = f'Failure detected on printer {camera_uuid} with countdown action {countdown_action}'
-	logger.critical(msg)
+	global suspend_status
+	logger.debug(f'Action requested from camera {camera_uuid}')
+	logger.warning(f'Requested action {action} --- current status {suspend_status}')
 	
-	#action = ACTION.ONFAILURE
+	# Use of suspend_status is to account for request from more than one camera
+	# Do not want to send multiple commands of the same type
+	# Need to allow for cancellation of request from one or other camera
+	# States are 'running' ==> 'paused' ==> 'cancelled' after which no more commands sent
 	if action  == 'pause_print':
-		_duet_pause()
-		_send_duet_code(f'''M291 S1 T0 P"Paused Printing"''')
+		if suspend_status  == 'running':
+			suspend_status = 'paused'
+			_duet_pause()
+			_send_duet_code(f'''M291 S1 T0 P"Paused Printing"''')
+
 	elif action  == 'cancel_print':
-		_duet_cancel()
-		_send_duet_code(f'''M291 S1 T0 P"Cancelled Printing"''')
+		if suspend_status =='running':
+			suspend_status ='paused'
+			_duet_pause()
+
+		time.sleep(2) #  Allow any prior pause to settle	
+
+		if suspend_status =='paused':
+			suspend_status = 'cancelled' # No more requests to printer
+			_duet_cancel()
+			_send_duet_code(f'''M291 S1 T0 P"Cancelled Printing"''')
 	else:
 		logger.critical(f'Unknown action {action}')
 
@@ -169,8 +188,26 @@ def _send_ntfy(alert):
 		return False
 	
 def _send_pushover(alert):
-		logger.debug(f'Sending PUSHOVER')
-		return
+	if PUSHOVER.API != '':
+		logger.debug(f'Sending PUSHOVER with topic {PUSHOVER.USER}')
+		title = ''
+		message = ''
+		if PUSHOVER.TITLE !='':
+			title = PUSHOVER.TITLE
+		else:
+			title = alert.title
+
+		if PUSHOVER.MESSAGE !='':
+			message = PUSHOVER.MESSAGE
+		else:
+			message = alert.body	
+
+		try:
+			client = Client(PUSHOVER.CLIENT, api_token=PUSHOVER.API)
+			client.send_message(message, title=title)
+		except Exception as e:
+			logger.info(f'PUSHOVER send failed with error {e}')
+		return False
 
 
 if __name__ == "__main__":    # Test setup
@@ -210,6 +247,9 @@ else:
 	# This is used when running as module
 	from duet_config import DUET,ACTION,MACRO,NTFY,PUSHOVER
 	from logger_module import logger
+	if PUSHOVER.API != '':
+		from pushover import Client
+
 	printerURL = f'http://{DUET.IP}:{DUET.PORT}'
 	
 	if _loginPrinter(printerURL,DUET.PASSWORD):
