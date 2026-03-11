@@ -14,36 +14,45 @@
     <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!--
     <div id="notificationPopup" class="notification-popup">
         <div id="notificationsContainer"></div>
     </div>
+    -->
     <div class="grid-container">
+        
         <div class="grid-item" style="display: none;">
-            <pre id="ascii-title"></pre>
+            <!--<pre id="ascii-title"></pre>-->
             <div class="camera-header">
                 <p class="camera-title" id="cameraTitle"></p>
                 <span class="live-indicator"></span>
             </div>
         </div>
-        <div class="grid-item" id="video-feed-container" style="display: none;">
-            <img id="videoPreview" src="" alt="Live Video Feed Preview" />
+        
+        
+        <div class="grid-item" id="video-feed-container">
+            <img id="videoPreview" src="" alt="Selected Video Feed Preview" />
             <div id="loadingOverlay" class="loading-overlay">
-                <div class="loading-spinner"></div>
+                <!--<div class="loading-spinner"></div>-->
                 <p>Loading camera feed...</p>
             </div>
         </div>
+        
+        
         <div class="grid-item" id="camera-list-container">
             <ul id="cameraList" name="camera">
                 {% for camera_id, camera_state in camera_states.items() %}
                     <li class="camera-item" data-camera-id="{{ camera_id }}">
                         <div class="camera-text-content">
-                            <div class="camera-header">
-                                <span>{{ camera_state.nickname }}</span>
-                                <span class="camera-status" style="display: none;"></span>
+                            <div class="camera-header" style="font-size: large;">
+                                <span>{{ camera_state.nickname }} &nbsp; {{ camera_state.source }}</span>
+                                <!--<span class="camera-status" style="display: none;"></span>-->
                             </div>
+                            <!--
                             <span class="camera-prediction" style="display: none;">-</span>
                             <span class="camera-prediction-time" style="display: none;">Detected at: <span id="lastTimeValue">-</span></span>
                             <img src="{{ url_for('static', path='images/default_icon.png') }}" alt="Camera Icon" class="camera-video-preview" id="cameraPreview">
+                            -->
                             <button class="remove-camera-btn" title="Remove camera">Remove Camera</button>
 
                         </div>
@@ -61,6 +70,7 @@
             {% endif %}
         </div>
         <div class="grid-item">
+            <!--
             <div class="camera-display-section">
                 <div class="info-grid">
                     <div class="info-item">
@@ -80,7 +90,8 @@
                     </div>
                 </div>
             </div>
-            <div class="settings-section" style="display: none;">
+            -->
+            <div class="settings-section">
                 <form action="{{ url_for('update_settings') }}" method="post" class="settings-form settings-grid">
                     <input type="hidden" id="camera_uuid" name="camera_uuid"  value="">
                     <div class="settings-item" style="display: none;">
@@ -144,9 +155,11 @@
             </div>
         </div>
     </div>
+    <!--
     <button class="settings-button" id="settingsButton">
         Settings
     </button>
+    -->
     <div class="setup-modal-overlay" id="setupModalOverlay">
         <div class="setup-modal">
             <div class="setup-modal-header">

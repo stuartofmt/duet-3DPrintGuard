@@ -7,7 +7,7 @@ body, html {
     position: relative;
     background-color: var(--bg-light);
     justify-content: center;
-    align-items: center;
+    align-items: left;
     min-height: 100vh;
 }
 
@@ -17,7 +17,8 @@ body, html {
     grid-template-rows: 1fr;
     /*
     grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 1fr);*/
+    grid-template-rows: repeat(2, 1fr);
+    */
     width: 100vw;
     height: 100vh;
     flex-grow: 1;
@@ -27,6 +28,7 @@ body, html {
     .grid-container {
         width: 90vw;
         height: 90vh;
+        /*halve?*/
         max-width: 1600px;
         max-height: 900px;
         flex-grow: 0;
@@ -42,7 +44,8 @@ body, html {
     align-items: center;
     padding: var(--spacing-sm);
     box-sizing: border-box;
-    overflow: hidden;
+    /* changed from hidden*/ 
+    overflow: visible;
     border-radius: var(--radius-medium);
 }
 

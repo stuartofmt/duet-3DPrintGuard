@@ -1,18 +1,5 @@
-03-10 21:38:54 logger_module - create_log_file:[INFO] Logging started at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/sd/sys/duetPrintGuard/duetPrintGuard.log
-03-10 21:38:54 duetPrintGuard - start:[INFO] duetPrintGuard -- 0.0.2
-03-10 21:38:54 logger_module - set_log_level:[INFO] Log level changed to INFO
-03-10 21:38:54 duetPrintGuard - checkIP:[INFO] IP address 192.168.30.41 with port 8002 is available
-03-10 21:38:57 config - config_set_paths_and_initialize:[WARNING] Using app data directory: /home/stuart/.local/share/duetprintguard
-03-10 21:38:57 duet_printer - <module>:[INFO] Successful login to printer at http://192.168.30.41:80
-03-10 21:38:57 app - appstartup:[WARNING] Startup mode: SiteStartupMode.LOCAL
-03-10 21:38:57 cloudflare_utils - stop_cloudflare_tunnel:[ERROR] Error stopping Cloudflare tunnel: Current OS not set in config.
-03-10 21:38:57 app - appstartup:[WARNING] Starting in local mode. Available at None
-03-10 21:38:57 inference_lib - _detect_backend:[INFO] ONNX Runtime detected, using ONNX Runtime backend
-03-10 21:38:57 model_downloader - download_all:[INFO] Downloading all model files for onnxruntime backend
-03-10 21:38:57 model_downloader - download_model:[INFO] Model model.onnx already cached at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/model.onnx
-03-10 21:38:57 model_downloader - download_options:[INFO] Options file already cached at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/opt.json
-03-10 21:38:57 model_downloader - download_prototypes:[INFO] Prototypes already cached at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/prototypes/cache/prototypes.pkl
-03-10 21:38:57 model_downloader - download_all:[INFO] All model files successfully downloaded/cached for onnxruntime backend
-03-10 21:38:58 inference_lib - get_inference_engine:[INFO] Created inference engine with onnxruntime backend
-03-10 21:38:58 inference_lib - _detect_backend:[INFO] ONNX Runtime detected, using ONNX Runtime backend
-03-10 21:38:58 onnxruntime_engine - load_model:[INFO] ONNX model loaded successfully. Input: input, Output: output, Shape: ['batch_size', 3, 224, 224]
+03-11 11:41:34 logger_module - create_log_file:[INFO] Logging started at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/sd/sys/duetPrintGuard/duetPrintGuard.log
+03-11 11:41:34 duetPrintGuard - start:[INFO] duetPrintGuard -- 0.0.2
+03-11 11:41:34 logger_module - set_log_level:[INFO] Log level changed to INFO
+03-11 11:41:34 duetPrintGuard - checkIP:[CRITICAL] Port 8002 is already in use.
+03-11 11:41:34 duetPrintGuard - force_quit:[CRITICAL] Terminating the program with exit code 1

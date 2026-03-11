@@ -1,7 +1,7 @@
 //import { registerPush, unsubscribeFromPush } from './notifications.js';
 import { render_ascii_title } from './utils.js';
 
-const asciiTitle = document.getElementById('ascii-title');
+//const asciiTitle = document.getElementById('ascii-title');
 const cameraTitle = document.getElementById('cameraTitle');
 const camPredictionDisplay = document.getElementById('camPredictionDisplay');
 const camPredictionTimeDisplay = document.getElementById('camPredictionTimeDisplay');
@@ -12,9 +12,9 @@ const camDetectionLiveIndicator = document.getElementsByClassName('live-indicato
 const camVideoPreview = document.getElementById('videoPreview');
 const loadingOverlay = document.getElementById('loadingOverlay');
 const cameraItems = document.querySelectorAll('.camera-item');
-const settingsButton = document.getElementById('settingsButton');
-const cameraDisplaySection = document.querySelector('.camera-display-section');
-const settingsSection = document.querySelector('.settings-section');
+//const settingsButton = document.getElementById('settingsButton');
+//const cameraDisplaySection = document.querySelector('.camera-display-section');
+//const settingsSection = document.querySelector('.settings-section');
 const notificationsBtn = document.getElementById('notificationBtn');
 
 const settingsCameraUUID = document.getElementById('camera_uuid');
@@ -228,6 +228,7 @@ function updateCameraSelectionListData(d) {
     });
 }
 
+
 function removeCamera(cameraUUID) {
     if (!cameraUUID) {
         console.warn('Cannot remove camera: invalid camera UUID provided.');
@@ -316,7 +317,7 @@ function fetchAndUpdateMetricsForCamera(cameraUUID) {
         return response.json();
     })
     .then(data => {
-        console.warn('Setting metrcsData', data.last_time);   
+        console.warn('Setting metricsData from last update', data.last_time);   
         const metricsData = {
             camera_uuid: cameraUUID,
             start_time: data.start_time,
@@ -336,7 +337,7 @@ function fetchAndUpdateMetricsForCamera(cameraUUID) {
             printer_config: data.printer_config,
             countdown_action: data.countdown_action
         };
-        updatePolledDetectionData(metricsData);
+        //updatePolledDetectionData(metricsData);
         updateSelectedCameraSettings(metricsData);
     })
     .catch(error => {
@@ -350,7 +351,7 @@ function fetchAndUpdateMetricsForCamera(cameraUUID) {
             frame_rate: null,
             live_detection_running: false
         };
-        updatePolledDetectionData(emptyMetrics);
+        //updatePolledDetectionData(emptyMetrics);
     });
 }
 
@@ -381,7 +382,7 @@ function sendDetectionRequest(isStart) {
         console.error(`Network error or exception during ${isStart ? 'start' : 'stop'} request for camera ${cameraUUID}:`, error);
     });
 }
-
+/*
 camDetectionToggleButton.addEventListener('click', function() {
     if (camDetectionToggleButton.textContent === startDetectionBtnLabel) {
         camDetectionToggleButton.textContent = stopDetectionBtnLabel;
@@ -393,8 +394,8 @@ camDetectionToggleButton.addEventListener('click', function() {
         toggleIsDetectingStatus(false);
     }
 });
-
-render_ascii_title(asciiTitle, 'PrintGuard');
+*/
+//render_ascii_title(asciiTitle, 'PrintGuard');
 
 cameraItems.forEach(item => {
     item.addEventListener('click', function() {
@@ -428,7 +429,7 @@ cameraItems.forEach(item => {
 
 document.addEventListener('cameraStateUpdated', evt => {
     if (evt.detail) {
-        updatePolledDetectionData(evt.detail);
+        //updatePolledDetectionData(evt.detail);
     }
 });
 
@@ -470,26 +471,25 @@ addFirstCameraBtn?.addEventListener('click', function(e) {
 
 let isSettingsVisible = false;
 
-
-
+/*
 settingsButton.addEventListener('click', function() {
     isSettingsVisible = !isSettingsVisible;
     
     if (isSettingsVisible) {
         cameraDisplaySection.style.display = 'none';
         settingsSection.style.display = 'block';
-        render_ascii_title(asciiTitle, 'Settings');
+        //render_ascii_title(asciiTitle, 'Settings');
         settingsButton.textContent = 'Test';
     } else {
         cameraDisplaySection.style.display = 'block';
         settingsSection.style.display = 'none';
-        updateAsciiTitle();
+        //updateAsciiTitle();
         settingsButton.textContent = 'Settings';
     }
 });
-
+*/
 /*SRS*/
-settingsButton.click();
+//settingsButton.click();
 /* SRS Notification code
 let notificationsEnabled = false;
 notificationsBtn.textContent = '';
@@ -628,7 +628,7 @@ function isMobileView() {
 function isSmallMobileView() {
     return window.innerWidth <= 380;
 }
-
+/*
 function updateAsciiTitle() {
     if (isSettingsVisible) {
         render_ascii_title(asciiTitle, 'Settings');
@@ -656,7 +656,7 @@ function updateAsciiTitle() {
 updateAsciiTitle();
 
 window.addEventListener('resize', updateAsciiTitle);
-
+*/
 const configureSetupBtn = document.getElementById('configureSetupBtn');
 const setupModalOverlay = document.getElementById('setupModalOverlay');
 const setupModalClose = document.getElementById('setupModalClose');
