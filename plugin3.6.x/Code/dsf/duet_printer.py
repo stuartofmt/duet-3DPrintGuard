@@ -153,8 +153,9 @@ def suspend_print_job(camera_uuid, action):
 
 def _send_macro(alert):
 	if MACRO.MACRO != '':
-		logger.info(f'Sending macro {MACRO.MACRO}')
-		_send_duet_code(f'M98 {MACRO.MACRO}')
+		msg = f'M98 P"{MACRO.MACRO}"'
+		logger.info(f'Sending macro {msg}')
+		_send_duet_code(msg)
 
 
 def _send_ntfy(alert):
