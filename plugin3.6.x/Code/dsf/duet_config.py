@@ -84,7 +84,6 @@ def get_DWC_config(file_path,file_name,logger):
         if not hasattr(LOGGING,'LEVEL') : LOGGING.LEVEL = 'INFO'        
 
         # ACTION
-        if not hasattr(ACTION,'ONFAILURE') : ACTION.ONFAILURE = 'CANCEL'
         if not hasattr(ACTION,'PAUSE') : ACTION.PAUSE = ''
         if not hasattr(ACTION,'CANCEL') : ACTION.CANCEL = ''
 

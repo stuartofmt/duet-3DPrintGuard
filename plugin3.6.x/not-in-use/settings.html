@@ -6,6 +6,7 @@
     <title>PG Settings</title>
     <link rel="stylesheet" href="{{ url_for('static', path='css/universal.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', path='css/settings.css') }}">
+    <!--<script type="module" src="{{ url_for('static', path='js/notifications.js') }}"></script>-->
     <script src="{{ url_for('static', path='js/sse.js') }}" defer></script>
     <script type="module" src="{{ url_for('static', path='js/utils.js') }}" defer></script>
     <script type="module" src="{{ url_for('static', path='js/settings.js') }}" defer></script>
@@ -13,7 +14,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!--
+    <div id="notificationPopup" class="notification-popup">
+        <div id="notificationsContainer"></div>
+    </div>
+    -->
     <div class="grid-container">
+        <!--
+        <div class="grid-item" style="display: none;">
+            <pre id="ascii-title"></pre>
+            <div class="camera-header">
+                <p class="camera-title" id="cameraTitle"></p>
+                <span class="live-indicator"></span>
+            </div>
+        </div>-->
         
         <div class="grid-item" id="video-feed-container">
             <img id="videoPreview" src="" alt="Camera Preview" />
@@ -31,20 +45,69 @@
                         <div class="camera-text-content">
                             <div class="camera-header" style="font-size: large;">
                                 <span>{{ camera_state.nickname }} &nbsp; {{ camera_state.source }}</span>
+                                <!--<span class="camera-status" style="display: none;"></span>-->
                             </div>
+                            <!--
+                            <span class="camera-prediction" style="display: none;">-</span>
+                            <span class="camera-prediction-time" style="display: none;">Detected at: <span id="lastTimeValue">-</span></span>
+                            <img src="{{ url_for('static', path='images/default_icon.png') }}" alt="Camera Icon" class="camera-video-preview" id="cameraPreview">
+                            -->
                             <button class="remove-camera-btn" title="Remove camera">Remove Camera</button>
+
                         </div>
                     </li>
                 {% endfor %}
             </ul>
+
+            <!--{% if not camera_states %}
+            <div id="noCamerasMessage" class="no-cameras-container" style="display: none;">
+                <div class="no-cameras-content">
+                    <h3>No cameras configured</h3>
+                    <p>Get started by adding your first camera</p>
+                    <button id="addFirstCameraBtn" class="start-stop-btn" >Add Camera</button>
+                </div>
+            </div>
+            {% endif %}-->
         </div>
         <div class="grid-item">
+            <!--
+            <div class="camera-display-section">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-value success-status" id="camPredictionDisplay">Inactive</span>
+                        <span class="info-label" id="camPredictionTimeDisplay">at -</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-value" id="camTotalDetectionsDisplay">-</span>
+                        <span class="info-label">total detections</span>
+                    </div>
+                    <div class="info-item">
+                        <button class="start-stop-btn" id="camDetectionToggleButton">Start Detection</button>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-value" id="camFrameRateDisplay">-</span>
+                        <span class="info-label">frames per second</span>
+                    </div>
+                </div>
+            </div>
+            -->
             <div class="settings-section">
                 <form action="{{ url_for('update_settings') }}" method="post" class="settings-form settings-grid">
                     <input type="hidden" id="camera_uuid" name="camera_uuid"  value="">
+                    <!--<div class="settings-item" style="display: none;">
+                        <button class="start-stop-btn" id="configureSetupBtn" >Configure Setup</button>
+                    </div>-->
                     <div class="settings-item">
                         <button class="start-stop-btn" id="addCameraBtn">Add Camera</button>
                     </div>
+                    <!--<div class="settings-item" style="display: none;">
+                        <button class="start-stop-btn" id="printerConfigBtn">
+                            <span id="printerConfigStatus">Printer Connected</span>
+                        </button>
+                        <button class="start-stop-btn" id="linkPrinterBtn">
+                            Link Printer
+                        </button>
+                    </div>-->
                     <div class="settings-item">
                         <label for="countdown_action">Countdown Action</label>
                         <select id="countdown_action" name="countdown_action" class="settings-dropdown">
@@ -53,6 +116,12 @@
                             <option value="pause_print">Pause Print</option>
                         </select>
                     </div>
+                    <!--<div class="settings-item" style="display: none;">
+                        <label for="notificationBtn">Notifications</label>
+                        <div class="notification-control">
+                            <button id="notificationBtn">Enable Notifications</button>
+                        </div>
+                    </div>-->
 
                     <div class="settings-item">
                         <label for="sensitivity">Sensitivity: <span id="sensitivity_val"></span></label>
@@ -86,6 +155,11 @@
             </div>
         </div>
     </div>
+    <!--
+    <button class="settings-button" id="settingsButton">
+        Settings
+    </button>
+    -->
     <div class="setup-modal-overlay" id="setupModalOverlay">
         <div class="setup-modal">
             <div class="setup-modal-header">
@@ -143,6 +217,55 @@
             </div>
         </div>
     </div>
+    <!--<div class="setup-modal-overlay" id="printerModalOverlay" style="display: none;">
+        <div class="setup-modal printer-modal">
+            <div class="setup-modal-header">
+                <h2 class="setup-modal-title">Printer Details</h2>
+                <button class="setup-modal-close" id="printerModalClose">×</button>
+            </div>
+            <div class="setup-modal-content">
+                <div id="modalPrinterInfo" style="display: none;">
+                    <h4 id="modalPrinterName">-</h4>
+                    <p id="modalPrinterType">-</p>
+                    <p>Status: <span id="modalPrinterStatus">-</span></p>
+                    <p>Nozzle: <span id="modalNozzleTemp">-</span>°C</p>
+                    <p>Bed: <span id="modalBedTemp">-</span>°C</p>
+                    <div class="button-group">
+                        <button id="modalCancelPrintBtn" class="start-stop-btn secondary">Cancel Print</button>
+                        <button id="modalPausePrintBtn" class="start-stop-btn secondary">Pause Print</button>
+                        <button id="modalUnlinkPrinterBtn" class="start-stop-btn danger">Unlink Printer</button>
+                    </div>
+                </div>
+                <div id="modalNoPrinterForm" style="display: none;">
+                    <form id="linkPrinterForm" class="printer-link-form">
+                        <div class="form-group">
+                            <label for="modalPrinterConnectionType">Connection Type</label>
+                            <select id="modalPrinterConnectionType" name="printer_type" required>
+                                <option value="">Select connection type...</option>
+                                <option value="Duet3D">Duet3D</option>
+                                <option value="octoprint">OctoPrint</option>
+                            </select>
+                        </div>
+                        <div id="modalOctoprintConfig" style="display: none;">
+                            <div class="form-group">
+                                <label for="modalPrinterNameInput">Printer Name</label>
+                                <input type="text" id="modalPrinterNameInput" name="name" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="modalOctoprintUrlInput">Base URL</label>
+                                <input type="url" id="modalOctoprintUrlInput" name="base_url" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="modalOctoprintApiKeyInput">API Key</label>
+                                <input type="text" id="modalOctoprintApiKeyInput" name="api_key" required />
+                            </div>
+                        </div>
+                        <button type="submit" id="modalLinkPrinterSubmit" class="start-stop-btn primary" >Link Printer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>-->
     <div class="setup-modal-overlay" id="addCameraModalOverlay" style="display: none;">
         <div class="setup-modal">
             <div class="setup-modal-header">

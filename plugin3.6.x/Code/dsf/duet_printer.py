@@ -153,13 +153,12 @@ def suspend_print_job(camera_uuid, action):
 
 def _send_macro(alert):
 	if MACRO.MACRO != '':
-		logger.debug(f'Sending macro {MACRO.MACRO}')
+		logger.info(f'Sending macro {MACRO.MACRO}')
 		_send_duet_code(f'M98 {MACRO.MACRO}')
 
 
 def _send_ntfy(alert):
 	if NTFY.TOPIC != '':
-		logger.debug(f'Sending NTFY with topic {NTFY.TOPIC}')
 		title = ''
 		message = ''
 		if NTFY.TITLE !='':
@@ -170,7 +169,9 @@ def _send_ntfy(alert):
 		if NTFY.MESSAGE !='':
 			message = NTFY.MESSAGE
 		else:
-			message = alert.body		
+			message = alert.body
+
+		logger.info(f'Sending NTFY with title {title}')	
 
 		data=json.dumps({
 			"Topic": NTFY.TOPIC,
@@ -189,7 +190,6 @@ def _send_ntfy(alert):
 	
 def _send_pushover(alert):
 	if PUSHOVER.API != '':
-		logger.debug(f'Sending PUSHOVER with topic {PUSHOVER.USER}')
 		title = ''
 		message = ''
 		if PUSHOVER.TITLE !='':
@@ -200,6 +200,8 @@ def _send_pushover(alert):
 			message = PUSHOVER.MESSAGE
 		else:
 			message = alert.body
+
+		logger.info(f'Sending PUSHOVER with title {title}')
 
 		data = {
 			"token": PUSHOVER.API,

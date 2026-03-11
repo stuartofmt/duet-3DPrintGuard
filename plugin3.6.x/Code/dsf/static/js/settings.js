@@ -280,7 +280,7 @@ document.querySelectorAll('.settings-form input[type="range"]').forEach(slider =
 });
 
 document.getElementById('countdown_action').addEventListener('change', (e) => {
-    console.warn('Countdown Settings now ' + e.target)
+    console.warn('Countdown Settings now ' + e.target.value)
     saveSetting(e.target);
 });
 
