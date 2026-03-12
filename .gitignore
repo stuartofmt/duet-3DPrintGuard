@@ -10,4 +10,5 @@ build
 data/
 .vscode/
 .DS_Store
-not-in-use/
+not-in-use/*
+*.sh
