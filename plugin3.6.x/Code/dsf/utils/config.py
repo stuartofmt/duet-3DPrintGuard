@@ -216,6 +216,9 @@ def init_config():
 
 		with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
 			json.dump(startup_config, f, indent=2)
+
+		logger.debug('Starting with new configuration file')
+		logger.debug(startup_config)
 		
 		release_lock()
 
@@ -374,6 +377,8 @@ def reset_config():
 		}
 		with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
 			json.dump(default_config, f, indent=2)
+	except Exception as e:
+		logger.info(f'Error initializing configuration ==> {e}')
 	finally:
 		release_lock()
 

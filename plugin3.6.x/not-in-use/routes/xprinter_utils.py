@@ -6,7 +6,7 @@ import requests
 from models import PollingTask, SavedConfig, AlertAction
 from .camera_utils import get_camera_state_sync, update_camera_state
 from .config import PRINTER_STAT_POLLING_RATE_MS, get_config
-from .printer_services.octoprint import OctoPrintClient
+#from .printer_services.octoprint import OctoPrintClient
 from .sse_utils import add_polling_task, sse_update_printer_state
 
 def get_printer_config(camera_uuid):

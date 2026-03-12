@@ -1,41 +1,13 @@
-03-12 15:34:10 logger_module - create_log_file:[INFO] Logging started at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/sd/sys/duetPrintGuard/duetPrintGuard.log
-03-12 15:34:10 duetPrintGuard - start:[INFO] duetPrintGuard -- 0.0.2
-03-12 15:34:10 logger_module - set_log_level:[INFO] Log level changed to INFO
-03-12 15:34:10 duetPrintGuard - checkIP:[INFO] IP address 192.168.30.41 with port 8002 is available
-03-12 15:34:13 config - config_set_paths_and_initialize:[WARNING] Using app data directory: /home/stuart/.local/share/duetprintguard
-03-12 15:34:13 duet_printer - <module>:[INFO] Successful login to printer at http://192.168.30.41:80
-03-12 15:34:13 app - appstartup:[WARNING] Startup mode: SiteStartupMode.LOCAL
-03-12 15:34:13 cloudflare_utils - stop_cloudflare_tunnel:[ERROR] Error stopping Cloudflare tunnel: Current OS not set in config.
-03-12 15:34:13 app - appstartup:[WARNING] Starting in local mode. Available at None
-03-12 15:34:13 inference_lib - _detect_backend:[INFO] ONNX Runtime detected, using ONNX Runtime backend
-03-12 15:34:13 model_downloader - download_all:[INFO] Downloading all model files for onnxruntime backend
-03-12 15:34:13 model_downloader - download_model:[INFO] Model model.onnx already cached at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/model.onnx
-03-12 15:34:13 model_downloader - download_options:[INFO] Options file already cached at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/opt.json
-03-12 15:34:13 model_downloader - download_prototypes:[INFO] Prototypes already cached at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/prototypes/cache/prototypes.pkl
-03-12 15:34:13 model_downloader - download_all:[INFO] All model files successfully downloaded/cached for onnxruntime backend
-03-12 15:34:15 inference_lib - get_inference_engine:[INFO] Created inference engine with onnxruntime backend
-03-12 15:34:15 inference_lib - _detect_backend:[INFO] ONNX Runtime detected, using ONNX Runtime backend
-03-12 15:34:15 onnxruntime_engine - load_model:[INFO] ONNX model loaded successfully. Input: input, Output: output, Shape: ['batch_size', 3, 224, 224]
-03-12 15:34:37 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: e912896d-1adc-45ca-889e-bad81329581d
-03-12 15:34:37 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 5dc4e491-01ce-4c0c-b37a-d490e2bdfb3d
-03-12 15:34:37 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: e912896d-1adc-45ca-889e-bad81329581d
-03-12 15:34:47 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 5dc4e491-01ce-4c0c-b37a-d490e2bdfb3d
-03-12 15:34:57 notification_utils - send_notification:[INFO] Starting notification send process
-03-12 15:34:57 duet_printer - _send_macro:[INFO] Sending macro M98 P"0:/sys/duetPrintGuard/Notify.g"
-03-12 15:34:57 duet_printer - _send_ntfy:[INFO] Sending NTFY with title duetPrintGuard
-03-12 15:35:57 duet_printer - suspend_print_job:[WARNING] Requested action pause_print --- current status running
-03-12 15:35:57 notification_utils - send_notification:[INFO] Starting notification send process
-03-12 15:35:57 duet_printer - _send_macro:[INFO] Sending macro M98 P"0:/sys/duetPrintGuard/Notify.g"
-03-12 15:35:57 duet_printer - _send_ntfy:[INFO] Sending NTFY with title duetPrintGuard
-03-12 15:36:15 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 5dc4e491-01ce-4c0c-b37a-d490e2bdfb3d
-03-12 15:37:01 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 5dc4e491-01ce-4c0c-b37a-d490e2bdfb3d
-03-12 15:37:01 notification_utils - send_notification:[INFO] Starting notification send process
-03-12 15:37:01 duet_printer - _send_macro:[INFO] Sending macro M98 P"0:/sys/duetPrintGuard/Notify.g"
-03-12 15:37:01 duet_printer - _send_ntfy:[INFO] Sending NTFY with title duetPrintGuard
-03-12 15:37:08 notification_utils - send_notification:[INFO] Starting notification send process
-03-12 15:37:08 duet_printer - _send_macro:[INFO] Sending macro M98 P"0:/sys/duetPrintGuard/Notify.g"
-03-12 15:37:08 duet_printer - _send_ntfy:[INFO] Sending NTFY with title duetPrintGuard
-03-12 15:37:10 notification_utils - send_notification:[INFO] Starting notification send process
-03-12 15:37:10 duet_printer - _send_macro:[INFO] Sending macro M98 P"0:/sys/duetPrintGuard/Notify.g"
-03-12 15:37:10 duet_printer - _send_ntfy:[INFO] Sending NTFY with title duetPrintGuard
-03-12 15:37:12 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 5dc4e491-01ce-4c0c-b37a-d490e2bdfb3d
+03-12 22:12:31 logger_module - create_log_file:[INFO] Logging started at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/sd/sys/duetPrintGuard/duetPrintGuard.log
+03-12 22:12:31 duetPrintGuard - start:[INFO] duetPrintGuard -- 0.0.2
+03-12 22:12:31 logger_module - set_log_level:[INFO] Log level changed to DEBUG
+03-12 22:12:31 duetPrintGuard - checkIP:[INFO] IP address 192.168.30.41 with port 8002 is available
+03-12 22:12:34 config - config_set_paths_and_initialize:[WARNING] Using app data directory: /home/stuart/.local/share/duetprintguard
+03-12 22:12:34 config - config_set_paths_and_initialize:[DEBUG] lock file path: /home/stuart/.local/share/duetprintguard/config.lock
+03-12 22:12:34 config - init_config:[DEBUG] Starting with new configuration file
+03-12 22:12:34 config - init_config:[DEBUG] {'version': '1.0.0', 'vapid_public_key': None, 'vapid_subject': None, 'startup_mode': None, 'site_domain': None, 'tunnel_provider': None, 'push_subscriptions': [], 'camera_states': {'b0e85679-0e2e-4df6-9292-2a396ae49bfb': {'nickname': 'Stream', 'source': 'http://192.168.30.41:8090/stream', 'current_alert_id': None, 'detection_history': [], 'live_detection_running': False, 'last_result': '', 'last_time': None, 'start_time': None, 'error': None, 'brightness': 1.0, 'contrast': 1.0, 'focus': 1.0, 'sensitivity': 1.0, 'countdown_time': 60, 'countdown_action': 'cancel_print', 'majority_vote_threshold': 2, 'majority_vote_window': 5, 'printer_id': None, 'printer_config': None}, '6361cbab-f002-4e57-98aa-e75ea9b89850': {'nickname': 'USB', 'source': '/dev/video2', 'current_alert_id': None, 'detection_history': [], 'live_detection_running': False, 'last_result': '', 'last_time': None, 'start_time': None, 'error': None, 'brightness': 1.0, 'contrast': 1.0, 'focus': 1.0, 'sensitivity': 1.0, 'countdown_time': 60.0, 'countdown_action': 'dismiss', 'majority_vote_threshold': 2, 'majority_vote_window': 5, 'printer_id': None, 'printer_config': None}}}
+03-12 22:12:34 duet_printer - _urlCall:[DEBUG] Connection attempt: 0 url: http://192.168.30.41:80/rr_connect?sessionKey=yes&password=reprap post:False
+03-12 22:12:35 duet_printer - _urlCall:[DEBUG] Connection attempt: 1 url: http://192.168.30.41:80/rr_connect?sessionKey=yes&password=reprap post:False
+03-12 22:12:36 duet_printer - _urlCall:[INFO] Error - connection attempt failed
+03-12 22:12:36 duet_printer - _loginPrinter:[DEBUG] Login issue: Is the Printer turned on?. code = 0
+03-12 22:12:36 duet_printer - <module>:[CRITICAL] Failed to login to printer at http://192.168.30.41:80

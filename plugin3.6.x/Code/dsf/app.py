@@ -35,12 +35,13 @@ def init_routes_and_modules():
 	"""
 
 
-	global TunnelProvider, start_cloudflare_tunnel, stop_cloudflare_tunnel,SavedConfig,SiteStartupMode
-	from models import (SiteStartupMode,
-					 TunnelProvider, SavedConfig)
+	#global TunnelProvider, start_cloudflare_tunnel, stop_cloudflare_tunnel,SavedConfig,SiteStartupMode
+	global SavedConfig,SiteStartupMode
+	#from models import (SiteStartupMode,TunnelProvider, SavedConfig)
+	from models import (SiteStartupMode, SavedConfig)
 
 	from utils.inference_lib import get_inference_engine
-	from utils.cloudflare_utils import (start_cloudflare_tunnel, stop_cloudflare_tunnel)
+	#from utils.cloudflare_utils import (start_cloudflare_tunnel, stop_cloudflare_tunnel)
 
 
 	from routes.alert_routes import router as alert_router
@@ -211,15 +212,11 @@ def appstartup():
 
 	app_config = get_config()
 	site_domain = app_config.get(SavedConfig.SITE_DOMAIN, "")
-	tunnel_provider = app_config.get(SavedConfig.TUNNEL_PROVIDER, None)
+	#tunnel_provider = app_config.get(SavedConfig.TUNNEL_PROVIDER, None)
 	
-	stop_cloudflare_tunnel()
+	#stop_cloudflare_tunnel()
 	
 	match startup_mode:
-		case SiteStartupMode.SETUP:
-			logger.warning(f'Starting in setup mode. Available at http://localhost:{port}/setup')
-			uvicorn.run(app, host=UI.HOST, port=UI.PORT)
-			"""/SRS"""
 		case SiteStartupMode.LOCAL:
 			logger.warning("Starting in local mode. Available at %s", site_domain)
 			"""SRS"""
@@ -231,6 +228,7 @@ def appstartup():
 							log_config=None
 							)
 				# At this point we swtch to uvicorn world and never return until done
+			"""
 			else:
 				ssl_private_key_path = get_ssl_private_key_temporary_path()
 				uvicorn.run(app,
@@ -239,7 +237,7 @@ def appstartup():
 							ssl_certfile=SSL_CERT_FILE,
 							ssl_keyfile=ssl_private_key_path
 							)
-			"""/SRS"""
+			
 		case SiteStartupMode.TUNNEL:
 			match tunnel_provider:
 				case TunnelProvider.NGROK:
@@ -262,6 +260,5 @@ def appstartup():
 						logger.error("Failed to start Cloudflare tunnel. Starting in SETUP mode.")
 						update_config({SavedConfig.STARTUP_MODE: SiteStartupMode.SETUP})
 						appstartup()
+		"""
 
-#if __name__ == "__main__":
-#	run()

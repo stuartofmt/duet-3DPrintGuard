@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Request, Body
 from sse_starlette.sse import EventSourceResponse
 from utils.sse_utils import outbound_packet_fetch, stop_and_remove_polling_task
-from utils.printer_utils import start_printer_state_polling
+
+#SRS
+# #from utils.printer_utils import start_printer_state_polling
 
 router = APIRouter()
 
@@ -21,7 +23,7 @@ async def sse_connect(request: Request):
                 break
             yield packet
     return EventSourceResponse(send_packet())
-
+'''
 @router.post("/sse/start-polling")
 async def start_polling(request: Request, camera_uuid: str = Body(..., embed=True)):
     """Start polling for printer state updates on a specific camera.
@@ -35,7 +37,7 @@ async def start_polling(request: Request, camera_uuid: str = Body(..., embed=Tru
     """
     await start_printer_state_polling(camera_uuid)
     return {"message": "Polling started for camera UUID {}".format(camera_uuid)}
-
+'''
 @router.post("/sse/stop-polling")
 async def stop_polling(request: Request, camera_uuid: str = Body(..., embed=True)):
     """Stop polling for printer state updates on a specific camera.
