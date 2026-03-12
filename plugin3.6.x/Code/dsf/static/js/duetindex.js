@@ -1,44 +1,45 @@
 //import { registerPush, unsubscribeFromPush } from './notifications.js';
-import { render_ascii_title } from './utils.js';
+//import { render_ascii_title } from './utils.js';
 
-const asciiTitle = document.getElementById('ascii-title');
+//const asciiTitle = document.getElementById('ascii-title');
 const cameraTitle = document.getElementById('cameraTitle');
-const camPredictionDisplay = document.getElementById('camPredictionDisplay');
-const camPredictionTimeDisplay = document.getElementById('camPredictionTimeDisplay');
-const camTotalDetectionsDisplay = document.getElementById('camTotalDetectionsDisplay');
-const camFrameRateDisplay = document.getElementById('camFrameRateDisplay');
-const camDetectionToggleButton = document.getElementById('camDetectionToggleButton');
+//const camPredictionDisplay = document.getElementById('camPredictionDisplay');
+//const camPredictionTimeDisplay = document.getElementById('camPredictionTimeDisplay');
+//const camTotalDetectionsDisplay = document.getElementById('camTotalDetectionsDisplay');
+//const camFrameRateDisplay = document.getElementById('camFrameRateDisplay');
+//const camDetectionToggleButton = document.getElementById('camDetectionToggleButton');
 const camDetectionLiveIndicator = document.getElementsByClassName('live-indicator');
 const camVideoPreview = document.getElementById('videoPreview');
-const loadingOverlay = document.getElementById('loadingOverlay');
+//const loadingOverlay = document.getElementById('loadingOverlay');
 const cameraItems = document.querySelectorAll('.camera-item');
-const settingsButton = document.getElementById('settingsButton');
-const cameraDisplaySection = document.querySelector('.camera-display-section');
-const settingsSection = document.querySelector('.settings-section');
-const notificationsBtn = document.getElementById('notificationBtn');
+//const settingsButton = document.getElementById('settingsButton');
+//const cameraDisplaySection = document.querySelector('.camera-display-section');
+//const settingsSection = document.querySelector('.settings-section');
+//const notificationsBtn = document.getElementById('notificationBtn');
 
-const settingsCameraUUID = document.getElementById('camera_uuid');
-const settingsSensitivity = document.getElementById('sensitivity');
-const settingsSensitivityLabel = document.getElementById('sensitivity_val');
-const settingsBrightness = document.getElementById('brightness');
-const settingsBrightnessLabel = document.getElementById('brightness_val');
-const settingsContrast = document.getElementById('contrast');
-const settingsContrastLabel = document.getElementById('contrast_val');
-const settingsFocus = document.getElementById('focus');
-const settingsFocusLabel = document.getElementById('focus_val');
-const settingsCountdownTime = document.getElementById('countdown_time');
-const settingsCountdownTimeLabel = document.getElementById('countdown_time_val');
-const settingsMajorityVoteThreshold = document.getElementById('majority_vote_threshold');
-const settingsMajorityVoteThresholdLabel = document.getElementById('majority_vote_threshold_val');
-const settingsMajorityVoteWindow = document.getElementById('majority_vote_window');
-const settingsMajorityVoteWindowLabel = document.getElementById('majority_vote_window_val');
-const settingsCountdownAction = document.getElementById('countdown_action');
+//const settingsCameraUUID = document.getElementById('camera_uuid');
+//const settingsSensitivity = document.getElementById('sensitivity');
+//const settingsSensitivityLabel = document.getElementById('sensitivity_val');
+//const settingsBrightness = document.getElementById('brightness');
+//const settingsBrightnessLabel = document.getElementById('brightness_val');
+//const settingsContrast = document.getElementById('contrast');
+//const settingsContrastLabel = document.getElementById('contrast_val');
+//const settingsFocus = document.getElementById('focus');
+//const settingsFocusLabel = document.getElementById('focus_val');
+//const settingsCountdownTime = document.getElementById('countdown_time');
+//const settingsCountdownTimeLabel = document.getElementById('countdown_time_val');
+//const settingsMajorityVoteThreshold = document.getElementById('majority_vote_threshold');
+//const settingsMajorityVoteThresholdLabel = document.getElementById('majority_vote_threshold_val');
+//const settingsMajorityVoteWindow = document.getElementById('majority_vote_window');
+//const settingsMajorityVoteWindowLabel = document.getElementById('majority_vote_window_val');
+//const settingsCountdownAction = document.getElementById('countdown_action');
 
-const addCameraModalOverlay = document.getElementById('addCameraModalOverlay');
-const addCameraModalClose = document.getElementById('addCameraModalClose');
-const addCameraBtn = document.getElementById('addCameraBtn');
-const addFirstCameraBtn = document.getElementById('addFirstCameraBtn');
+//const addCameraModalOverlay = document.getElementById('addCameraModalOverlay');
+//const addCameraModalClose = document.getElementById('addCameraModalClose');
+//const addCameraBtn = document.getElementById('addCameraBtn');
+//const addFirstCameraBtn = document.getElementById('addFirstCameraBtn');
 
+/*
 camVideoPreview.onload = () => {
     loadingOverlay.style.display = 'none';
 };
@@ -47,16 +48,16 @@ camVideoPreview.onerror = () => {
     loadingOverlay.style.display = 'none';
     console.error("Failed to load camera feed.");
 };
-
+*/
 const stopDetectionBtnLabel = 'Stop Detection';
 const startDetectionBtnLabel = 'Start Detection';
 
 //Effectively a global - let scope
 let cameraUUID = 0;
-let currentCameraPrinterConfig = null;
+//let currentCameraPrinterConfig = null;
 
 function changeLiveCameraFeed(cameraUUID) {
-    loadingOverlay.style.display = 'flex';
+    //loadingOverlay.style.display = 'flex';
     camVideoPreview.src = `/camera/feed/${cameraUUID}`;
 }
 
@@ -64,11 +65,13 @@ function updateCameraTitle(nickname) {
     const titleText = nickname ? nickname : 'No camera selected';
     cameraTitle.textContent = titleText;
 }
-
+/*
 function updateRecentDetectionResult(result, doc_element) {
     doc_element.textContent = result || '-';
 }
+*/
 
+/*
 function updateRecentDetectionTime(last_time, doc_element) {
     try {
         if (!last_time) {throw 'exit';}
@@ -80,7 +83,8 @@ function updateRecentDetectionTime(last_time, doc_element) {
         doc_element.textContent = '-';
     }
 }
-
+*/
+/*
 function updateTotalDetectionsCount(detection_times, doc_element) {
     if (!detection_times) {
         doc_element.textContent = '-';
@@ -88,6 +92,8 @@ function updateTotalDetectionsCount(detection_times, doc_element) {
     }
     doc_element.textContent = detection_times;
 }
+*/
+/*
 
 function updateFrameRate(fps, doc_element) {
     if (!fps) {
@@ -96,7 +102,7 @@ function updateFrameRate(fps, doc_element) {
     }
     doc_element.textContent = fps.toFixed(2);
 }
-
+*/
 function toggleIsDetectingStatus(isActive) {
     if (isActive) {
         camDetectionLiveIndicator[0].textContent = `active`;
@@ -106,7 +112,7 @@ function toggleIsDetectingStatus(isActive) {
         camDetectionLiveIndicator[0].style.color = '#b2b2b2';
     }
 }
-
+/*
 function updateDetectionButton(isActive) {
     if (isActive) {
         camDetectionToggleButton.textContent = stopDetectionBtnLabel;
@@ -116,7 +122,8 @@ function updateDetectionButton(isActive) {
 
     }
 }
-
+*/
+/*
 function updateSelectedCameraSettings(d) {
     settingsCameraUUID.value = d.camera_uuid;
     settingsSensitivityLabel.textContent = d.sensitivity;
@@ -154,8 +161,8 @@ function updateSelectedCameraSettings(d) {
         settingsCountdownAction.value = 'dismiss';
         saveSetting(settingsCountdownAction);
     }
-    */
-}
+    
+}*/
 
 /*
 function printerTileStyle(linked) {
@@ -185,27 +192,51 @@ function updateSelectedCamerasPrinterModal(printerStatus, printerTemperature, pr
     }
 }
 */
-
+/*
 // This function refers to the shared buttons CAMERAUUID?
 function updateSelectedCameraData(d) {
-    updateRecentDetectionResult(d.last_result, camPredictionDisplay);
-    updateRecentDetectionTime(d.last_time, camPredictionTimeDisplay);
-    updateTotalDetectionsCount(d.total_detections, camTotalDetectionsDisplay);
-    updateFrameRate(d.frame_rate, camFrameRateDisplay);
-    toggleIsDetectingStatus(d.live_detection_running);
-    updateDetectionButton(d.live_detection_running); //SRS This is the shared detection button
+    //updateRecentDetectionResult(d.last_result, camPredictionDisplay);
+    //updateRecentDetectionTime(d.last_time, camPredictionTimeDisplay);
+    //updateTotalDetectionsCount(d.total_detections, camTotalDetectionsDisplay);
+    //updateFrameRate(d.frame_rate, camFrameRateDisplay);
+    //toggleIsDetectingStatus(d.live_detection_running);
+    //updateDetectionButton(d.live_detection_running); //SRS This is the shared detection button
     
     //printerTileStyle(d.printer_id !== undefined && d.printer_id !== null);
-}
+}*/
 
 function updateCameraSelectionListData(d) {
     cameraItems.forEach(item => {
         const cameraId = item.dataset.cameraId;
         if (cameraId == d.camera_uuid) {
-            item.querySelector('.camera-prediction').textContent = d.last_result;
+            const camPred = item.querySelector('.camera-prediction');
+            // console.warn('last result' + d.last_result);
+            camPred.textContent = d.last_result;
+            camPred.style.color = d.last_result === 'success' ? 'green' : 'red';
+
+            const camAction = item.querySelector('.countdown-action');
+            let action = 'Unknown';
+            console.warn(d.countdown_action);
+            if (d.countdown_action === 'dismiss'){
+                action = 'DISMISS';
+                camAction.style.color = 'green';
+            }
+            if (d.countdown_action === 'cancel_print'){
+                action = 'CANCEL';
+                camAction.style.color = 'red';
+            }
+            if (d.countdown_action === 'pause_print'){
+                action = 'PAUSE';
+                camAction.style.color = 'orange';
+            }
+            camAction.textContent = action;
+           
+
             item.querySelector('#lastTimeValue').textContent = d.last_time ? new Date(d.last_time * 1000).toLocaleTimeString() : '-';
-            item.querySelector('.camera-prediction').style.color = d.last_result === 'Connected' ? 'green' : 'red';
+            //item.querySelector('.camera-prediction').style.color = d.last_result === 'sucess' ? 'green' : 'red';
+            
             let statusIndicator = item.querySelector('.camera-status');
+            // console.warn('last status' + statusIndicator.textContent);
             if (d.live_detection_running) {
                 statusIndicator.textContent = `Detecting`;
                 statusIndicator.style.color = '#2ecc40';
@@ -214,6 +245,7 @@ function updateCameraSelectionListData(d) {
                 statusIndicator.textContent = `Inactive`;
                 statusIndicator.style.color = '#f30606';
                 statusIndicator.style.backgroundColor = 'transparent';
+                camPred.textContent = '----';
             }
             /*SRS
             Added toggle here to support multiple browser instances correctly updating
@@ -223,7 +255,7 @@ function updateCameraSelectionListData(d) {
         }
     });
 }
-
+/*
 function removeCamera(cameraUUID) {
     if (!cameraUUID) {
         console.warn('Cannot remove camera: invalid camera UUID provided.');
@@ -270,14 +302,15 @@ function removeCamera(cameraUUID) {
         alert(`Failed to remove camera: ${error.message}`);
     });
 }
-
+*/
 function updatePolledDetectionData(d) {
-    if ('camera_uuid' in d && d.camera_uuid == cameraUUID) {
+    /*if ('camera_uuid' in d && d.camera_uuid == cameraUUID) {
         updateSelectedCameraData(d);
-    }
+    }*/
     updateCameraSelectionListData(d);
 }
 
+/*
 function updatePolledPrinterData(d) {
     const nozzleTemp = d.temperatureReading?.nozzle_actual || 0;
     const bedTemp = d.temperatureReading?.bed_actual || 0;
@@ -288,8 +321,10 @@ function updatePolledPrinterData(d) {
         bedTemp
     );
 }
+*/
 
 function fetchAndUpdateMetricsForCamera(cameraUUID) {
+    console.warn('Fetching metrics for camera:', cameraUUID);
     if (!cameraUUID) {
         console.warn('Cannot fetch metrics: invalid camera UUID provided:', cameraUUID);
         return;
@@ -310,7 +345,8 @@ function fetchAndUpdateMetricsForCamera(cameraUUID) {
         }
         return response.json();
     })
-    .then(data => { 
+    .then(data => {
+        console.warn('Setting metricsData: Last update time ==>', data.last_time);
         const metricsData = {
             camera_uuid: cameraUUID,
             start_time: data.start_time,
@@ -331,7 +367,7 @@ function fetchAndUpdateMetricsForCamera(cameraUUID) {
             countdown_action: data.countdown_action
         };
         updatePolledDetectionData(metricsData);
-        updateSelectedCameraSettings(metricsData);
+        //updateSelectedCameraSettings(metricsData);
     })
     .catch(error => {
         console.error(`Error fetching metrics for camera ${cameraUUID}:`, error.message);
@@ -376,7 +412,7 @@ function sendDetectionRequest(isStart) {
         console.error(`Network error or exception during ${isStart ? 'start' : 'stop'} request for camera ${cameraUUID}:`, error);
     });
 }
-
+/*
 camDetectionToggleButton.addEventListener('click', function() {
     if (camDetectionToggleButton.textContent === startDetectionBtnLabel) {
         camDetectionToggleButton.textContent = stopDetectionBtnLabel;
@@ -388,11 +424,13 @@ camDetectionToggleButton.addEventListener('click', function() {
         toggleIsDetectingStatus(false);
     }
 });
-
+*/
+/*
 render_ascii_title(asciiTitle, 'PrintGuard');
-
+*/
 cameraItems.forEach(item => {
     item.addEventListener('click', function() {
+        console.warn('Camera item clicked:', this.dataset.cameraId);
         cameraItems.forEach(i => i.classList.remove('selected'));
         this.classList.add('selected');
         const cameraId = this.dataset.cameraId;
@@ -400,14 +438,14 @@ cameraItems.forEach(item => {
             const nickname = this.querySelector('.camera-header span:first-child').textContent;         
             changeLiveCameraFeed(cameraId);
             cameraUUID = cameraId;
-            settingsCameraUUID.value = cameraId;
+            //settingsCameraUUID.value = cameraId;
             updateCameraTitle(nickname);
-            stopPrinterStatusPolling();
+            //stopPrinterStatusPolling();
             fetchAndUpdateMetricsForCamera(cameraId);
         } else {
             console.warn('No camera ID found for selected item');
             cameraUUID = null;
-            settingsCameraUUID.value = '';
+            //settingsCameraUUID.value = '';
             updateCameraTitle(null);
         }
     });
@@ -440,7 +478,7 @@ cameraItems.forEach(item => {
         cameraUUID = cameraId;
         /*SRS
         Added toggle here to support multiple instances showing correct state
-        This should be changed based on setection value
+        This should be changed based on selection value
         */
         update_start_stop_button_UI(startstopcameraButton,isLive);
         if (isLive) {
@@ -474,23 +512,35 @@ document.addEventListener('cameraStateUpdated', evt => {
     }
 });
 
+/*
 document.addEventListener('printerStateUpdated', evt => {
     if (evt.detail) {
         updatePolledPrinterData(evt.detail);
     }
 });
+*/
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Click each of the cameras to update displays
+    let counter = 0;
+    while(counter < (Object.keys(cameraItems).length)){
+        const camera = cameraItems[counter]
+        if (camera){
+            cameraItems[counter].click();
+        }
+        counter ++;
+    }
+    // Go back to the first camera
     const firstCameraItem = cameraItems[0];
     if (firstCameraItem) {
         const cameraId = firstCameraItem.dataset.cameraId;
         if (cameraId) {
             firstCameraItem.click();
-        } else {
+        }/* else {
             if (addCameraModalOverlay) {
                 addCameraModalOverlay.style.display = 'flex';
             }
-        }
+        }*/
     }/*SRS else {
         const noCamerasMessage = document.getElementById('noCamerasMessage');
         if (noCamerasMessage && addCameraModalOverlay) {
@@ -498,7 +548,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }*/
 });
-
+/*
 addCameraBtn?.addEventListener('click', function(e) {
     e.preventDefault();
     addCameraModalOverlay.style.display = 'flex';
@@ -508,7 +558,8 @@ addFirstCameraBtn?.addEventListener('click', function(e) {
     e.preventDefault();
     addCameraModalOverlay.style.display = 'flex';
 });
-
+*/
+/*
 let isSettingsVisible = false;
 
 settingsButton.addEventListener('click', function() {
@@ -526,7 +577,7 @@ settingsButton.addEventListener('click', function() {
         settingsButton.textContent = 'Settings';
     }
 });
-
+*/
 /*  SRS Notification code
 let notificationsEnabled = false;
 notificationsBtn.textContent = '';
@@ -596,6 +647,7 @@ notificationsBtn.addEventListener('click', async () => {
     }
 });
 */
+/*
 function updateSliderFill(slider) {
     const min = slider.min || 0;
     const max = slider.max || 100;
@@ -655,7 +707,8 @@ document.getElementById('countdown_action').addEventListener('change', (e) => {
 document.querySelector('.settings-form')?.addEventListener('submit', (e) => {
     e.preventDefault();
 });
-
+*/
+/*
 function isMobileView() {
     return window.innerWidth <= 768;
 }
@@ -663,7 +716,8 @@ function isMobileView() {
 function isSmallMobileView() {
     return window.innerWidth <= 380;
 }
-
+*/
+/*
 function updateAsciiTitle() {
     if (isSettingsVisible) {
         render_ascii_title(asciiTitle, 'Settings');
@@ -691,7 +745,8 @@ function updateAsciiTitle() {
 updateAsciiTitle();
 
 window.addEventListener('resize', updateAsciiTitle);
-
+*/
+/*
 const configureSetupBtn = document.getElementById('configureSetupBtn');
 const setupModalOverlay = document.getElementById('setupModalOverlay');
 const setupModalClose = document.getElementById('setupModalClose');
@@ -1269,4 +1324,4 @@ addCameraModalClose?.addEventListener('click', function() {
         clearTimeout(previewUpdateTimeout);
     }
 });
-
+*/

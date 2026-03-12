@@ -1,32 +1,28 @@
-03-11 17:18:08 logger_module - create_log_file:[INFO] Logging started at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/sd/sys/duetPrintGuard/duetPrintGuard.log
-03-11 17:18:08 duetPrintGuard - start:[INFO] duetPrintGuard -- 0.0.2
-03-11 17:18:08 logger_module - set_log_level:[INFO] Log level changed to INFO
-03-11 17:18:08 duetPrintGuard - checkIP:[INFO] IP address 192.168.30.41 with port 8002 is available
-03-11 17:18:10 config - config_set_paths_and_initialize:[WARNING] Using app data directory: /home/stuart/.local/share/duetprintguard
-03-11 17:18:10 duet_printer - <module>:[INFO] Successful login to printer at http://192.168.30.41:80
-03-11 17:18:10 app - appstartup:[WARNING] Startup mode: SiteStartupMode.LOCAL
-03-11 17:18:10 cloudflare_utils - stop_cloudflare_tunnel:[ERROR] Error stopping Cloudflare tunnel: Current OS not set in config.
-03-11 17:18:10 app - appstartup:[WARNING] Starting in local mode. Available at None
-03-11 17:18:10 inference_lib - _detect_backend:[INFO] ONNX Runtime detected, using ONNX Runtime backend
-03-11 17:18:10 model_downloader - download_all:[INFO] Downloading all model files for onnxruntime backend
-03-11 17:18:10 model_downloader - download_model:[INFO] Model model.onnx already cached at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/model.onnx
-03-11 17:18:10 model_downloader - download_options:[INFO] Options file already cached at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/opt.json
-03-11 17:18:10 model_downloader - download_prototypes:[INFO] Prototypes already cached at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/prototypes/cache/prototypes.pkl
-03-11 17:18:10 model_downloader - download_all:[INFO] All model files successfully downloaded/cached for onnxruntime backend
-03-11 17:18:12 inference_lib - get_inference_engine:[INFO] Created inference engine with onnxruntime backend
-03-11 17:18:12 inference_lib - _detect_backend:[INFO] ONNX Runtime detected, using ONNX Runtime backend
-03-11 17:18:12 onnxruntime_engine - load_model:[INFO] ONNX model loaded successfully. Input: input, Output: output, Shape: ['batch_size', 3, 224, 224]
-03-11 17:18:22 sse_utils - stop_and_remove_polling_task:[WARNING] No polling task found for camera UUID 5eda627b-b2d6-4973-9544-8b4b68ef7e6e to stop.
-03-11 17:18:22 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 5eda627b-b2d6-4973-9544-8b4b68ef7e6e
-03-11 17:18:26 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 5eda627b-b2d6-4973-9544-8b4b68ef7e6e
-03-11 17:18:26 notification_utils - send_notification:[INFO] Starting notification send process
-03-11 17:18:26 duet_printer - _send_ntfy:[INFO] Sending NTFY with title duetPrintGuard
-03-11 17:18:32 sse_utils - stop_and_remove_polling_task:[WARNING] No polling task found for camera UUID da550c59-cbb9-4540-b7f7-c4fae3af5e3a to stop.
-03-11 17:18:32 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: da550c59-cbb9-4540-b7f7-c4fae3af5e3a
-03-11 17:18:32 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: da550c59-cbb9-4540-b7f7-c4fae3af5e3a
-03-11 17:18:57 notification_utils - send_notification:[INFO] Starting notification send process
-03-11 17:18:57 duet_printer - _send_ntfy:[INFO] Sending NTFY with title duetPrintGuard
-03-11 17:19:00 notification_utils - send_notification:[INFO] Starting notification send process
-03-11 17:19:00 duet_printer - _send_ntfy:[INFO] Sending NTFY with title duetPrintGuard
-03-11 17:20:02 notification_utils - send_notification:[INFO] Starting notification send process
-03-11 17:20:02 duet_printer - _send_ntfy:[INFO] Sending NTFY with title duetPrintGuard
+03-12 14:41:48 logger_module - create_log_file:[INFO] Logging started at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/sd/sys/duetPrintGuard/duetPrintGuard.log
+03-12 14:41:48 duetPrintGuard - start:[INFO] duetPrintGuard -- 0.0.2
+03-12 14:41:48 logger_module - set_log_level:[INFO] Log level changed to INFO
+03-12 14:41:48 duetPrintGuard - checkIP:[INFO] IP address 192.168.30.41 with port 8002 is available
+03-12 14:41:51 config - config_set_paths_and_initialize:[WARNING] Using app data directory: /home/stuart/.local/share/duetprintguard
+03-12 14:41:51 duet_printer - <module>:[INFO] Successful login to printer at http://192.168.30.41:80
+03-12 14:41:51 app - appstartup:[WARNING] Startup mode: SiteStartupMode.LOCAL
+03-12 14:41:51 cloudflare_utils - stop_cloudflare_tunnel:[ERROR] Error stopping Cloudflare tunnel: Current OS not set in config.
+03-12 14:41:51 app - appstartup:[WARNING] Starting in local mode. Available at None
+03-12 14:41:51 inference_lib - _detect_backend:[INFO] ONNX Runtime detected, using ONNX Runtime backend
+03-12 14:41:51 model_downloader - download_all:[INFO] Downloading all model files for onnxruntime backend
+03-12 14:41:51 model_downloader - download_model:[INFO] Model model.onnx already cached at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/model.onnx
+03-12 14:41:51 model_downloader - download_options:[INFO] Options file already cached at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/opt.json
+03-12 14:41:51 model_downloader - download_prototypes:[INFO] Prototypes already cached at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/prototypes/cache/prototypes.pkl
+03-12 14:41:51 model_downloader - download_all:[INFO] All model files successfully downloaded/cached for onnxruntime backend
+03-12 14:41:53 inference_lib - get_inference_engine:[INFO] Created inference engine with onnxruntime backend
+03-12 14:41:53 inference_lib - _detect_backend:[INFO] ONNX Runtime detected, using ONNX Runtime backend
+03-12 14:41:53 onnxruntime_engine - load_model:[INFO] ONNX model loaded successfully. Input: input, Output: output, Shape: ['batch_size', 3, 224, 224]
+03-12 14:41:56 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: e912896d-1adc-45ca-889e-bad81329581d
+03-12 14:41:56 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 5dc4e491-01ce-4c0c-b37a-d490e2bdfb3d
+03-12 14:41:56 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: e912896d-1adc-45ca-889e-bad81329581d
+03-12 14:42:19 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: e912896d-1adc-45ca-889e-bad81329581d
+03-12 14:42:19 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 5dc4e491-01ce-4c0c-b37a-d490e2bdfb3d
+03-12 14:42:19 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: e912896d-1adc-45ca-889e-bad81329581d
+03-12 14:42:40 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: e912896d-1adc-45ca-889e-bad81329581d
+03-12 14:42:43 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 5dc4e491-01ce-4c0c-b37a-d490e2bdfb3d
+03-12 14:42:49 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: e912896d-1adc-45ca-889e-bad81329581d
+03-12 14:42:51 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 5dc4e491-01ce-4c0c-b37a-d490e2bdfb3d

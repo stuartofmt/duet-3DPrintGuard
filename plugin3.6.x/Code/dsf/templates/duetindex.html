@@ -52,9 +52,10 @@ Uses original index.js and modified stylesheet to facilitate reformattingfor DWC
                                 <span>{{ camera_state.nickname }}</span>
                                 <span class="camera-status"></span>
                             </div>
-                            <span class="camera-prediction">-</span>
-                            <span class="camera-prediction-time">Last Active: <span id="lastTimeValue">-</span></span>
+                            <span class="camera-prediction">----</span>
+                            <span class="camera-prediction-time">Last Active: <span id="lastTimeValue">----</span></span>
                         </div>
+                        <span class="countdown-action" style="font-weight: bold; font-size: large;">----</span>
                         <!--<div id="notificationPopup" class="notification-popup">
                             <div id="notificationsContainer"></div>
                         </div>-->
@@ -98,6 +99,8 @@ Uses original index.js and modified stylesheet to facilitate reformattingfor DWC
 
                 </div>
             </div>
+
+<!--
             <div class="settings-section" style="display: none;">
                 <form action="{{ url_for('update_settings') }}" method="post" class="settings-form settings-grid">
                     <input type="hidden" id="camera_uuid" name="camera_uuid"  value="">
@@ -327,5 +330,6 @@ Uses original index.js and modified stylesheet to facilitate reformattingfor DWC
             </div>
         </div>
     </div>
+-->    
 </body>
 </html>
