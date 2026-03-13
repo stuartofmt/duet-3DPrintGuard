@@ -1,5 +1,0 @@
-03-11 21:43:12 logger_module - create_log_file:[INFO] Logging started at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/sd/sys/duetPrintGuard/test.log
-03-11 21:43:12 duet_printer - <module>:[INFO] test
-03-11 21:43:12 logger_module - set_log_level:[INFO] Log level changed to INFO
-03-11 21:43:12 duet_printer - _send_macro:[INFO] Sending macro M98 P"0:/sys/duetPrintGuard/Notify.g"
-03-11 21:43:12 duet_printer - _send_ntfy:[INFO] Sending NTFY with title test

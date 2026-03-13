@@ -12,3 +12,4 @@ data/
 .DS_Store
 not-in-use/*
 *.sh
+duetPrintGuard.config
