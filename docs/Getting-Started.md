@@ -2,7 +2,6 @@
 <img src="https://github.com/stuartofmt/duetPrintGuard/blob/main/docs/media/images/Plugin1.png" width="320" height="240">
 
 
-
 ## Table of Contents
 - [Features](#features)
 - [Installation](#installation)
