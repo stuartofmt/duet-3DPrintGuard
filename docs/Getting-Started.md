@@ -136,7 +136,7 @@ PORT = 8001
 
 The camera settings page is accessible via `http://localhost:<PORT>/settings` or `http://<IP>:<PORT>/settings`
 
-Where IP and PORT are set in the [DUET] section of the configuration file.
+Where IP is set in the [DUET] section of the configuration file and PORT is set in the [UI] section
 
 This page allows you to configure the action to be taken on failure, camera settings, and detection settings.
 
@@ -146,28 +146,28 @@ This page allows you to configure the action to be taken on failure, camera sett
 
 Multiple cameras can be configure, either serial (USB) or newtwork based.
 
-This image shows the serial configuration UI.  The Serial Device box provides a dropdown of POSSIBLE serial cameras on your system. Most will not have a camera attached - so some trial and error is needed to find those that work.  The "show camera preview" checkbox can be helful in this.
+This image shows the serial configuration UI.  The `Serial Device` box provides a dropdown of POSSIBLE serial cameras on your system. Most will not have a camera attached - so some trial and error is needed to find those that work.  The `Show Camera Preview` checkbox can be helful in this.
 
 <img src="https://github.com/stuartofmt/duetPrintGuard/blob/main/docs/media/images/Setting2.png" style="width:50%; height:auto;">
 
-This image shows the network camera UI/  Both HTTP and RTSP are supported.
+This image shows the network camera UI.  Both HTTP and RTSP are supported.
 
 <img src="https://github.com/stuartofmt/duetPrintGuard/blob/main/docs/media/images/Setting3.png" style="width:50%; height:auto;">
 
 
 ### Countdown Action
 
-The countdown Action allows the selection of one of three actions that will occur when a failure is detected.  These are Dismiss, Pause and Cancel. If here is no manual override within the time set in "Countdown Time" then 
+`Countdown Action` allows the selection of one of three actions that will occur when a failure is detected.  These are Dismiss, Pause and Cancel. If here is no manual override within the time set in `Countdown Time` then the selected action will be requested of the printer.
 
 ### Countdown Time
 
-Specifies the time from the occurrence of a failure (see detection setting below) abefore which the user can override the action using the UI (see Failure section below)
+Specifies the maximum time from the occurrence of a failure (see detection setting below) before which the user can override the `Countdown Action` (using the UI --see Failure section below)
 
 ### Detection Setings
 
-A failure is raised when the camera detects anomolies which satisfy this rule:
+A failure is raised when the camera detects a series of anomolies that satisfy this rule:
 
-More than "n" (Majority Vote Threshhold) anomolies during a window of "y" consecutive frames (Majority Vote Window)
+More than "n" `Majority Vote Threshhold` anomolies during a window of "y" consecutive frames `Majority Vote Window`.
 
 Optimal values for these settings depend on many factors such as the rate at which frames are recieved, the type and position of the camera, lighting conditions etc.
 
@@ -192,17 +192,17 @@ This image shows the main UI of duetPrintGuard on restart of the plugin.  Each c
 
  <img src="https://github.com/stuartofmt/duetPrintGuard/blob/main/docs/media/images/Plugin1.png" style="width:50%; height:auto;">
 
- Once a camera is Detecting the "Last Time Active" field is updated regularly
+ Once a camera is Detecting the `Last Active` field is updated regularly
 
  <img src="https://github.com/stuartofmt/duetPrintGuard/blob/main/docs/media/images/Plugin2.png" style="width:50%; height:auto;">
  
 ### Failure
 
- If a failure occurs - a popup will appear which allows the user to manually override the configured action.  If the user does nothing within the configured countdown time -- the configured action will be taken automatically.
+ If a failure occurs - a popup will appear which allows the user to manually override the configured `Countdown Action`.  If the user does nothing within the configured `Countdown time` -- the `Countdown Action` will be sent to the printer (Dismiss does nothing).
 
 <img src="https://github.com/stuartofmt/duetPrintGuard/blob/main/docs/media/images/Plugin3.png" style="width:50%; height:auto;">
 
-If more then one camera detects a failure them multiple failure popups will eb generated.
+If more then one camera detects a failure them multiple failure popups will be generated.
 
 <img src="https://github.com/stuartofmt/duetPrintGuard/blob/main/docs/media/images/Plugin4.png" style="width:50%; height:auto;">
 

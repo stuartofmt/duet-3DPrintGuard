@@ -92,6 +92,7 @@ export default {
 		
 			try {
 				//var data = fs.readFileSync('C:\\data\\data.dat', 'utf8');
+				const data
 				data = content
 				var javascript_ini = parseINIString(data);
 				console.log(javascript_ini['DUET']);
