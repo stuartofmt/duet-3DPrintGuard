@@ -1,4 +1,8 @@
 
+<img src="https://github.com/stuartofmt/duetPrintGuard/blob/main/docs/media/images/Plugin1.png width="100" height="100">
+
+
+
 ## Table of Contents
 - [Features](#features)
 - [Installation](#installation)
@@ -129,7 +133,7 @@ The camera settings page is accessible via `http://localhost:<PORT>/settings`
   
   It allows you to configure the action to be taken on failure [Dismiss, Pause, Cancel] as well as camera settings, including camera brightness and contrast, detection thresholds, etc |
 
-   | ![Add Serial (USB) Camera](media/images/Setting2.png)
+   | ![Add Serial (USB) Camera](media/images/Setting2.png )
   
   Description|
 
