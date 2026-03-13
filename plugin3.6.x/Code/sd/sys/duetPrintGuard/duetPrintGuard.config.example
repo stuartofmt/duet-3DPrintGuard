@@ -54,8 +54,8 @@ PORT = 8001
 # Optional Macro to be called on failure
 # This is to facilitate a custom macro eg using MQTT
 # tO ACTIVATE 
-# Enter string in M98 P"<string>" - Macro must be located in the sys/Macros folder
-# Mandatory if MACRO to be called e.g. 0:/sys/duetPrintGuard/Notify.g
+# Enter string in M98 P"<string>"
+# Mandatory if MACRO to be called  e.g. 0:/macros/Notify.g
 ;MACRO =
 
 
