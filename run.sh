@@ -1,2 +1,0 @@
-python "/home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/duetPrintGuard.py" "/home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/sd/sys/duetPrintGuard"
-
