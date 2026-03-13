@@ -1,5 +1,5 @@
 
-<img src="https://github.com/stuartofmt/duetPrintGuard/blob/main/docs/media/images/Plugin1.png">
+<img src="https://github.com/stuartofmt/duetPrintGuard/blob/main/docs/media/images/Plugin1.png" style="width:50%; height:auto;">
 
 
 ## Table of Contents
