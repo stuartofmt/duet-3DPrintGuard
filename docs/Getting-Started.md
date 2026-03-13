@@ -1,15 +1,12 @@
-
-<img src="https://github.com/stuartofmt/duetPrintGuard/blob/main/docs/media/images/Plugin1.png" style="width:50%; height:auto;">
+# duetPrintGuard - Getting Started
 
 
 ## Table of Contents
-- [Features](#features)
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Logging](#logging)
 - [Camera Setup](#camera-setup)
 - [Monitoring](#monitoring)
-- [Notifications](#notifications)
 
 
 ## Installation
