@@ -65,7 +65,7 @@ export default {
 				let line = ''
 				for (line of lines) {
 					let key = line.split('=');
-					if (key[0].trim() == 'DUETIP'){
+					if (key[0].trim() == 'IP'){
 						ip = key[1].trim();
 					}
 					if (key[0].trim() == 'PORT'){
