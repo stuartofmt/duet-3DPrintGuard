@@ -51,13 +51,67 @@ export default {
 				const setFileName = Path.combine(this.systemDirectory, configFile);
 				const response = await store.dispatch("machine/download", { filename: setFileName, type: 'text', showSuccess: false, showError: false});
 				content = await response;
-				} catch (e) {
+			} catch (e) {
 					if (!(e instanceof DisconnectedError) && !(e instanceof OperationCancelledError)) {
 						console.warn(e);
 						console.warn("File Does Not Exist or Network error");
 					}
-				}
+			}
+
+			//var fs = require("fs");
+
+			function parseINIString(data){
+				var regex = {
+					section: /^\s*\[\s*([^\]]*)\s*\]\s*$/,
+					param: /^\s*([^=]+?)\s*=\s*(.*?)\s*$/,
+					comment: /^\s*;.*$/
+				};
+				var value = {};
+				var lines = data.split(/[\r\n]+/);
+				var section = null;
+				lines.forEach(function(line){
+					if(regex.comment.test(line)){
+						return;
+					}else if(regex.param.test(line)){
+						var match = line.match(regex.param);
+						if(section){
+							value[section][match[1]] = match[2];
+						}else{
+							value[match[1]] = match[2];
+						}
+					}else if(regex.section.test(line)){
+						var match = line.match(regex.section);
+						value[match[1]] = {};
+						section = match[1];
+					}else if(line.length == 0 && section){
+						section = null;
+					};
+				});
+				return value;
+			}
+		
+			try {
+				//var data = fs.readFileSync('C:\\data\\data.dat', 'utf8');
+				data = content
+				var javascript_ini = parseINIString(data);
+				console.log(javascript_ini['DUET']);
+				console.log(javascript_ini['DUET']['IP']);
+				console.log(javascript_ini['UI']['PORT']);
+				const ip = javascript_ini['DUET']['IP']
+				const port = javascript_ini['UI']['PORT']
+
+				this.myurl = 'http://' + ip + ":" + port + "/duetindex";
+				console.log('duetPrintGuard url is ' + this.myurl);
+
+			} 
+			catch(e) {
+				console.log(e);
+			}
+
 			
+
+			
+			/*
 			try {
 				const lines = content.split(/\r?\n/);
 				let ip = '';
@@ -72,17 +126,18 @@ export default {
 						port = key[1].trim();
 					}
 				}
+				
 				//console.log(ip);
 				//console.log(port);
 
 				this.myurl = 'http://' + ip + ":" + port + "/duetindex";
 				console.log('duetPrintGuard url is ' + this.myurl);
-			
+				
 			} catch (e) {
 				console.warn(e);
 				console.warn("Error parsing config file");				
 			}
-			
+			*/
 		},
 		// Set the screen height - from @MintyTrebor
 		getAvailScreenHeight(){

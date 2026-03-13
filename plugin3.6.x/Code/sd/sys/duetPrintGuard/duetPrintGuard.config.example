@@ -11,7 +11,7 @@
 # Mandatory e.g. DUETIP = 192.168.1.2
 IP =
 
-# DUETPORT address of duet printer
+# PORT address of duet printer
 # Optional - only use port has been changed in /opt/dsf/conf/http.json
 # Default is 80
 ;PORT =

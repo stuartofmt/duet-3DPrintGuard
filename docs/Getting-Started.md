@@ -17,6 +17,14 @@ duetPrintGuard is packaged as a DWC plugin and installed in the normal manner fr
 
 ## Configuration
 
+During installation of the plugin, a template configuration file (duetPrintGuard.config.example) is placed in the system/duetPrintGuard directory.  The two key settings are:
+
+In the [DUET] section:
+-- IP ==> the IP address of the printer
+
+In the [UI] section:
+-- PORT ==> the port number for UI elements to access the settings and monitoring pages
+
 ```
 # Configuration parameters for duetPrintGuard
 # Optional parameters can be commented out with ;
@@ -28,13 +36,13 @@ duetPrintGuard is packaged as a DWC plugin and installed in the normal manner fr
 # They are the same as would be used for DWC
 
 # IP address of duet printer
-# Mandatory e.g. DUETIP = 192.168.1.2
+# Mandatory e.g. IP = 192.168.1.2
 IP =
 
 # DUETPORT address of duet printer
 # Optional - only use port has been changed in /opt/dsf/conf/http.json
 # Default is 80
-;PORT =
+;DUETPORT =
 
 # Password for duet
 # Optional - only use if password has been set in DWC configuration
@@ -126,50 +134,76 @@ PORT = 8001
 
 ## Camera Setup
 
-The camera settings page is accessible via `http://localhost:<PORT>/settings`
+The camera settings page is accessible via `http://localhost:<PORT>/settings` or `http://<IP>:<PORT>/settings`
 
- | ![Camera Settings](media/images/Setting1.png) | 
+Where IP and PORT are set in the [DUET] section of the configuration file.
+
+This page allows you to configure the action to be taken on failure, camera settings, and detection settings.
+
+<img src="https://github.com/stuartofmt/duetPrintGuard/blob/main/docs/media/images/Setting1.png" style="width:50%; height:auto;">
   
-  It allows you to configure the action to be taken on failure [Dismiss, Pause, Cancel] as well as camera settings, including camera brightness and contrast, detection thresholds, etc |
+### Adding Cameras
 
-   | ![Add Serial (USB) Camera](media/images/Setting2.png )
-  
-  Description|
+Multiple cameras can be configure, either serial (USB) or newtwork based.
 
-   | ![Add Network Camera ](media/images/Setting3.png) | HTTP or RTS|
+This image shows the serial configuration UI.  The Serial Device box provides a dropdown of POSSIBLE serial cameras on your system. Most will not have a camera attached - so some trial and error is needed to find those that work.  The "show camera preview" checkbox can be helful in this.
 
-   | ![Countdown Action](media/images/Setting4.png) | 
-  
-  bla bla |
+<img src="https://github.com/stuartofmt/duetPrintGuard/blob/main/docs/media/images/Setting2.png" style="width:50%; height:auto;">
 
-   | ![PrintGuard Camera Settings](media/images/Setting5.png) | 
-  
-Change camera parameters |
+This image shows the network camera UI/  Both HTTP and RTSP are supported.
+
+<img src="https://github.com/stuartofmt/duetPrintGuard/blob/main/docs/media/images/Setting3.png" style="width:50%; height:auto;">
+
+
+### Countdown Action
+
+The countdown Action allows the selection of one of three actions that will occur when a failure is detected.  These are Dismiss, Pause and Cancel. If here is no manual override within the time set in "Countdown Time" then 
+
+### Countdown Time
+
+Specifies the time from the occurrence of a failure (see detection setting below) abefore which the user can override the action using the UI (see Failure section below)
+
+### Detection Setings
+
+A failure is raised when the camera detects anomolies which satisfy this rule:
+
+More than "n" (Majority Vote Threshhold) anomolies during a window of "y" consecutive frames (Majority Vote Window)
+
+Optimal values for these settings depend on many factors such as the rate at which frames are recieved, the type and position of the camera, lighting conditions etc.
+
+<img src="https://github.com/stuartofmt/duetPrintGuard/blob/main/docs/media/images/Setting4.png" style="width:50%; height:auto;">
 
 ## Monitoring
 
+The monitoring page is accessible via `http://localhost:<PORT>/duetindex` or `http://<IP>:<PORT>/duetindex`  This is the page displayed in DWC
 
+Where IP and PORT are set in the [DUET] section of the configuration file.
 
- | ![Status Page](media/images/Plugin1.png) | The main interface of PrintGuard. All cameras are shown as a list. Details for each camera are:
+### No Failure
+
+This image shows the main UI of duetPrintGuard on restart of the plugin.  Each configured camera is shown separately. Details for each camera are:
  -- The Camera nickname
  -- Current detection status [Detecting, Inactive]
  -- Current print state [Success, Failure] (If Detecting)
  -- The time detection was last Active
  -- The action associated with the camera if a failure exceeds the failure threshold
  -- A thumbnail image of the cameras view
- -- A button to toggle between Detecting and Inactive
+ -- A button to toggle Detecting on and off
+
+ <img src="https://github.com/stuartofmt/duetPrintGuard/blob/main/docs/media/images/Plugin1.png" style="width:50%; height:auto;">
+
+ Once a camera is Detecting the "Last Time Active" field is updated regularly
+
+ <img src="https://github.com/stuartofmt/duetPrintGuard/blob/main/docs/media/images/Plugin2.png" style="width:50%; height:auto;">
  
- If a failure exceeds the threshold - a popup will appear which allows the user to manually override the specified action.  If there is no manual override within the configured countdown time -- the specified action will be taken automatically. |
- 
+### Failure
 
-  | ![Multiple Cameras](media/images/Plugin2.png)| 
+ If a failure occurs - a popup will appear which allows the user to manually override the configured action.  If the user does nothing within the configured countdown time -- the configured action will be taken automatically.
 
+<img src="https://github.com/stuartofmt/duetPrintGuard/blob/main/docs/media/images/Plugin3.png" style="width:50%; height:auto;">
 
+If more then one camera detects a failure them multiple failure popups will eb generated.
 
-  Displays in DWC or separately in a browser http://localhost:<PORT>/duetindex
-  
-| ![Print Failures](media/images/Plugin4.png)
-  When a failure is detected an alert modal appears showing a snapshot of the failure and buttons to dismiss the alert or pause or cancel the print job. If the alert is not addressed within the customisable countdown time, the printer will automatically be dismissed, paused or cancelled based on user settings. |
+<img src="https://github.com/stuartofmt/duetPrintGuard/blob/main/docs/media/images/Plugin4.png" style="width:50%; height:auto;">
 
-  ## Notifications
   
