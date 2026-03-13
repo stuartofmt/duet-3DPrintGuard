@@ -57,9 +57,7 @@ export default {
 						console.warn("File Does Not Exist or Network error");
 					}
 			}
-
-			//var fs = require("fs");
-
+			// Ini parser from https://gist.github.com/anonymous/dad852cde5df545ed81f1bc334ea6f72
 			function parseINIString(data){
 				var regex = {
 					section: /^\s*\[\s*([^\]]*)\s*\]\s*$/,
@@ -91,9 +89,7 @@ export default {
 			}
 		
 			try {
-				//var data = fs.readFileSync('C:\\data\\data.dat', 'utf8');
-				const data
-				data = content
+				var data = content
 				var javascript_ini = parseINIString(data);
 				console.log(javascript_ini['DUET']);
 				console.log(javascript_ini['DUET']['IP']);
@@ -108,37 +104,6 @@ export default {
 			catch(e) {
 				console.log(e);
 			}
-
-			
-
-			
-			/*
-			try {
-				const lines = content.split(/\r?\n/);
-				let ip = '';
-				let port = ''
-				let line = ''
-				for (line of lines) {
-					let key = line.split('=');
-					if (key[0].trim() == 'IP'){
-						ip = key[1].trim();
-					}
-					if (key[0].trim() == 'PORT'){
-						port = key[1].trim();
-					}
-				}
-				
-				//console.log(ip);
-				//console.log(port);
-
-				this.myurl = 'http://' + ip + ":" + port + "/duetindex";
-				console.log('duetPrintGuard url is ' + this.myurl);
-				
-			} catch (e) {
-				console.warn(e);
-				console.warn("Error parsing config file");				
-			}
-			*/
 		},
 		// Set the screen height - from @MintyTrebor
 		getAvailScreenHeight(){

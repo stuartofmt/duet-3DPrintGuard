@@ -12,7 +12,8 @@
 IP =
 
 # PORT address of duet printer
-# Optional - only use port has been changed in /opt/dsf/conf/http.json
+# Optional - only use if the DWC port has been changed in /opt/dsf/conf/http.json
+# Note this is NOT the UI port of the settings or monitoring pages (See [UI] section)
 # Default is 80
 ;PORT =
 
@@ -22,10 +23,9 @@ IP =
 
 [UI]
 # Settings for UI components
-# Accessed at either http://localhost or http://<DUETIP>
-# PORT cannot conflict with other apps / plugins / or DWC
+# PORT cannot conflict with other DWC or other apps / plugins
 # Mandatory e.g. PORT = 8001
-PORT = 8001
+PORT =
 
 [LOGGING]
 # Sets the logging detail
