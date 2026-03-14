@@ -1,5 +1,6 @@
 # Release notes
 
+
 ## 0.0.3 (planned)
 - There appears to be little benefit from checking too often
 since printer activity does not hapen that quickly
