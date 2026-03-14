@@ -213,6 +213,10 @@ def init_config():
 			startup_config['camera_states'][k]['live_detection_running'] = False
 			startup_config['camera_states'][k]['last_result'] = ''
 			startup_config['camera_states'][k]['last_time'] = None
+			startup_config['camera_states'][k]['start_time'] = None
+			startup_config['camera_states'][k]['error'] = None
+
+		print(startup_config)	
 
 		with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
 			json.dump(startup_config, f, indent=2)
@@ -437,9 +441,9 @@ FOCUS = 1.0
 COUNTDOWN_TIME = 60
 COUNTDOWN_ACTION = AlertAction.DISMISS
 
-DETECTIONS_PER_SECOND = 15
-
-STREAM_MAX_FPS = 30
+#SRS DEFULTS - NO LONGER IN HTML
+DETECTIONS_PER_SECOND = 3 #15
+STREAM_MAX_FPS = 3 #30
 STREAM_TUNNEL_FPS = 10
 STREAM_JPEG_QUALITY = 85
 STREAM_TUNNEL_JPEG_QUALITY = 60

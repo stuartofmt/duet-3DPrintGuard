@@ -108,7 +108,9 @@
                         <div class="feed-settings-grid">
                             <div class="feed-setting-item">
                                 <label for="streamMaxFps">Max FPS: <span id="streamMaxFps_val">30</span></label>
-                                <input type="range" id="streamMaxFps" name="streamMaxFps" min="1" max="60" step="1" value="30" />
+                                <!--SRS Experimental settings for now ... -->
+                                <!--FPS 30 ==> 5 -->
+                                <input type="range" id="streamMaxFps" name="streamMaxFps" min="1" max="60" step="1" value="5" />
                             </div>
                             <div class="feed-setting-item">
                                 <label for="streamTunnelFps">Tunnel FPS: <span id="streamTunnelFps_val">10</span></label>
@@ -139,6 +141,7 @@
                                 <input type="range" id="minSseDispatchDelay" name="minSseDispatchDelay" min="0" max="10000" step="20" value="100" />
                             </div>
                         </div>
+                        <!--Submit form automagically ?-->
                     </form>
                 </div>
             </div>

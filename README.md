@@ -1,10 +1,8 @@
-I'm please to release the beta version of a new plugin ...
-
 # duetPrintGuard DWC Plugin
 
 **This is a reconstructed version of the original authored by @oliverbravery**
 
-duetPrintGuard offers local, **real-time print failure detection** for 3D printing on edge devices **(e.g. Rapberry Pi)** .   It is self contained and does not require external connections or subscritions.
+duetPrintGuard offers local, **real-time print failure detection** for 3D printing on edge devices **(e.g. Rapberry Pi)** .   It is self contained and does not require external connections or subscriptions.
 
  When the **computer vision** fault detection model detects an issue it will  **automatically pause or cancel the print job**.
 
