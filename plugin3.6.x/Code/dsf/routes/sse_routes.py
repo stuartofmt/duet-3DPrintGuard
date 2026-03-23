@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Request, Body
 from sse_starlette.sse import EventSourceResponse
 from utils.sse_utils import outbound_packet_fetch, stop_and_remove_polling_task
+from logger_module import logger
 
 #SRS
 # #from utils.printer_utils import start_printer_state_polling
@@ -20,6 +21,8 @@ async def sse_connect(request: Request):
     async def send_packet():
         async for packet in outbound_packet_fetch():
             if await request.is_disconnected():
+                logger.warning('sse request disconnected')
+                logger.warning(f'{request}')
                 break
             yield packet
     return EventSourceResponse(send_packet())

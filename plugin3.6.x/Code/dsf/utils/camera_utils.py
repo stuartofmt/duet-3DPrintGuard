@@ -23,7 +23,8 @@ async def add_camera(source, nickname):
         dict: A dictionary containing the new camera's UUID, nickname, and source.
     """
     manager = get_camera_state_manager()
-    camera_uuid = str(uuid.uuid4())
+    #camera_uuid = str(uuid.uuid4()) # SRS REMOVED Camera Id's are now counted
+    camera_uuid = '' # SRS update_camera_state assigns id 
     new_camera_state = CameraState(
         nickname=nickname,
         source=source,

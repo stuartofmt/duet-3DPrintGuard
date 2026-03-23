@@ -4,7 +4,7 @@ import uuid
 
 import cv2  # pylint: disable=E0401
 from fastapi import APIRouter, Body, HTTPException, Request
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, Response
 
 from utils.camera_utils import (add_camera, find_available_serial_cameras,
                                   get_camera_state)
@@ -16,15 +16,8 @@ router = APIRouter()
 
 @router.post("/camera/state", include_in_schema=False)
 async def get_camera_state_ep(request: Request, camera_uuid: str = Body(..., embed=True)):
+    #raise Exception('raised exception in camera state')
     """Get the current state of a specific camera.
-
-    Args:
-        request (Request): The FastAPI request object.
-        camera_uuid (str): UUID of the camera to retrieve state for.
-
-    Returns:
-        dict: Dictionary containing comprehensive camera state information including
-              detection history, settings, error status, and printer configuration.
     """
     logger.warning('entered get_camera_state_ep with camera_uuid: %s', camera_uuid)
     camera_state = await get_camera_state(camera_uuid)
@@ -53,18 +46,48 @@ async def get_camera_state_ep(request: Request, camera_uuid: str = Body(..., emb
     }
     return response
 
+
 @router.get('/camera/feed/{camera_uuid}', include_in_schema=False)
 async def camera_feed(camera_uuid: str):
     """Stream live camera feed for a specific camera.
-
-    Args:
-        camera_uuid (str): UUID of the camera to stream from.
-
-    Returns:
-        StreamingResponse: MJPEG streaming response with camera frames.
     """
     return StreamingResponse(generate_frames(camera_uuid),
                              media_type='multipart/x-mixed-replace; boundary=frame')
+
+
+@router.get('/camera/snapshot/{camera_uuid}', include_in_schema=False)
+async def camera_snapshot(camera_uuid: str):
+    manager = get_shared_stream_manager()
+
+    try:
+        # 🔥 YOU MUST GET SOURCE HERE
+        camera_state = await get_camera_state(camera_uuid)
+        print(f'Camera source  {camera_state}')
+        source = camera_state.source   # ← adjust if different field name
+
+        # ✅ NOW create stream correctly
+        stream = manager.get_stream(camera_uuid, source)
+
+        # Wait for frame
+        max_wait = 20
+        wait_count = 0
+        while not stream.is_frame_available() and wait_count < max_wait:
+            time.sleep(0.05)
+            wait_count += 1
+
+        if not stream.is_frame_available():
+            raise HTTPException(status_code=404, detail="No frame available")
+
+        frame = stream.get_frame()
+        if frame is None:
+            raise HTTPException(status_code=500, detail="Failed to read frame")
+
+        _, buffer = cv2.imencode('.jpg', frame)
+        return Response(content=buffer.tobytes(), media_type="image/jpeg")
+
+    except Exception as e:
+        logger.error("Snapshot error for %s: %s", camera_uuid, e)
+        raise
 
 @router.post("/camera/add")
 async def add_camera_ep(request: Request):
@@ -76,6 +99,7 @@ async def add_camera_ep(request: Request):
         raise HTTPException(status_code=400, detail="Missing camera nickname or source.")
     camera = await add_camera(source=source, nickname=nickname)
     return {"camera_uuid": camera['camera_uuid'], "nickname": camera['nickname'], "source": camera['source']}
+
 
 @router.post("/camera/remove")
 async def remove_camera_ep(request: Request):
@@ -89,20 +113,16 @@ async def remove_camera_ep(request: Request):
         raise HTTPException(status_code=404, detail="Camera not found.")
     return {"message": "Camera removed successfully."}
 
+
 @router.get("/camera/serial_devices")
 async def get_serial_devices_ep():
     """Get a list of available serial devices."""
     devices = find_available_serial_cameras()
     return devices
 
+
 def generate_preview_frames(source: str):
     """Generate frames for camera preview using shared video stream.
-    
-    Args:
-        source (str): The camera source (device path or RTSP URL).
-        
-    Yields:
-        bytes: Multipart JPEG frame data.
     """
     preview_uuid = f"preview_{uuid.uuid4()}"
     manager = get_shared_stream_manager()
@@ -125,7 +145,7 @@ def generate_preview_frames(source: str):
             _, buffer = cv2.imencode('.jpg', frame)
             frame_bytes = buffer.tobytes()
             yield (b'--frame\r\nContent-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
-            time.sleep(0.2) 
+            time.sleep(0.2)
     except (cv2.error, OSError, RuntimeError) as e:
         logger.error("Error in preview frame generation for source %s: %s", source, e)
     finally:
@@ -134,15 +154,10 @@ def generate_preview_frames(source: str):
         except (AttributeError, RuntimeError) as cleanup_error:
             logger.error("Error cleaning up preview stream %s: %s", preview_uuid, cleanup_error)
 
+
 @router.get('/camera/preview', include_in_schema=False)
 async def camera_preview(source: str):
     """Stream live camera preview for a specific source without registration.
-
-    Args:
-        source (str): Camera source (device path or RTSP URL).
-
-    Returns:
-        StreamingResponse: MJPEG streaming response with camera frames.
     """
     return StreamingResponse(generate_preview_frames(source),
                              media_type='multipart/x-mixed-replace; boundary=frame')

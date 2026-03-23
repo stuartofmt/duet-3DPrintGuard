@@ -33,7 +33,8 @@ from models import AlertAction, SavedKey, SavedConfig
 from duet_config import DUET
 
 # Config version - increment this when the config structure changes
-CONFIG_VERSION = "1.0.0"
+# SRS reduced config to just camera states
+CONFIG_VERSION = "2.0.0"
 
 _config_lock = threading.RLock()
 _file_lock = None
@@ -188,6 +189,7 @@ def init_config():
 			if os.path.exists(CONFIG_FILE):
 				os.remove(CONFIG_FILE)
 				logger.info("Deleted old config file")
+			''' SRS Old V1.0.0
 			default_config = {
 				SavedConfig.VERSION: CONFIG_VERSION,
 				SavedConfig.VAPID_PUBLIC_KEY: None,
@@ -196,6 +198,11 @@ def init_config():
 				SavedConfig.SITE_DOMAIN: None,
 				SavedConfig.TUNNEL_PROVIDER: None,
 				SavedConfig.PUSH_SUBSCRIPTIONS: [],
+				SavedConfig.CAMERA_STATES: {}
+			}
+			'''
+			default_config = {
+				SavedConfig.VERSION: CONFIG_VERSION,
 				SavedConfig.CAMERA_STATES: {}
 			}
 			with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
@@ -369,6 +376,7 @@ def reset_config():
 	"""
 	acquire_lock()
 	try:
+		''' SRS Don't need all this
 		default_config = {
 			SavedConfig.VERSION: CONFIG_VERSION,
 			SavedConfig.VAPID_PUBLIC_KEY: None,
@@ -379,6 +387,12 @@ def reset_config():
 			SavedConfig.PUSH_SUBSCRIPTIONS: [],
 			SavedConfig.CAMERA_STATES: {}
 		}
+		'''
+		default_config = {
+			SavedConfig.VERSION: CONFIG_VERSION,
+			SavedConfig.CAMERA_STATES: {}
+		}
+
 		with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
 			json.dump(default_config, f, indent=2)
 	except Exception as e:
@@ -442,8 +456,8 @@ COUNTDOWN_TIME = 60
 COUNTDOWN_ACTION = AlertAction.DISMISS
 
 #SRS DEFULTS - NO LONGER IN HTML
-DETECTIONS_PER_SECOND = 3 #15
-STREAM_MAX_FPS = 3 #30
+DETECTIONS_PER_SECOND = 1 #15
+STREAM_MAX_FPS = 2 #30
 STREAM_TUNNEL_FPS = 10
 STREAM_JPEG_QUALITY = 85
 STREAM_TUNNEL_JPEG_QUALITY = 60
@@ -453,5 +467,5 @@ DETECTION_INTERVAL_MS = 1000 / DETECTIONS_PER_SECOND
 DETECTION_TUNNEL_INTERVAL_MS = 1000 / DETECTIONS_PER_SECOND
 
 PRINTER_STAT_POLLING_RATE_MS = 2000
-MIN_SSE_DISPATCH_DELAY_MS = 100
-STANDARD_STAT_POLLING_RATE_MS = 250
+MIN_SSE_DISPATCH_DELAY_MS = 50 #100
+STANDARD_STAT_POLLING_RATE_MS = 250 #250

@@ -49,7 +49,7 @@ def init_routes_and_modules():
 	#from routes.notification_routes import router as notification_router
 	from routes.sse_routes import router as sse_router
 	#from routes.setup_routes import router as setup_router
-	#from routes.index_routes import router as index_router
+	from routes.index_routes import router as index_router
 	"""SRS"""
 	from routes.duetindex_routes import router as duetindex_router
 	from routes.settings_routes import router as settings_router
@@ -152,7 +152,7 @@ def init_routes_and_modules():
 	#app.include_router(notification_router, tags=["notifications"])
 	app.include_router(sse_router, tags=["sse"])
 	#app.include_router(setup_router, tags=["setup"])
-	#app.include_router(index_router, tags=["index"])
+	app.include_router(index_router, tags=["index"])
 	"""SRS"""
 	app.include_router(duetindex_router, tags=["duetindex"])
 	app.include_router(settings_router, tags=["settings"])
@@ -175,6 +175,9 @@ def init_routes_and_modules():
 				response = await call_next(request)
 				return response
 				"""SRS"""
+			elif request.url.path.startswith("/index"):
+				logger.warning(f'Redirecting to index')
+				return RedirectResponse(url="/index", status_code=307)
 			elif request.url.path.startswith("/duetindex"):
 				logger.warning(f'Redirecting to duetindex')
 				return RedirectResponse(url="/duetindex", status_code=307)

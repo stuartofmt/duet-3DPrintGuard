@@ -222,6 +222,10 @@ evtSource.onmessage = (e) => {
                 document.dispatchEvent(new CustomEvent('printerStateUpdated', {
                     detail: printerData
                 }));
+        } else {
+                document.dispatchEvent(new CustomEvent('cameraStateUpdated', {
+                    detail: 'No Packet Data'
+                }));
             }
         }
     } catch (error) {

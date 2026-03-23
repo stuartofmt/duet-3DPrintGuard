@@ -8,6 +8,7 @@ const startDetectionBtnLabel = 'Start Detection';
 
 //Effectively a global - let scope
 let cameraUUID = 0;
+let startstopcameraButton 
 
 function changeLiveCameraFeed(cameraUUID) {
     camVideoPreview.src = `/camera/feed/${cameraUUID}`;
@@ -88,12 +89,17 @@ function updateCameraSelectionListData(d) {
 }
 
 function updatePolledDetectionData(d) {
+    console.warn('Polled Detection Data');
+    if (!d || typeof d === 'undefined'){
+        console.warn('no data');
+    }
+    console.warn(d);
     updateCameraSelectionListData(d);
 }
 
 
 function fetchAndUpdateMetricsForCamera(cameraUUID) {
-    console.warn('Fetching metrics for camera:', cameraUUID);
+    console.warn('Fetching and update metrics for camera:', cameraUUID);
     if (!cameraUUID) {
         console.warn('Cannot fetch metrics: invalid camera UUID provided:', cameraUUID);
         return;
@@ -182,16 +188,22 @@ function sendDetectionRequest(isStart) {
 }
 
 cameraItems.forEach(item => {
+    console.warn('Camera Item ' + item);
     item.addEventListener('click', function() {
         console.warn('Camera item clicked:', this.dataset.cameraId);
         cameraItems.forEach(i => i.classList.remove('selected'));
         this.classList.add('selected');
+        console.warn('Camera data ' + this.dataset);
         const cameraId = this.dataset.cameraId;
+        console.warn('Camera Id ' + cameraId);
         if (cameraId) {
+            console.warn('Adding EL for Camera Id ' + cameraId);
             const nickname = this.querySelector('.camera-header span:first-child').textContent;         
             changeLiveCameraFeed(cameraId);
             cameraUUID = cameraId;
             updateCameraTitle(nickname);
+            console.warn(nickname)
+            startstopcameraButton = item.querySelector('.start-stop-camera-btn');
             fetchAndUpdateMetricsForCamera(cameraId);
         } else {
             console.warn('No camera ID found for selected item');
@@ -201,8 +213,8 @@ cameraItems.forEach(item => {
     });
 
 
-    const startstopcameraButton = item.querySelector('.start-stop-camera-btn');
-    update_start_stop_button_UI(startstopcameraButton, !(item.dataset.isLive.toLowerCase() === 'true'));
+    startstopcameraButton = item.querySelector('.start-stop-camera-btn');
+    //update_start_stop_button_UI(startstopcameraButton, !(item.dataset.isLive.toLowerCase() === 'true'));
 
     startstopcameraButton.addEventListener('click', function(event) {
         event.stopPropagation();
@@ -223,7 +235,7 @@ cameraItems.forEach(item => {
         /*SRS
         Added toggle here to support individual control in UI
         */
-        update_start_stop_button_UI(startstopcameraButton,isLive);
+        //update_start_stop_button_UI(startstopcameraButton,isLive);
         if (isLive) {
             sendDetectionRequest(false);
             toggleIsDetectingStatus(false);
@@ -248,8 +260,20 @@ function update_start_stop_button_UI(startstopcameraButton, isLive) {
     }
 }
 
+let previous_time = null;
 //SRS If active - this is where its tracked
 document.addEventListener('cameraStateUpdated', evt => {
+    console.warn('camera state updated');
+    console.log(previous_time);
+    console.log(evt.detail.last_time);
+    if (evt.detail.last_time == previous_time){
+        console.log('Not running');
+        update_start_stop_button_UI(startstopcameraButton, true)
+    } else{
+        console.log('Running');
+        update_start_stop_button_UI(startstopcameraButton, false)
+    }
+    previous_time = evt.detail.last_time;
     if (evt.detail) {
         updatePolledDetectionData(evt.detail);
     }
@@ -267,6 +291,7 @@ document.addEventListener('DOMContentLoaded', function() {
         counter ++;
     }
     // Go back to the first camera
+
     const firstCameraItem = cameraItems[0];
     if (firstCameraItem) {
         const cameraId = firstCameraItem.dataset.cameraId;
@@ -274,4 +299,5 @@ document.addEventListener('DOMContentLoaded', function() {
             firstCameraItem.click();
         }
     }
+    
 });
