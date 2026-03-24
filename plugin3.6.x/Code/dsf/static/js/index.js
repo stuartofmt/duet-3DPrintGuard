@@ -1,173 +1,140 @@
-console.warn('Started JS');
-
-//templates
-const camtemplate = document.getElementById("camera-template");
-const vidtemplate = document.getElementById("video-template");
+console.warn("NEW GRID LAYOUT ACTIVE");
 
 // =========================
-// ✅ SNAPSHOT SCHEDULER (NEW)
+// Templates
+// =========================
+const camTemplate = document.getElementById("camera-template");
+const vidTemplate = document.getElementById("video-template");
+const btnTemplate = document.getElementById("button-template");
+const grid = document.getElementById("grid");
+
+// =========================
+// Globals
+// =========================
+ let cameraItems
+
+// =========================
+// Snapshot Queue
 // =========================
 const MAX_CONCURRENT_SNAPSHOTS = 2;
-let activeRequests = 0;
-const snapshotQueue = [];
 
-function enqueueSnapshot(task) {
-    snapshotQueue.push(task);
-    processQueue();
+let activeRequests = 0;
+const queue = [];
+
+function enqueue(task) {
+  queue.push(task);
+  processQueue();
 }
 
 function processQueue() {
-    if (activeRequests >= MAX_CONCURRENT_SNAPSHOTS) return;
-    if (snapshotQueue.length === 0) return;
+  if (activeRequests >= MAX_CONCURRENT_SNAPSHOTS || queue.length === 0) return;
 
-    const task = snapshotQueue.shift();
-    activeRequests++;
+  const task = queue.shift();
+  activeRequests++;
 
-    task().finally(() => {
-        activeRequests--;
-        processQueue();
-    });
+  task().finally(() => {
+    activeRequests--;
+    processQueue();
+  });
 }
 
 // =========================
-// ✅ SNAPSHOT CONTROLLER (NEW)
+// Snapshot Loop
 // =========================
 function startSnapshots(img, camId) {
-    let stopped = false;
-    let timer = null;
+  function loop() {
+    if (document.hidden) return;
 
-    function schedule() {
-        if (stopped || document.hidden) return;
-
-        enqueueSnapshot(async () => {
-            img.src = `/camera/snapshot/${camId}?t=${Date.now()}`;
-        });
-
-        timer = setTimeout(schedule, 2000 + Math.random() * 500);
-    }
-
-    function start() {
-        if (!timer && !stopped) {
-            schedule();
-        }
-    }
-
-    function stop() {
-        if (timer) {
-            clearTimeout(timer);
-            timer = null;
-        }
-    }
-
-    document.addEventListener("visibilitychange", () => {
-        if (document.hidden) {
-            console.warn(`Tab hidden → stopping snapshots for ${camId}`);
-            stop();
-        } else {
-            console.warn(`Tab visible → restarting snapshots for ${camId}`);
-            start();
-        }
+    enqueue(async () => {
+      img.src = `/camera/snapshot/${camId}?t=${Date.now()}`;
     });
 
-    start();
+    setTimeout(loop, 2000 + Math.random() * 500);
+  }
 
-    return { stop };
+  loop();
 }
 
 // =========================
-// ORIGINAL CODE
+// Create UI (FIXED)
 // =========================
+function createTopRowButtons(){
+  const row = document.createElement("div");
+  row.className = "button-row";
+  const btnFrag = btnTemplate.content.cloneNode(true);
+  const btn = btnFrag.firstElementChild;
 
-let camera_list = [];
+  const ignoreBtn = btn.querySelector(".btn-ignore");
+  const pauseBtn = btn.querySelector(".btn-pause");
+  const cancelBtn = btn.querySelector(".btn-cancel");
 
-// which cameras are defined
-camera_list = await getCameraList();
+  // Event for Ignore button
+  ignoreBtn.addEventListener("click", () => {
+    alert("Ignore button clicked");
+    // Add your Ignore logic here
+  });
 
-// Create a row for each
-camera_list.forEach(cameraId => {
-    createDisplayItem(cameraId);
-});
+  // Event for Pause button
+  pauseBtn.addEventListener("click", () => {
+    alert("Pause button clicked");
+    // Add your Pause logic here
+  });
 
-//Get a list of all camera elements
-let cameraItems = document.querySelectorAll('.camera-container');
+  // Event for Cancel button
+  cancelBtn.addEventListener("click", () => {
+    alert("Cancel button clicked");
+    // Add your Cancel logic here
+  });
 
-// Update each camera item with the latest data
-function update_cameras () {
-    cameraItems.forEach(item => {
-        const camId = item.dataset.cameraId;
-        console.warn('camid to update' + camId)
-        updateDisplayItem(item,camId);
-    });
-    //setTimeout(update_cameras, 5000);
+  row.appendChild(btn);
+  grid.appendChild(row);
+
 }
-
-//update_cameras();
 
 function createDisplayItem(camId) {
-    // First Column
-    const camfrag = camtemplate.content.cloneNode(true);
-    const cam = camfrag.firstElementChild;
-    cam.setAttribute("data-camera-id", camId);
+  // Wrapper (CRITICAL)
+  const row = document.createElement("div");
+  row.className = "camera-row";
 
-    const button = cam.querySelector("button");
-    button.addEventListener("click", () => {
-        alert("Button clicked!");
-    });
+  // Card
+  const camFrag = camTemplate.content.cloneNode(true);
+  const card = camFrag.firstElementChild;
+  card.dataset.cameraId = camId;
 
-    grid.appendChild(cam);
+  // Button
+  const button = card.querySelector("button");
+  button.addEventListener("click", () => {
+    alert(`Camera ${camId} button clicked`);
+  });
 
-    // Second Column
-    const vidfrag = vidtemplate.content.cloneNode(true);
-    const vid = vidfrag.firstElementChild;
-    const img = vid.querySelector("img");
+  // Video
+  const vidFrag = vidTemplate.content.cloneNode(true);
+  const video = vidFrag.firstElementChild;
+  const img = video.querySelector("img");
 
-    vid.setAttribute("data-camera-id", camId);
+  video.dataset.cameraId = camId;
 
-    // ✅ NEW SNAPSHOT SYSTEM
-    startSnapshots(img, camId);
+  startSnapshots(img, camId);
 
-    grid.appendChild(vid);
+  // Assemble
+  row.appendChild(card);
+  row.appendChild(video);
+
+  grid.appendChild(row);
 }
 
-// No Camera Modal
-const modal = document.getElementById("noCamera");
-const closeBtn = document.getElementById("closeModal");
-
-if ( camera_list.length == 0 ){
-    console.warn('Empty camera_list');
-    modal.style.display = "block";
-}
-
-closeBtn.onclick = () => {
-  modal.style.display = "none";
-};
-
-window.onclick = (e) => {
-  if (e.target === modal) {
-    modal.style.display = "none";
+// =========================
+// API
+// =========================
+async function getCameraList() {
+  try {
+    const res = await fetch("/index/cameralist");
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.camera_list || [];
+  } catch {
+    return [];
   }
-};
-
-
-// Functions
-
-function getCameraList() {
-    return fetch('/index/cameralist', {
-        method: 'GET',
-    })
-    .then(response => {
-        if (!response.ok) {
-            console.warn(`Failed to fetch camera list`);
-        }
-        return response.json();
-    })
-    .then(data => {
-      return data.camera_list;
-    })
-    .catch(error => {
-        console.error("Error fetching camera list:", error);
-        return [];
-    });
 }
 
 
@@ -225,36 +192,39 @@ function updateCameraDisplay(item, d) {
     const camNick = item.querySelector('.nickname');
     camNick.textContent = d.nickname;
 
-    const camPred = item.querySelector('.camera-prediction');
-
+    //const camPred = item.querySelector('.camera-prediction');
+    const camPred = item.querySelector(".camera-prediction .prediction-value");
+    
     camPred.textContent = d.last_result;
     camPred.style.color = d.last_result === 'success' ? 'green' : 'red';
 
-    const camAction = item.querySelector('.countdown-action');
+    const camAction = item.querySelector('.countdown-action .action-value');
+    //const camAction = item.querySelector('.countdown-action');
+    /*
     let lastAction = camAction.textContent;
     let action = 'Unknown';
-
-    if (typeof  d.countdown_action === 'undefined'){
-        action = lastAction;
-    } else {
-        console.warn(d.countdown_action);
-    }
-
-    if (d.countdown_action === 'dismiss'){
+    */
+  console.warn('checkpoint');
+   let action = d.countdown_action;
+     console.warn('checkpoint ' + action);
+    if (action === 'dismiss') {
         action = 'DISMISS';
         camAction.style.color = 'green';
-    }
-    if (d.countdown_action === 'cancel_print'){
+    } else if (action === 'cancel_print'){
         action = 'CANCEL';
         camAction.style.color = 'red';
-    }
-    if (d.countdown_action === 'pause_print'){
+    } else if (action === 'pause_print'){
         action = 'PAUSE';
         camAction.style.color = 'orange';
+    } else {
+        action = 'UNKNOWN';
+        camAction.style.color = 'green';
     }
+
     camAction.textContent = action;
 
-    item.querySelector('.lastTimeValue').textContent = d.last_time ? new Date(d.last_time * 1000).toLocaleTimeString() : '-';
+    //item.querySelector('.lastTimeValue').textContent = d.last_time ? new Date(d.last_time * 1000).toLocaleTimeString() : '-';
+    item.querySelector(".last-update .update-value").textContent = d.last_time ? new Date(d.last_time * 1000).toLocaleTimeString() : '-';
 
     let statusIndicator = item.querySelector('.camera-status');
     if (d.live_detection_running) {
@@ -284,8 +254,38 @@ document.addEventListener('cameraStateUpdated', evt => {
 });
 
 
-// Check
-window.onload = function() {
-    console.warn('on load triggered');
 
-};
+// =========================
+// Init
+// =========================
+(async function init() {
+  console.warn('Initializing');
+
+  const cameras = await getCameraList();
+
+  if (cameras.length === 0) {
+    document.getElementById("noCamera").style.display = "block";
+  }
+
+  //create top row of buttons
+  createTopRowButtons();
+  //crerate a row for each camera
+  cameras.forEach(createDisplayItem);
+
+
+
+//Get a list of all camera rows
+  cameraItems = document.querySelectorAll('.camera-card');
+  console.warn(cameraItems);
+
+  cameraItems.forEach(item => {
+      const camId = item.dataset.cameraId;
+      console.warn('camid to update ' + camId)
+      updateDisplayItem(item,camId);
+  });
+})();
+
+// Wait until the DOM is fully loaded
+document.addEventListener("DOMContentLoaded", () => {
+  console.warn('DOM loaded');
+});
