@@ -12,6 +12,7 @@ const grid = document.getElementById("grid");
 // Globals
 // =========================
  let cameraItems
+ let detectionStatus
 
 // =========================
 // Snapshot Queue
@@ -105,6 +106,13 @@ function createDisplayItem(camId) {
   const button = card.querySelector("button");
   button.addEventListener("click", () => {
     alert(`Camera ${camId} button clicked`);
+    const btnState = button.textContent;
+    let isStart = false;
+    if (btnState === 'Start Detection'){
+      isStart = true;
+    }
+    alert(btnState);
+    sendDetectionRequest(isStart,row,camId);
   });
 
   // Video
@@ -187,57 +195,86 @@ function updateDisplayItem(item ,cameraUUID) {
 
 
 function updateCameraDisplay(item, d) {
-    console.warn('updating for ' + d.nickname);
+  console.warn('updating for ' + d.nickname);
 
-    const camNick = item.querySelector('.nickname');
-    camNick.textContent = d.nickname;
+  const camNick = item.querySelector('.nickname');
+  camNick.textContent = d.nickname;
 
-    //const camPred = item.querySelector('.camera-prediction');
-    const camPred = item.querySelector(".camera-prediction .prediction-value");
-    
-    camPred.textContent = d.last_result;
-    camPred.style.color = d.last_result === 'success' ? 'green' : 'red';
+  const camPred = item.querySelector(".camera-prediction .prediction-value"); 
+  camPred.textContent = d.last_result;
+  camPred.style.color = d.last_result === 'success' ? 'green' : 'red';
 
-    const camAction = item.querySelector('.countdown-action .action-value');
-    //const camAction = item.querySelector('.countdown-action');
-    /*
-    let lastAction = camAction.textContent;
-    let action = 'Unknown';
-    */
-  console.warn('checkpoint');
-   let action = d.countdown_action;
-     console.warn('checkpoint ' + action);
-    if (action === 'dismiss') {
-        action = 'DISMISS';
-        camAction.style.color = 'green';
-    } else if (action === 'cancel_print'){
-        action = 'CANCEL';
-        camAction.style.color = 'red';
-    } else if (action === 'pause_print'){
-        action = 'PAUSE';
-        camAction.style.color = 'orange';
-    } else {
-        action = 'UNKNOWN';
-        camAction.style.color = 'green';
-    }
+  const camAction = item.querySelector('.countdown-action .action-value');
+  let action = d.countdown_action;
+  if (action === 'dismiss') {
+      action = 'DISMISS';
+      camAction.style.color = 'green';
+  } else if (action === 'cancel_print'){
+      action = 'CANCEL';
+      camAction.style.color = 'red';
+  } else if (action === 'pause_print'){
+      action = 'PAUSE';
+      camAction.style.color = 'orange';
+  } else {
+      action = 'UNKNOWN';
+      camAction.style.color = 'green';
+  }
 
-    camAction.textContent = action;
+  camAction.textContent = action;
 
-    //item.querySelector('.lastTimeValue').textContent = d.last_time ? new Date(d.last_time * 1000).toLocaleTimeString() : '-';
-    item.querySelector(".last-update .update-value").textContent = d.last_time ? new Date(d.last_time * 1000).toLocaleTimeString() : '-';
+  const lastUpdate = item.querySelector(".last-update .update-value")
+  lastUpdate.textContent = d.last_time ? new Date(d.last_time * 1000).toLocaleTimeString() : '-';
 
-    let statusIndicator = item.querySelector('.camera-status');
-    if (d.live_detection_running) {
-        statusIndicator.textContent = `Detecting`;
-        statusIndicator.style.color = '#2ecc40';
-        statusIndicator.style.backgroundColor = 'transparent';
-    } else {
-        statusIndicator.textContent = `Inactive`;
-        statusIndicator.style.color = '#f30606';
-        statusIndicator.style.backgroundColor = 'transparent';
-        camPred.textContent = '----';
-    }
+  let statusIndicator = item.querySelector('.camera-status');
+  let startStopButton = item.querySelector('.start-stop-camera-btn');
+  detectionStatus = d.live_detection_running;
+  if (detectionStatus) {
+      statusIndicator.textContent = `Detecting`;
+      statusIndicator.style.color = '#2ecc40';
+      statusIndicator.style.backgroundColor = 'transparent';
+      startStopButton.textContent = 'Stop Detection';
+      startStopButton.style.backgroundColor = '#f30606';
+  } else {
+      statusIndicator.textContent = `Inactive`;
+      statusIndicator.style.color = '#f30606';
+      statusIndicator.style.backgroundColor = 'transparent';
+      startStopButton.textContent = 'Start Detection';
+      startStopButton.style.backgroundColor = '#2ecc40';
+      camPred.textContent = 'Pending';
+  }
 }
+
+function sendDetectionRequest(isStart,item, cameraUUID) {
+    if (cameraUUID === null || cameraUUID === undefined) {
+        console.warn(`Cannot ${isStart ? 'start' : 'stop'} detection: no valid camera selected`);
+        return;
+    }
+    fetch(`/detect/live/${isStart ? 'start' : 'stop'}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ camera_uuid: cameraUUID })
+    })
+    .then(response => {
+        if (response.ok) {
+          updateDisplayItem(item,cameraUUID);
+        } else {
+            response.json().then(errData => {
+                console.error(`Failed to ${isStart ? 'start' : 'stop'} live detection for camera ${cameraUUID}. Server: ${errData.detail || response.statusText}`);
+            }).catch(() => {
+                console.error(`Failed to ${isStart ? 'start' : 'stop'} live detection for camera ${cameraUUID}. Status: ${response.status} ${response.statusText}`);
+            });
+        }
+    })
+    .catch(error => {
+        console.error(`Network error or exception during ${isStart ? 'start' : 'stop'} request for camera ${cameraUUID}:`, error);
+    });
+}
+
+
+
+
 
 //SRS If active - this is where its tracked
 

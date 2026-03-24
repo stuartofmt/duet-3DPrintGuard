@@ -283,6 +283,37 @@ document.addEventListener('cameraStateUpdated', evt => {
     });
 });
 
+function sendDetectionRequest(isStart,cameraUUID) {
+    if (cameraUUID === null || cameraUUID === undefined) {
+        console.warn(`Cannot ${isStart ? 'start' : 'stop'} detection: no valid camera selected`);
+        return;
+    }
+    fetch(`/detect/live/${isStart ? 'start' : 'stop'}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ camera_uuid: cameraUUID })
+    })
+    .then(response => {
+        if (response.ok) {
+            fetchAndUpdateMetricsForCamera(cameraUUID);
+        } else {
+            response.json().then(errData => {
+                console.error(`Failed to ${isStart ? 'start' : 'stop'} live detection for camera ${cameraUUID}. Server: ${errData.detail || response.statusText}`);
+            }).catch(() => {
+                console.error(`Failed to ${isStart ? 'start' : 'stop'} live detection for camera ${cameraUUID}. Status: ${response.status} ${response.statusText}`);
+            });
+        }
+    })
+    .catch(error => {
+        console.error(`Network error or exception during ${isStart ? 'start' : 'stop'} request for camera ${cameraUUID}:`, error);
+    });
+}
+
+
+
+
 
 // Check
 window.onload = function() {
