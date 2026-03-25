@@ -13,6 +13,8 @@ const grid = document.getElementById("grid");
 // =========================
  let cameraItems
  let detectionStatus
+ let BTNSTOP = 'Stop Detection';
+ let BTNSTART =  'Start Detection';
 
 // =========================
 // Snapshot Queue
@@ -105,13 +107,12 @@ function createDisplayItem(camId) {
   // Button
   const button = card.querySelector("button");
   button.addEventListener("click", () => {
-    alert(`Camera ${camId} button clicked`);
+    //alert(`Camera ${camId} says ${btnState}`);
     const btnState = button.textContent;
     let isStart = false;
-    if (btnState === 'Start Detection'){
+    if (btnState === BTNSTART){
       isStart = true;
     }
-    alert(btnState);
     sendDetectionRequest(isStart,row,camId);
   });
 
@@ -232,13 +233,13 @@ function updateCameraDisplay(item, d) {
       statusIndicator.textContent = `Detecting`;
       statusIndicator.style.color = '#2ecc40';
       statusIndicator.style.backgroundColor = 'transparent';
-      startStopButton.textContent = 'Stop Detection';
+      startStopButton.textContent = BTNSTOP;
       startStopButton.style.backgroundColor = '#f30606';
   } else {
       statusIndicator.textContent = `Inactive`;
       statusIndicator.style.color = '#f30606';
       statusIndicator.style.backgroundColor = 'transparent';
-      startStopButton.textContent = 'Start Detection';
+      startStopButton.textContent = BTNSTART;
       startStopButton.style.backgroundColor = '#2ecc40';
       camPred.textContent = 'Pending';
   }
@@ -272,13 +273,22 @@ function sendDetectionRequest(isStart,item, cameraUUID) {
     });
 }
 
-
+// Update each camera item with the latest data
+function update_cameras () {
+    cameraItems.forEach(item => {
+        const camId = item.dataset.cameraId;
+        console.warn('camid to update' + camId)
+        updateDisplayItem(item,camId);
+    });
+    //setTimeout(update_cameras, 5000);
+}
 
 
 
 //SRS If active - this is where its tracked
 
 document.addEventListener('cameraStateUpdated', evt => {
+  return;
     console.warn('camera state updated');
     console.warn(evt.detail.camera_uuid)
 
@@ -289,6 +299,8 @@ document.addEventListener('cameraStateUpdated', evt => {
         }
     });
 });
+
+
 
 
 
@@ -315,11 +327,16 @@ document.addEventListener('cameraStateUpdated', evt => {
   cameraItems = document.querySelectorAll('.camera-card');
   console.warn(cameraItems);
 
+  update_cameras;
+  setInterval(update_cameras, 5000);
+
+  /*
   cameraItems.forEach(item => {
       const camId = item.dataset.cameraId;
       console.warn('camid to update ' + camId)
       updateDisplayItem(item,camId);
   });
+  */
 })();
 
 // Wait until the DOM is fully loaded
