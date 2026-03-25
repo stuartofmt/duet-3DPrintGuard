@@ -104,12 +104,24 @@ function updateAlertUI(data) {
         return;
     }
 
+    // test
+    if (true) {
+        document.dispatchEvent(new CustomEvent('defectRaised', {
+                    detail: data
+        }));
+        return;
+    }
+
     const alertElement = document.createElement('div');
+    console.warn('Creating Alert');
+    console.warn(data.camera_uuid);
     alertElement.id = `alert-${data.id}`;
     alertElement.className = 'alert-item';
+    /*
     alertElement.style.padding = '10px';
     alertElement.style.marginBottom = '10px';
     alertElement.style.borderBottom = '1px solid #dee2e6';
+    */
     let alertContent = `<p>${data.message}</p>`;
     alertContent += `<p id="countdown-${data.id}"></p>`;
     //alertContent += `<p></p>`
@@ -120,8 +132,9 @@ function updateAlertUI(data) {
     }
     */
     //const hasPrinter = data.has_printer === true;
-    hasPrinter = true
+    //hasPrinter = true
     //SRS get rid of everything above += ==> =
+    /*
     alertContent += `<div>
         <button class="dismiss-btn"  style="background-color: #3d9918;" data-alert-id="${data.id}">Dismiss</button>
         <button class="suspend-print-btn${!hasPrinter ? ' disabled' : ''}" 
@@ -131,10 +144,10 @@ function updateAlertUI(data) {
                 style="background-color: #f8bf04;" data-alert-id="${data.id}"
                 ${!hasPrinter ? 'disabled' : ''}>Pause Print</button>
     </div>`;
-    
+    */
     alertElement.innerHTML = alertContent;
     notificationsContainer.prepend(alertElement);
-
+    /*
     alertElement.querySelector('.dismiss-btn').addEventListener('click', () => {
         dismissAlert('dismiss', data.id);
     });
@@ -151,6 +164,7 @@ function updateAlertUI(data) {
             dismissAlert('pause_print', data.id);
         });
     }
+    */
 
     notificationPopup.style.display = 'block';
 }

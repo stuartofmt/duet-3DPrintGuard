@@ -245,6 +245,16 @@ function updateCameraDisplay(item, d) {
   }
 }
 
+function updateCountdownDisplay(item, d) {
+  console.warn('Updating countdown for ' + d.nickname);
+
+  const countdownLabel = item.querySelector('.countdown-action .countdown-label');
+  const countdownValue = item.querySelector('.countdown-action .countdown-value');
+  countdownLabel.textContent = ' in ';
+  countdownValue.textContent = d.countdown_time;
+
+}
+
 function sendDetectionRequest(isStart,item, cameraUUID) {
     if (cameraUUID === null || cameraUUID === undefined) {
         console.warn(`Cannot ${isStart ? 'start' : 'stop'} detection: no valid camera selected`);
@@ -284,6 +294,17 @@ function update_cameras () {
 }
 
 
+// Called from sse when defect confirmed
+document.addEventListener('defectRaised', evt => {
+    alert(`Defect Raised on ${evt.detail.camera_uuid}`);
+    cameraItems.forEach(item => {
+        const camId = item.dataset.cameraId; // data-camera-id ==> dataset.cameraId camelCase
+        if (evt.detail.camera_uuid == camId){
+        updateCountdownDisplay(item,evt.detail);
+        }
+    });
+});
+
 
 //SRS If active - this is where its tracked
 
@@ -318,7 +339,7 @@ document.addEventListener('cameraStateUpdated', evt => {
 
   //create top row of buttons
   createTopRowButtons();
-  //crerate a row for each camera
+  //create a row for each camera
   cameras.forEach(createDisplayItem);
 
 
