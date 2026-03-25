@@ -13,3 +13,4 @@ data/
 not-in-use/
 *.sh
 duetPrintGuard.config
+*.log

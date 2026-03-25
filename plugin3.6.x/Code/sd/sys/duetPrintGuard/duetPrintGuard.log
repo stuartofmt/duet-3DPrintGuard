@@ -92,3 +92,13 @@
 03-25 10:14:54 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
 03-25 10:14:59 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
 03-25 10:14:59 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-25 10:15:04 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-25 10:15:04 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-25 10:15:09 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-25 10:15:09 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-25 10:15:14 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-25 10:15:14 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-25 10:15:27 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-25 10:15:27 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-25 10:16:27 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-25 10:16:27 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
