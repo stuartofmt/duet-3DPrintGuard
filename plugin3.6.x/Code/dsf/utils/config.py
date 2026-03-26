@@ -222,9 +222,7 @@ def init_config():
 			startup_config['camera_states'][k]['last_time'] = None
 			startup_config['camera_states'][k]['start_time'] = None
 			startup_config['camera_states'][k]['error'] = None
-
-		print(startup_config)	
-
+	
 		with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
 			json.dump(startup_config, f, indent=2)
 

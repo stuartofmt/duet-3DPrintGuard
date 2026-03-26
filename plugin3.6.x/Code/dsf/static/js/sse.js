@@ -98,20 +98,23 @@ function parseAlertData(alert_data) {
 
 function updateAlertUI(data) {
     currentAlertId = data.id;
+    /*
     const notificationsContainer = document.getElementById('notificationsContainer');
 
     if (document.getElementById(`alert-${data.id}`)) {
         return;
     }
+    */
 
-    // test
-    if (true) {
-        document.dispatchEvent(new CustomEvent('defectRaised', {
-                    detail: data
-        }));
-        return;
-    }
+    // SRS
 
+    
+    document.dispatchEvent(new CustomEvent('defectRaised', {
+                detail: data
+    }));
+    return;
+    
+    /*
     const alertElement = document.createElement('div');
     console.warn('Creating Alert');
     console.warn(data.camera_uuid);
@@ -121,7 +124,7 @@ function updateAlertUI(data) {
     alertElement.style.padding = '10px';
     alertElement.style.marginBottom = '10px';
     alertElement.style.borderBottom = '1px solid #dee2e6';
-    */
+    --SRS
     let alertContent = `<p>${data.message}</p>`;
     alertContent += `<p id="countdown-${data.id}"></p>`;
     //alertContent += `<p></p>`
@@ -144,7 +147,7 @@ function updateAlertUI(data) {
                 style="background-color: #f8bf04;" data-alert-id="${data.id}"
                 ${!hasPrinter ? 'disabled' : ''}>Pause Print</button>
     </div>`;
-    */
+    --SRS
     alertElement.innerHTML = alertContent;
     notificationsContainer.prepend(alertElement);
     /*
@@ -166,7 +169,7 @@ function updateAlertUI(data) {
     }
     */
 
-    notificationPopup.style.display = 'block';
+    //notificationPopup.style.display = 'block';
 }
 
 function startAlertCountdown(data) {
