@@ -11,11 +11,17 @@ const grid = document.getElementById("grid");
 // =========================
 // Globals
 // =========================
- let cameraItems
- let detectionStatus
+ let cameraItems;
+ let detectionStatus;
  let BTNSTOP = 'Stop Detection';
  let BTNSTART =  'Start Detection';
  const countdownTimers = new Map(); // cameraId -> intervalId
+
+ //
+  let topControls;
+  let ignoreBtn;
+  let pauseBtn;
+  let cancelBtn;
 
 // =========================
 // Snapshot Queue
@@ -226,7 +232,7 @@ function updateCameraDisplay(item, d) {
   }
 }
 
-function updateCountdownDisplay(item, d) {
+function updateCountdownDisplay(item, action, secondsLeft) {
 
   const container = item.querySelector('.countdown-action');
   const countdownLabel = item.querySelector('.countdown-action .countdown-label');
@@ -237,7 +243,6 @@ function updateCountdownDisplay(item, d) {
   const topControls = document.querySelector(".top-controls");
   const ignoreBtn = topControls.querySelector(".btn-ignore");
 
-  let action = d.countdown_action;
   if (action === 'dismiss') {
       action = 'IGNORE';
       countdownAction.style.color = 'green';
@@ -256,7 +261,7 @@ function updateCountdownDisplay(item, d) {
   countdownAction.textContent = action;
 
   countdownLabel.textContent = ' in ';
-  countdownValue.textContent = d.countdown_time;
+  countdownValue.textContent = secondsLeft;
 
   // Make it visible
   container.style.display = "block";
@@ -278,14 +283,9 @@ function triggerFlash(el) {
 
 //Timers
 
-function startCountdown(item, cameraId, seconds, action) {
+function xstartCountdown(item, cameraId, seconds, action) {
   const countdownValue = item.querySelector('.countdown-value');
   const container = item.querySelector('.countdown-action');
-
-  const topControls = document.querySelector(".top-controls");
-  const ignoreBtn = topControls.querySelector(".btn-ignore");
-  const pauseBtn = topControls.querySelector(".btn-pause");
-  const cancelBtn = topControls.querySelector(".btn-cancel");
   
   let flashButton = ignoreBtn;
   if (action == 'dismiss') {
@@ -332,6 +332,25 @@ function startCountdown(item, cameraId, seconds, action) {
   countdownTimers.set(cameraId, interval);
 }
 
+function flashCountdown(item, action, seconds) {
+  const container = item.querySelector('.countdown-action');
+  
+  let flashButton = ignoreBtn;
+  if (action == 'cancel_print'){
+    flashButton = cancelBtn;
+  } else if (action == 'pause_print'){
+    flashButton = pauseBtn;
+  }
+    if (seconds <= 0) {
+      container.style.display = "none";
+      ignoreBtn.style.display = "none";
+      flashButton.classList.remove('flash');
+      return;
+    }
+
+    //triggerFlash(container);
+    triggerFlash(flashButton);
+}
 
 
 function sendDetectionRequest(isStart,item, cameraUUID) {
@@ -374,17 +393,17 @@ function update_cameras () {
 
 // Called from sse when defect confirmed
 document.addEventListener('defectRaised', evt => {
-
-  //alert(`countdown time = ${evt.detail.countdown_time}`)
+  const { camera, action, countdown } = evt.detail;
 
   cameraItems.forEach(item => {
     const camId = item.dataset.cameraId;
 
-    if (evt.detail.camera_uuid == camId) {
-      updateCountdownDisplay(item, evt.detail);
-
+    if (camera == camId) {
+      console.warn(countdown);
+      updateCountdownDisplay(item, action, countdown);
+      flashCountdown(item, action, countdown);
       //START COUNTDOWN
-      startCountdown(item, camId, evt.detail.countdown_time,evt.detail.countdown_action);
+      //startCountdown(item, camId, evt.secondsLeft, evt.detail.countdown_action);
     }
   });
 });
@@ -422,6 +441,12 @@ document.addEventListener('cameraStateUpdated', evt => {
 
   //create top row of buttons
   createTopRowButtons();
+  topControls = document.querySelector(".top-controls");
+  ignoreBtn = topControls.querySelector(".btn-ignore");
+  pauseBtn = topControls.querySelector(".btn-pause");
+  cancelBtn = topControls.querySelector(".btn-cancel");
+
+
   //create a row for each camera
   cameras.forEach(createDisplayItem);
 

@@ -87,7 +87,9 @@ async function loadPendingAlerts() {
 
 function displayAlert(alert_data) {
     const parsedData = parseAlertData(alert_data);
-    updateAlertUI(parsedData);
+    console.warn("ALERT RECIEVED");
+    //alert('Alert Raised');
+    //updateAlertUI(parsedData);
     startAlertCountdown(parsedData);
     saveActiveAlert(parsedData);
 }
@@ -172,7 +174,59 @@ function updateAlertUI(data) {
     //notificationPopup.style.display = 'block';
 }
 
+
 function startAlertCountdown(data) {
+    if (!data || !data.camera_uuid) return;
+
+    const countdownTimerId = `countdown-${data.camera_uuid}`;
+
+    // Clear any existing timer for this camera
+    if (window[countdownTimerId]) {
+        clearInterval(window[countdownTimerId]);
+        delete window[countdownTimerId];
+    }
+
+    const startTime = Date.now();
+    const countdownTime = data.countdown_time || 0;
+    const endTime = startTime + countdownTime * 1000;
+
+    function updateCountdown() {
+        const now = Date.now();
+        const secondsLeft = Math.max(0, Math.ceil((endTime - now) / 1000));
+
+        // Dispatch event
+        document.dispatchEvent(new CustomEvent('defectRaised', {
+            detail: {
+                camera: data.camera_uuid,
+                action: data.countdown_action,
+                countdown: secondsLeft
+            }
+        }));
+
+        // Update local storage
+        const activeAlerts = getLocalActiveAlerts();
+        if (activeAlerts[data.id]) {
+            activeAlerts[data.id].expirationTime = endTime;
+            localStorage.setItem('activeAlerts', JSON.stringify(activeAlerts));
+        }
+
+        // Stop when done
+        if (secondsLeft <= 0) {
+            clearInterval(window[countdownTimerId]);
+            delete window[countdownTimerId];
+        }
+    }
+
+    // Start interval FIRST
+    window[countdownTimerId] = setInterval(updateCountdown, 1000);
+
+    // Then run immediately
+    updateCountdown();
+}
+
+/*
+function startAlertCountdown(data) {
+    
     if (!data.id) return;
     
     const countdownElement = document.getElementById(`countdown-${data.id}`);
@@ -183,6 +237,9 @@ function startAlertCountdown(data) {
         clearInterval(window[countdownTimerId]);
     }
     
+    alert(data.camera_uuid);
+    const countdownTimerId = data.camera_uuid;
+
     const startTime = Date.now();
     const countdownTime = data.countdown_time || 0;
     const endTime = startTime + countdownTime * 1000;
@@ -190,6 +247,8 @@ function startAlertCountdown(data) {
     function updateCountdown() {
         const now = Date.now();
         let secondsLeft = Math.max(0, Math.round((endTime - now) / 1000));
+
+
         countdownElement.textContent = `${secondsLeft}s remaining`;
         
         const activeAlerts = getLocalActiveAlerts();
@@ -199,6 +258,8 @@ function startAlertCountdown(data) {
         }
         if (secondsLeft <= 0) {
             clearInterval(window[countdownTimerId]);
+
+            
             const action = data.countdown_action || 'pause_print';
             if (action === 'cancel_print' && data.has_printer) {
                 executeAlertAction('cancel_print', data.id);
@@ -207,13 +268,14 @@ function startAlertCountdown(data) {
             } else {
                 executeAlertAction('dismiss', data.id);
             }
+            
         }
     }
     
     updateCountdown();
     window[countdownTimerId] = setInterval(updateCountdown, 1000);
 }
-
+*/
 evtSource.onmessage = (e) => {
     try {
         let packet_data = JSON.parse(e.data);
