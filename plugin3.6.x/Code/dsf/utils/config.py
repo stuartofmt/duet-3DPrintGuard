@@ -189,15 +189,10 @@ def init_config():
 			if os.path.exists(CONFIG_FILE):
 				os.remove(CONFIG_FILE)
 				logger.info("Deleted old config file")
-			''' SRS Old V1.0.0
+
 			default_config = {
 				SavedConfig.VERSION: CONFIG_VERSION,
-				SavedConfig.VAPID_PUBLIC_KEY: None,
-				SavedConfig.VAPID_SUBJECT: None,
-				SavedConfig.STARTUP_MODE: None,
-				SavedConfig.SITE_DOMAIN: None,
-				SavedConfig.TUNNEL_PROVIDER: None,
-				SavedConfig.PUSH_SUBSCRIPTIONS: [],
+				SavedConfig.COUNTDOWN: {SavedConfig.COUNTDOWN_ACTION: COUNTDOWN_ACTION, SavedConfig.COUNTDOWN_TIME: COUNTDOWN_TIME, SavedConfig.COUNTDOWN_CONDITION: COUNTDOWN_CONDITION},
 				SavedConfig.CAMERA_STATES: {}
 			}
 			'''
@@ -205,6 +200,7 @@ def init_config():
 				SavedConfig.VERSION: CONFIG_VERSION,
 				SavedConfig.CAMERA_STATES: {}
 			}
+			'''
 			with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
 				json.dump(default_config, f, indent=2)
 			logger.info("Created new config file with version %s at %s",
@@ -374,15 +370,9 @@ def reset_config():
 	"""
 	acquire_lock()
 	try:
-		''' SRS Don't need all this
 		default_config = {
 			SavedConfig.VERSION: CONFIG_VERSION,
-			SavedConfig.VAPID_PUBLIC_KEY: None,
-			SavedConfig.VAPID_SUBJECT: None,
-			SavedConfig.STARTUP_MODE: None,
-			SavedConfig.SITE_DOMAIN: None,
-			SavedConfig.TUNNEL_PROVIDER: None,
-			SavedConfig.PUSH_SUBSCRIPTIONS: [],
+			SavedConfig.COUNTDOWN: {SavedConfig.COUNTDOWN_ACTION: COUNTDOWN_ACTION, SavedConfig.COUNTDOWN_TIME: COUNTDOWN_TIME, SavedConfig.COUNTDOWN_CONDITION: COUNTDOWN_CONDITION},
 			SavedConfig.CAMERA_STATES: {}
 		}
 		'''
@@ -390,6 +380,7 @@ def reset_config():
 			SavedConfig.VERSION: CONFIG_VERSION,
 			SavedConfig.CAMERA_STATES: {}
 		}
+		'''
 
 		with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
 			json.dump(default_config, f, indent=2)
@@ -449,9 +440,10 @@ MAX_CAMERA_HISTORY = 10_000
 BRIGHTNESS = 1.0
 CONTRAST = 1.0
 FOCUS = 1.0
-
+#SRS
 COUNTDOWN_TIME = 60
 COUNTDOWN_ACTION = AlertAction.DISMISS
+COUNTDOWN_CONDITION = "any"
 
 #SRS DEFULTS - NO LONGER IN HTML
 DETECTIONS_PER_SECOND = 1 #15

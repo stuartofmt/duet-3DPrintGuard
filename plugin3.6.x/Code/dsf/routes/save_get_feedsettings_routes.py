@@ -8,12 +8,12 @@ from fastapi.responses import RedirectResponse
 from utils.config import (STREAM_MAX_FPS, STREAM_TUNNEL_FPS,
                             STREAM_JPEG_QUALITY, STREAM_MAX_WIDTH,
                             DETECTION_INTERVAL_MS, PRINTER_STAT_POLLING_RATE_MS,
-                            MIN_SSE_DISPATCH_DELAY_MS,
+                            MIN_SSE_DISPATCH_DELAY_MS,COUNTDOWN_ACTION, COUNTDOWN_TIME, COUNTDOWN_CONDITION,
                             update_config, get_config)
 from utils.camera_utils import update_camera_state
 from utils.camera_state_manager import get_camera_state_manager
 from utils.stream_utils import stream_optimizer
-from models import FeedSettings, SavedConfig
+from models import FeedSettings, SavedConfig, CountdownSettings
 
 router = APIRouter()
 
@@ -82,4 +82,68 @@ async def get_feed_settings():
         raise HTTPException(
             status_code=500,
             detail=f"Failed to load feed settings: {str(e)}"
+        )
+    
+@router.get("/get-countdown-settings", include_in_schema=False)
+
+async def get_countdown_settings():
+    """Retrieve countdown settings.
+
+    Returns:
+        dict: Current countdown_action and countdown_time
+
+    Raises:
+        HTTPException: If loading settings fails due to configuration errors.
+    """
+    try:
+        config = get_config()
+        config = config.get(SavedConfig.COUNTDOWN, {})
+
+        # pylint:disable=import-outside-toplevel
+
+        
+        countdown = {
+            SavedConfig.COUNTDOWN_ACTION.value: config.get(SavedConfig.COUNTDOWN_ACTION, COUNTDOWN_ACTION),
+            SavedConfig.COUNTDOWN_TIME.value: config.get(SavedConfig.COUNTDOWN_TIME, COUNTDOWN_TIME),
+            SavedConfig.COUNTDOWN_CONDITION.value: config.get(SavedConfig.COUNTDOWN_CONDITION, COUNTDOWN_CONDITION)
+        }
+        print(countdown)
+        return {"success": True, "countdown": countdown}
+    except Exception as e:
+        logger.error("Error loading countdown settings: %s", e)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to load countdown settings: {str(e)}"
+        )
+    
+@router.post("/save-countdown-settings ", include_in_schema=False)
+async def save_countdown_settings(settings: CountdownSettings):
+    """Save countdown settings to configuration.
+
+    Args:
+        settings (CountdownSettings): Countdown configuration settings including action, time, and condition.
+
+    Returns:
+        dict: Success status and message indicating settings were saved.
+
+    Raises:
+        HTTPException: If saving settings fails due to validation or storage errors.
+    """
+    try:
+        config_data = {
+            SavedConfig.COUNTDOWN: {
+                SavedConfig.COUNTDOWN_ACTION: settings.countdown_action,
+                SavedConfig.COUNTDOWN_TIME: settings.countdown_time,
+                SavedConfig.COUNTDOWN_CONDITION: settings.countdown_condition
+            }
+        }
+        update_config(config_data)
+        #ream_optimizer.invalidate_cache()
+        logger.debug("Countdown settings saved successfully.")
+        return {"success": True, "message": "Countdown settings saved successfully."}
+    except Exception as e:
+        logger.error("Error saving countdown settings: %s", e)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to save countdown settings: {str(e)}"
         )

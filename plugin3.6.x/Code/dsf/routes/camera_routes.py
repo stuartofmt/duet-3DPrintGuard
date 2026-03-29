@@ -11,6 +11,7 @@ from utils.camera_utils import (add_camera, find_available_serial_cameras,
 from utils.camera_utils import remove_camera as remove_camera_util
 from utils.shared_video_stream import get_shared_stream_manager
 from utils.stream_utils import generate_frames
+from utils.camera_state_manager import get_camera_state_manager
 
 router = APIRouter()
 
@@ -62,7 +63,6 @@ async def camera_snapshot(camera_uuid: str):
     try:
         # 🔥 YOU MUST GET SOURCE HERE
         camera_state = await get_camera_state(camera_uuid)
-        print(f'Camera source  {camera_state}')
         source = camera_state.source   # ← adjust if different field name
 
         # ✅ NOW create stream correctly
@@ -161,3 +161,18 @@ async def camera_preview(source: str):
     """
     return StreamingResponse(generate_preview_frames(source),
                              media_type='multipart/x-mixed-replace; boundary=frame')
+
+@router.get("/camera/cameralist", include_in_schema=False)
+async def camera_list(request: Request):
+    """Get a list of current camera id's
+
+    Args:
+        request (Request): The FastAPI request object.
+
+    Returns:
+        list of camera UUID
+    """
+    # pylint: disable=import-outside-toplevel
+    camera_state_manager = get_camera_state_manager()
+    camera_uuids = await camera_state_manager.get_all_camera_uuids()
+    return {"camera_list": camera_uuids}

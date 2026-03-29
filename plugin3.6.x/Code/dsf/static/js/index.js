@@ -1,4 +1,4 @@
-console.warn("Countdown timers added");
+console.warn("Countdown abstacted");
 
 // =========================
 // Templates
@@ -22,6 +22,8 @@ const grid = document.getElementById("grid");
   let ignoreBtn;
   let pauseBtn;
   let cancelBtn;
+  let countdownTimer;
+  let flashButton;
 
 // =========================
 // Snapshot Queue
@@ -144,7 +146,7 @@ function createDisplayItem(camId) {
 // =========================
 async function getCameraList() {
   try {
-    const res = await fetch("/index/cameralist");
+    const res = await fetch("/camera/cameralist");
     if (!res.ok) return [];
     const data = await res.json();
     return data.camera_list || [];
@@ -232,44 +234,31 @@ function updateCameraDisplay(item, d) {
   }
 }
 
-function updateCountdownDisplay(item, action, secondsLeft) {
 
-  const container = item.querySelector('.countdown-action');
-  const countdownLabel = item.querySelector('.countdown-action .countdown-label');
-  const countdownValue = item.querySelector('.countdown-action .countdown-value');
-  const countdownActionLabel = item.querySelector('.countdown-action .action-label');
-  const countdownAction = item.querySelector('.countdown-action .action-value');
 
+function flashCountdown(action) {
   const topControls = document.querySelector(".top-controls");
   const ignoreBtn = topControls.querySelector(".btn-ignore");
+  const pauseBtn = topControls.querySelector(".btn-pause");
+  const cancelBtn = topControls.querySelector(".btn-cancel");
 
-  if (action === 'dismiss') {
-      action = 'IGNORE';
-      countdownAction.style.color = 'green';
-  } else if (action === 'cancel_print'){
-      action = 'CANCEL';
-      countdownAction.style.color = 'red';
-  } else if (action === 'pause_print'){
-      action = 'PAUSE';
-      countdownAction.style.color = 'orange';
-  } else {
-      action = 'UNKNOWN';
-      countdownAction.style.color = 'green';
+  flashButton = ignoreBtn;
+  if (action == 'cancel_print'){
+    flashButton = cancelBtn;
+  } else if (action == 'pause_print'){
+    flashButton = pauseBtn;
   }
+  // Get the current background color of the button
+  const currentColor = window.getComputedStyle(flashButton).backgroundColor;
 
-  countdownActionLabel.textContent = 'Default Action ';
-  countdownAction.textContent = action;
+  // Set the current color as a CSS variable
+  flashButton.style.setProperty('--current-color', currentColor);
 
-  countdownLabel.textContent = ' in ';
-  countdownValue.textContent = secondsLeft;
+  flashButton.classList.add("flash");
 
-  // Make it visible
-  container.style.display = "block";
-  ignoreBtn.style.display = "block";
-
-  triggerFlash(container);
-
+  return flashButton;
 }
+
 
 function triggerFlash(el) {
   el.classList.remove('flash');
@@ -280,78 +269,6 @@ function triggerFlash(el) {
     el.classList.remove('flash');
   }, 600);
 }
-
-//Timers
-
-function xstartCountdown(item, cameraId, seconds, action) {
-  const countdownValue = item.querySelector('.countdown-value');
-  const container = item.querySelector('.countdown-action');
-  
-  let flashButton = ignoreBtn;
-  if (action == 'dismiss') {
-    flashButton = ignoreBtn;
-  } else if (action == 'cancel_print'){
-    flashButton = cancelBtn;
-  } else if (action == 'pause_print'){
-    flashButton = pauseBtn;
-  } else {
-    flashButton = ignoreBtn;
-  }
-
-  // Clear any existing timer for this camera
-  if (countdownTimers.has(cameraId)) {
-    clearInterval(countdownTimers.get(cameraId));
-  }
-
-  let remaining = seconds;
-
-  // Initial render
-  countdownValue.textContent = remaining;
-
-  const interval = setInterval(() => {
-    remaining--;
-
-    if (remaining <= 0) {
-      container.style.display = "none";
-      ignoreBtn.style.display = "none";
-      clearInterval(interval);
-      countdownTimers.delete(cameraId);
-
-      // Optional: stop flashing when done
-      //container.classList.remove('flash');
-      flashButton.classList.remove('flash');
-      return;
-    }
-
-    countdownValue.textContent = remaining;
-
-    //triggerFlash(container);
-    triggerFlash(flashButton);
-  }, 1000);
-
-  countdownTimers.set(cameraId, interval);
-}
-
-function flashCountdown(item, action, seconds) {
-  const container = item.querySelector('.countdown-action');
-  
-  let flashButton = ignoreBtn;
-  if (action == 'cancel_print'){
-    flashButton = cancelBtn;
-  } else if (action == 'pause_print'){
-    flashButton = pauseBtn;
-  }
-    if (seconds <= 0) {
-      container.style.display = "none";
-      ignoreBtn.style.display = "none";
-      flashButton.classList.remove('flash');
-      return;
-    }
-
-    //triggerFlash(container);
-    triggerFlash(flashButton);
-}
-
 
 function sendDetectionRequest(isStart,item, cameraUUID) {
     if (cameraUUID === null || cameraUUID === undefined) {
@@ -390,22 +307,27 @@ function update_cameras () {
     //setTimeout(update_cameras, 5000);
 }
 
+let defectActive = false;
 
 // Called from sse when defect confirmed
 document.addEventListener('defectRaised', evt => {
   const { camera, action, countdown } = evt.detail;
-
-  cameraItems.forEach(item => {
-    const camId = item.dataset.cameraId;
-
-    if (camera == camId) {
-      console.warn(countdown);
-      updateCountdownDisplay(item, action, countdown);
-      flashCountdown(item, action, countdown);
-      //START COUNTDOWN
-      //startCountdown(item, camId, evt.secondsLeft, evt.detail.countdown_action);
-    }
-  });
+  if (!defectActive && countdown > 0) {
+    ignoreBtn.style.display = "block";
+    countdownTimer.style.display = "block";
+    flashButton = flashCountdown(action);
+    console.warn(flashButton);
+  }
+  if (countdown > 0) {
+    defectActive  = true;
+    countdownTimer.textContent = countdown;
+  } else {
+    defectActive = false;
+    flashButton.classList.remove('flash');
+    ignoreBtn.style.display = "none";
+    countdownTimer.style.display = "none";
+  }
+    
 });
 
 //SRS If active - this is where its tracked
@@ -445,7 +367,7 @@ document.addEventListener('cameraStateUpdated', evt => {
   ignoreBtn = topControls.querySelector(".btn-ignore");
   pauseBtn = topControls.querySelector(".btn-pause");
   cancelBtn = topControls.querySelector(".btn-cancel");
-
+  countdownTimer = topControls.querySelector(".countdown-timer");
 
   //create a row for each camera
   cameras.forEach(createDisplayItem);
@@ -459,7 +381,28 @@ document.addEventListener('cameraStateUpdated', evt => {
   setInterval(update_cameras, 5000);
 })();
 
+//test feed settings
+async function getCountdownSettings() {
+  try {
+    const res = await fetch("/get-countdown-settings");
+    //const res = await fetch("/get-feed-settings");
+    
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.countdown || { countdown_action: null, countdown_time: null, countdown_condition: null };;
+  } catch {
+    return { countdown_action: null, countdown_time: null, countdown_condition: null };
+  }
+}
+
 // Wait until the DOM is fully loaded
 document.addEventListener("DOMContentLoaded", () => {
   console.warn('DOM loaded');
+  //d = await getCountdownSettings();
+  getCountdownSettings().then(d => {
+    console.warn(d.countdown_action);
+    console.warn(d.countdown_time);
+    console.warn(d.countdown_condition);
+  });
+
 });

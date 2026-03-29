@@ -231,6 +231,10 @@ class SavedConfig(str, Enum):
     MIN_SSE_DISPATCH_DELAY_MS = "min_sse_dispatch_delay_ms"
     PUSH_SUBSCRIPTIONS = "push_subscriptions"
     CAMERA_STATES = "camera_states"
+    COUNTDOWN = "countdown"
+    COUNTDOWN_ACTION = "countdown_action"
+    COUNTDOWN_TIME = "countdown_time"
+    COUNTDOWN_CONDITION = "countdown_condition"
 
 class CloudflareTunnelConfig(BaseModel):
     account_id: str
@@ -268,6 +272,11 @@ class FeedSettings(BaseModel):
     detection_interval_ms: int
     printer_stat_polling_rate_ms: int
     min_sse_dispatch_delay_ms: int
+
+class CountdownSettings(BaseModel):
+    countdown_action: str
+    countdown_time: int
+    countdown_condition: str
 
 class PollingTask(BaseModel):
     task: Optional[asyncio.Task] = None

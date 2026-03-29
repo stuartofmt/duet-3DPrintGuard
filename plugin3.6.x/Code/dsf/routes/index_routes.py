@@ -85,18 +85,3 @@ async def update_settings(request: Request,
         "majority_vote_window": majority_vote_window,
     })
     return RedirectResponse("/index", status_code=303)
-
-@router.get("/index/cameralist", include_in_schema=False)
-async def camera_list(request: Request):
-    """Get a list of current camera id's
-
-    Args:
-        request (Request): The FastAPI request object.
-
-    Returns:
-        list of camera UUID
-    """
-    # pylint: disable=import-outside-toplevel
-    camera_state_manager = get_camera_state_manager()
-    camera_uuids = await camera_state_manager.get_all_camera_uuids()
-    return {"camera_list": camera_uuids}

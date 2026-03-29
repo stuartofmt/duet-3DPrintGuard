@@ -121,13 +121,13 @@ body {
 /* Flash animation */
 @keyframes flash {
   0%   { background-color: transparent; }
-  50%  { background-color: #ffeb3b; } /* yellow highlight */
+  50%  { background-color: var(--current-color); }
   100% { background-color: transparent; }
 }
 
-/* Class to trigger it */
+
 .flash {
-  animation: flash 0.6s ease;
+  animation: flash 2s ease-in-out infinite;
 }
 
 

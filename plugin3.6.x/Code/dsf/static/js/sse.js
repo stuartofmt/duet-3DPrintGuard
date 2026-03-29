@@ -80,6 +80,7 @@ async function loadPendingAlerts() {
         const alert = activeAlerts[alertId].data;
         alert.countdown_time = Math.max(1, Math.floor((activeAlerts[alertId].expirationTime - now) / 1000));
         displayAlert(alert);
+        console.warn('Pending Alert');
     });
     
     return alertIds.length > 0;
@@ -88,25 +89,49 @@ async function loadPendingAlerts() {
 function displayAlert(alert_data) {
     const parsedData = parseAlertData(alert_data);
     console.warn("ALERT RECIEVED");
-    //alert('Alert Raised');
+    console.warn(parsedData);
+    if (alertBypass(parsedData)) {
+        return;
+    }
     //updateAlertUI(parsedData);
     startAlertCountdown(parsedData);
-    saveActiveAlert(parsedData);
+    //saveActiveAlert(parsedData);
 }
 
 function parseAlertData(alert_data) {
     return typeof alert_data === 'string' ? JSON.parse(alert_data) : alert_data;
 }
 
+let alert_uuids = [];
+function alertBypass(data) {
+    console.warn(alert_uuids.length);
+    any = false;
+    if (any && alert_uuids.length == 0) {
+        alert_uuids.push(data.camera_uuid);
+        return false;
+    }
+    if (!any){
+        numCameras = document.querySelectorAll('.camera-card').length;
+        if (!alert_uuids.includes(data.camera_uuid)) {
+        alert_uuids.push(data.camera_uuid);
+        if (alert_uuids.length == numCameras) {
+            return false;
+        }
+        return true;
+    }
+    return true;
+    }
+}
+
 function updateAlertUI(data) {
-    currentAlertId = data.id;
     /*
+    currentAlertId = data.id;
     const notificationsContainer = document.getElementById('notificationsContainer');
 
     if (document.getElementById(`alert-${data.id}`)) {
         return;
     }
-    */
+    
 
     // SRS
 
@@ -214,6 +239,7 @@ function startAlertCountdown(data) {
         if (secondsLeft <= 0) {
             clearInterval(window[countdownTimerId]);
             delete window[countdownTimerId];
+            alert_uuids = []; // Reset bypass list when countdown ends
         }
     }
 
