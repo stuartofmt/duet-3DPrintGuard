@@ -104,8 +104,8 @@ function parseAlertData(alert_data) {
 
 let alert_uuids = [];
 function alertBypass(data) {
-    console.warn(alert_uuids.length);
-    any = false;
+    console.warn(data.camera_uuid);
+    any = true;
     if (any && alert_uuids.length == 0) {
         alert_uuids.push(data.camera_uuid);
         return false;

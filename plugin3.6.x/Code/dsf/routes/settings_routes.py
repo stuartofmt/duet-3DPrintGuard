@@ -53,10 +53,9 @@ async def update_settings(request: Request,
                           brightness: float = Form(...),
                           contrast: float = Form(...),
                           focus: float = Form(...),
-                          countdown_time: int = Form(...),
-                          countdown_action: str = Form(...),
+
                           majority_vote_threshold: int = Form(...),
-                          majority_vote_window: int = Form(...),
+                          majority_vote_window: int = Form(...)
                           ):
     """Update camera settings and detection parameters.
 
@@ -67,8 +66,6 @@ async def update_settings(request: Request,
         brightness (float): Camera brightness setting.
         contrast (float): Camera contrast setting.
         focus (float): Camera focus setting.
-        countdown_time (int): Alert countdown duration in seconds.
-        countdown_action (str): Action to take when countdown expires.
         majority_vote_threshold (int): Number of detections needed for majority vote.
         majority_vote_window (int): Time window for majority vote calculation.
 
@@ -80,10 +77,31 @@ async def update_settings(request: Request,
         "brightness": brightness,
         "contrast": contrast,
         "focus": focus,
-        "countdown_time": countdown_time,
-        "countdown_action": countdown_action,
+
         "majority_vote_threshold": majority_vote_threshold,
-        "majority_vote_window": majority_vote_window,
+        "majority_vote_window": majority_vote_window
     })
     return RedirectResponse("/settings", status_code=303)
 
+# pylint: disable=unused-argument
+@router.post("/update-countdown", include_in_schema=False)
+async def update_countdown(request: Request,
+                          countdown_time: int = Form(...),
+                          countdown_action: str = Form(...)
+                          ):
+    """Update camera settings and detection parameters.
+
+    Args:
+        request (Request): The FastAPI request object.
+        majority_vote_threshold (int): Number of detections needed for majority vote.
+        majority_vote_window (int): Time window for majority vote calculation.
+
+    Returns:
+        RedirectResponse: Redirect to the main index page.
+    """
+    for camera_uuid in await get_camera_state_manager().get_all_camera_uuids():
+        await update_camera_state(camera_uuid, {
+                                "countdown_time": countdown_time,
+                                "countdown_action": countdown_action
+                                })
+    return RedirectResponse("/settings", status_code=303)

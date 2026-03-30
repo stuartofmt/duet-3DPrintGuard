@@ -1,233 +1,155 @@
-03-29 22:59:30 logger_module - create_log_file:[INFO] Logging started at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/sd/sys/duetPrintGuard/duetPrintGuard.log
-03-29 22:59:30 duetPrintGuard - start:[INFO] duetPrintGuard -- 0.0.2
-03-29 22:59:30 logger_module - set_log_level:[INFO] Log level changed to DEBUG
-03-29 22:59:30 duetPrintGuard - checkIP:[INFO] IP address 192.168.30.41 with port 8002 is available
-03-29 22:59:33 config - config_set_paths_and_initialize:[WARNING] Using app data directory: /home/stuart/.local/share/duetprintguard
-03-29 22:59:33 config - config_set_paths_and_initialize:[DEBUG] lock file path: /home/stuart/.local/share/duetprintguard/config.lock
-03-29 22:59:33 config - init_config:[DEBUG] Starting with new configuration file
-03-29 22:59:33 config - init_config:[DEBUG] {'version': '2.0.0', 'countdown': {'countdown_action': 'dismiss', 'countdown_time': 60, 'countdown_condition': 'any'}, 'camera_states': {'0': {'nickname': 'Stream', 'source': 'http://192.168.30.41:8090/stream', 'current_alert_id': None, 'detection_history': [], 'live_detection_running': False, 'last_result': '', 'last_time': None, 'start_time': None, 'error': None, 'brightness': 1.0, 'contrast': 1.0, 'focus': 1.0, 'sensitivity': 1.0, 'countdown_time': 60.0, 'countdown_action': 'dismiss', 'majority_vote_threshold': 2, 'majority_vote_window': 5, 'printer_id': None, 'printer_config': None}, '1': {'nickname': 'usb', 'source': '/dev/video2', 'current_alert_id': None, 'detection_history': [], 'live_detection_running': False, 'last_result': '', 'last_time': None, 'start_time': None, 'error': None, 'brightness': 1.0, 'contrast': 1.0, 'focus': 1.0, 'sensitivity': 1.0, 'countdown_time': 60.0, 'countdown_action': 'dismiss', 'majority_vote_threshold': 2, 'majority_vote_window': 5, 'printer_id': None, 'printer_config': None}}}
-03-29 22:59:33 duet_printer - _urlCall:[DEBUG] Connection attempt: 0 url: http://192.168.30.41:80/rr_connect?sessionKey=yes&password=reprap post:False
-03-29 22:59:33 duet_printer - <module>:[INFO] Successful login to printer at http://192.168.30.41:80
-03-29 22:59:34 app - appstartup:[WARNING] Startup mode: SiteStartupMode.LOCAL
-03-29 22:59:34 app - appstartup:[WARNING] Starting in local mode. Available at 
-03-29 22:59:34 app - appstartup:[DEBUG] Starting uvicorn
-03-29 22:59:34 inference_lib - _detect_backend:[INFO] ONNX Runtime detected, using ONNX Runtime backend
-03-29 22:59:34 model_downloader - download_all:[INFO] Downloading all model files for onnxruntime backend
-03-29 22:59:34 model_downloader - download_model:[INFO] Model model.onnx already cached at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/model.onnx
-03-29 22:59:34 model_downloader - download_options:[INFO] Options file already cached at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/opt.json
-03-29 22:59:34 model_downloader - download_prototypes:[INFO] Prototypes already cached at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/prototypes/cache/prototypes.pkl
-03-29 22:59:34 model_downloader - download_all:[INFO] All model files successfully downloaded/cached for onnxruntime backend
-03-29 22:59:35 inference_lib - get_inference_engine:[INFO] Created inference engine with onnxruntime backend
-03-29 22:59:35 app - lifespan:[DEBUG] Setting up device...
-03-29 22:59:35 onnxruntime_engine - setup_device:[DEBUG] Using device: cpu
-03-29 22:59:35 app - lifespan:[DEBUG] Using device: cpu
-03-29 22:59:35 app - lifespan:[DEBUG] Loading model...
-03-29 22:59:35 inference_lib - _detect_backend:[INFO] ONNX Runtime detected, using ONNX Runtime backend
-03-29 22:59:35 onnxruntime_engine - _get_execution_providers:[DEBUG] Using execution providers: ['CPUExecutionProvider']
-03-29 22:59:35 onnxruntime_engine - load_model:[INFO] ONNX model loaded successfully. Input: input, Output: output, Shape: ['batch_size', 3, 224, 224]
-03-29 22:59:35 app - lifespan:[DEBUG] Model loaded successfully.
-03-29 22:59:35 app - lifespan:[DEBUG] Building prototypes...
-03-29 22:59:35 base_engine - _load_prototypes_from_cache:[DEBUG] Attempting to load prototypes from downloaded file: /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/prototypes/cache/prototypes.pkl
-03-29 22:59:35 onnxruntime_engine - _load_prototypes:[DEBUG] Prototypes loaded from cache: /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/prototypes/cache/prototypes.pkl
-03-29 22:59:35 base_engine - _load_prototypes_from_cache:[DEBUG] Successfully loaded prototypes from downloaded file: /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/prototypes/cache/prototypes.pkl
-03-29 22:59:35 app - lifespan:[DEBUG] Prototypes built successfully.
-03-29 22:59:35 app - lifespan:[DEBUG] Camera indices set up successfully.
-03-29 22:59:37 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 22:59:37 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 22:59:37 shared_video_stream - start:[DEBUG] Started shared video stream for camera 0
-03-29 22:59:37 shared_video_stream - start:[DEBUG] Started shared video stream for camera 1
-03-29 22:59:38 camera_routes - camera_snapshot:[ERROR] Snapshot error for 1: 404: No frame available
-03-29 22:59:41 stream_utils - log_optimization_info:[DEBUG] Stream optimization settings for local mode:
-03-29 22:59:41 stream_utils - log_optimization_info:[DEBUG]   Max FPS: 2
-03-29 22:59:41 stream_utils - log_optimization_info:[DEBUG]   JPEG Quality: 85
-03-29 22:59:41 stream_utils - log_optimization_info:[DEBUG]   Max Width: 1280
-03-29 22:59:41 stream_utils - log_optimization_info:[DEBUG]   Detection Interval: 1000ms
-03-29 22:59:41 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 22:59:42 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 22:59:42 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 22:59:42 notification_utils - send_defect_notification:[DEBUG] Attempting to send defect notification for alert ID: 0_0fc8f679-2036-41c2-886b-f2e480bd9f2c
-03-29 22:59:42 notification_utils - send_defect_notification:[DEBUG] Alert found for ID 0_0fc8f679-2036-41c2-886b-f2e480bd9f2c, preparing notification
-03-29 22:59:42 notification_utils - send_defect_notification:[DEBUG] Created notification object without image payload, sending to 0 subscriptions
-03-29 22:59:42 notification_utils - send_notification:[INFO] Starting notification send process
-03-29 22:59:42 notification_utils - send_notification:[DEBUG] title='duetPrintGuard' body='Defect detected on camera Stream' image_url=None icon_url=None badge_url=None actions=[]
-03-29 22:59:42 duet_printer - duet_send_notification:[DEBUG] Defect notification title='duetPrintGuard' body='Defect detected on camera Stream' image_url=None icon_url=None badge_url=None actions=[]
-03-29 22:59:42 duet_printer - _send_macro:[INFO] Sending macro M98 P"0:/sys/duetPrintGuard/Notify.g"
-03-29 22:59:42 duet_printer - _urlCall:[DEBUG] Connection attempt: 0 url: http://192.168.30.41:80/rr_gcode?gcode=M98 P"0:/sys/duetPrintGuard/Notify.g" post:False
-03-29 22:59:42 duet_printer - _send_ntfy:[INFO] Sending NTFY with title duetPrintGuard
-03-29 22:59:42 duet_printer - _urlCall:[DEBUG] Connection attempt 0 url: https://ntfy.sh cmd: {"Topic": "MonksAtTheGate", "Title": "duetPrintGuard", "Priority": 5, "Message": "Defect detected on camera Stream"} post:True
-03-29 22:59:43 notification_utils - send_notification:[DEBUG] Notification send completed
-03-29 22:59:47 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 22:59:47 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 22:59:49 stream_utils - log_optimization_info:[DEBUG] Stream optimization settings for local mode:
-03-29 22:59:49 stream_utils - log_optimization_info:[DEBUG]   Max FPS: 2
-03-29 22:59:49 stream_utils - log_optimization_info:[DEBUG]   JPEG Quality: 85
-03-29 22:59:49 stream_utils - log_optimization_info:[DEBUG]   Max Width: 1280
-03-29 22:59:49 stream_utils - log_optimization_info:[DEBUG]   Detection Interval: 1000ms
-03-29 22:59:49 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 22:59:49 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 33.2ms)
-03-29 22:59:50 notification_utils - send_defect_notification:[DEBUG] Attempting to send defect notification for alert ID: 1_93da9f01-2157-452d-b67a-02f4c5359fd1
-03-29 22:59:50 notification_utils - send_defect_notification:[DEBUG] Alert found for ID 1_93da9f01-2157-452d-b67a-02f4c5359fd1, preparing notification
-03-29 22:59:50 notification_utils - send_defect_notification:[DEBUG] Created notification object without image payload, sending to 0 subscriptions
-03-29 22:59:50 notification_utils - send_notification:[INFO] Starting notification send process
-03-29 22:59:50 notification_utils - send_notification:[DEBUG] title='duetPrintGuard' body='Defect detected on camera usb' image_url=None icon_url=None badge_url=None actions=[]
-03-29 22:59:50 duet_printer - duet_send_notification:[DEBUG] Defect notification title='duetPrintGuard' body='Defect detected on camera usb' image_url=None icon_url=None badge_url=None actions=[]
-03-29 22:59:50 duet_printer - _send_macro:[INFO] Sending macro M98 P"0:/sys/duetPrintGuard/Notify.g"
-03-29 22:59:50 duet_printer - _urlCall:[DEBUG] Connection attempt: 0 url: http://192.168.30.41:80/rr_gcode?gcode=M98 P"0:/sys/duetPrintGuard/Notify.g" post:False
-03-29 22:59:50 duet_printer - _send_ntfy:[INFO] Sending NTFY with title duetPrintGuard
-03-29 22:59:50 duet_printer - _urlCall:[DEBUG] Connection attempt 0 url: https://ntfy.sh cmd: {"Topic": "MonksAtTheGate", "Title": "duetPrintGuard", "Priority": 5, "Message": "Defect detected on camera usb"} post:True
-03-29 22:59:51 notification_utils - send_notification:[DEBUG] Notification send completed
-03-29 22:59:52 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 22:59:52 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 22:59:57 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 22:59:57 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 22:59:57 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 38.8ms)
-03-29 22:59:59 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 21.3ms)
-03-29 23:00:00 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 48.7ms)
-03-29 23:00:01 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 29.1ms)
-03-29 23:00:02 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 23:00:02 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 23:00:02 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 20.0ms)
-03-29 23:00:03 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 22.1ms)
-03-29 23:00:06 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 29.9ms)
-03-29 23:00:07 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 23:00:07 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 23:00:10 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 37.2ms)
-03-29 23:00:12 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 35.2ms)
-03-29 23:00:12 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 23:00:12 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 23:00:13 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 43.7ms)
-03-29 23:00:14 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 40.8ms)
-03-29 23:00:17 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 23:00:17 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 23:00:19 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 27.9ms)
-03-29 23:00:20 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 36.6ms)
-03-29 23:00:20 detection_routes - stop_live_detection:[DEBUG] Live detection task for camera 0 did not finish in time.
-03-29 23:00:20 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 23:00:22 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 23:00:22 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 23:00:27 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 23:00:27 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 23:00:31 stream_utils - log_optimization_info:[DEBUG] Stream optimization settings for local mode:
-03-29 23:00:31 stream_utils - log_optimization_info:[DEBUG]   Max FPS: 2
-03-29 23:00:31 stream_utils - log_optimization_info:[DEBUG]   JPEG Quality: 85
-03-29 23:00:31 stream_utils - log_optimization_info:[DEBUG]   Max Width: 1280
-03-29 23:00:31 stream_utils - log_optimization_info:[DEBUG]   Detection Interval: 1000ms
-03-29 23:00:32 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 23:00:32 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 23:00:32 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 23:00:33 notification_utils - send_defect_notification:[DEBUG] Attempting to send defect notification for alert ID: 0_a492ddab-8533-4360-9ba0-77cf64615c4b
-03-29 23:00:33 notification_utils - send_defect_notification:[DEBUG] Alert found for ID 0_a492ddab-8533-4360-9ba0-77cf64615c4b, preparing notification
-03-29 23:00:33 notification_utils - send_defect_notification:[DEBUG] Created notification object without image payload, sending to 0 subscriptions
-03-29 23:00:33 notification_utils - send_notification:[INFO] Starting notification send process
-03-29 23:00:33 notification_utils - send_notification:[DEBUG] title='duetPrintGuard' body='Defect detected on camera Stream' image_url=None icon_url=None badge_url=None actions=[]
-03-29 23:00:33 duet_printer - duet_send_notification:[DEBUG] Defect notification title='duetPrintGuard' body='Defect detected on camera Stream' image_url=None icon_url=None badge_url=None actions=[]
-03-29 23:00:33 duet_printer - _send_macro:[INFO] Sending macro M98 P"0:/sys/duetPrintGuard/Notify.g"
-03-29 23:00:33 duet_printer - _urlCall:[DEBUG] Connection attempt: 0 url: http://192.168.30.41:80/rr_gcode?gcode=M98 P"0:/sys/duetPrintGuard/Notify.g" post:False
-03-29 23:00:33 duet_printer - _send_ntfy:[INFO] Sending NTFY with title duetPrintGuard
-03-29 23:00:33 duet_printer - _urlCall:[DEBUG] Connection attempt 0 url: https://ntfy.sh cmd: {"Topic": "MonksAtTheGate", "Title": "duetPrintGuard", "Priority": 5, "Message": "Defect detected on camera Stream"} post:True
-03-29 23:00:33 notification_utils - send_notification:[DEBUG] Notification send completed
-03-29 23:00:37 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 23:00:37 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 23:00:39 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 42.7ms)
-03-29 23:00:40 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 27.6ms)
-03-29 23:00:42 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 23:00:42 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 23:00:42 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 38.5ms)
-03-29 23:00:43 notification_utils - send_defect_notification:[DEBUG] Attempting to send defect notification for alert ID: 0_33c6b639-2823-4782-b9e7-36ab1be78dab
-03-29 23:00:43 notification_utils - send_defect_notification:[DEBUG] Alert found for ID 0_33c6b639-2823-4782-b9e7-36ab1be78dab, preparing notification
-03-29 23:00:43 notification_utils - send_defect_notification:[DEBUG] Created notification object without image payload, sending to 0 subscriptions
-03-29 23:00:43 notification_utils - send_notification:[INFO] Starting notification send process
-03-29 23:00:43 notification_utils - send_notification:[DEBUG] title='duetPrintGuard' body='Defect detected on camera Stream' image_url=None icon_url=None badge_url=None actions=[]
-03-29 23:00:43 duet_printer - duet_send_notification:[DEBUG] Defect notification title='duetPrintGuard' body='Defect detected on camera Stream' image_url=None icon_url=None badge_url=None actions=[]
-03-29 23:00:43 duet_printer - _send_macro:[INFO] Sending macro M98 P"0:/sys/duetPrintGuard/Notify.g"
-03-29 23:00:43 duet_printer - _urlCall:[DEBUG] Connection attempt: 0 url: http://192.168.30.41:80/rr_gcode?gcode=M98 P"0:/sys/duetPrintGuard/Notify.g" post:False
-03-29 23:00:43 duet_printer - _send_ntfy:[INFO] Sending NTFY with title duetPrintGuard
-03-29 23:00:43 duet_printer - _urlCall:[DEBUG] Connection attempt 0 url: https://ntfy.sh cmd: {"Topic": "MonksAtTheGate", "Title": "duetPrintGuard", "Priority": 5, "Message": "Defect detected on camera Stream"} post:True
-03-29 23:00:43 notification_utils - send_notification:[DEBUG] Notification send completed
-03-29 23:00:43 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 13.0ms)
-03-29 23:00:47 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 23:00:47 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 23:00:49 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 26.1ms)
-03-29 23:00:51 notification_utils - send_defect_notification:[DEBUG] Attempting to send defect notification for alert ID: 1_68fddf79-f23a-486b-9923-9cd9fd1fd469
-03-29 23:00:51 notification_utils - send_defect_notification:[DEBUG] Alert found for ID 1_68fddf79-f23a-486b-9923-9cd9fd1fd469, preparing notification
-03-29 23:00:51 notification_utils - send_defect_notification:[DEBUG] Created notification object without image payload, sending to 0 subscriptions
-03-29 23:00:51 notification_utils - send_notification:[INFO] Starting notification send process
-03-29 23:00:51 notification_utils - send_notification:[DEBUG] title='duetPrintGuard' body='Defect detected on camera usb' image_url=None icon_url=None badge_url=None actions=[]
-03-29 23:00:51 duet_printer - duet_send_notification:[DEBUG] Defect notification title='duetPrintGuard' body='Defect detected on camera usb' image_url=None icon_url=None badge_url=None actions=[]
-03-29 23:00:51 duet_printer - _send_macro:[INFO] Sending macro M98 P"0:/sys/duetPrintGuard/Notify.g"
-03-29 23:00:51 duet_printer - _urlCall:[DEBUG] Connection attempt: 0 url: http://192.168.30.41:80/rr_gcode?gcode=M98 P"0:/sys/duetPrintGuard/Notify.g" post:False
-03-29 23:00:51 duet_printer - _send_ntfy:[INFO] Sending NTFY with title duetPrintGuard
-03-29 23:00:51 duet_printer - _urlCall:[DEBUG] Connection attempt 0 url: https://ntfy.sh cmd: {"Topic": "MonksAtTheGate", "Title": "duetPrintGuard", "Priority": 5, "Message": "Defect detected on camera usb"} post:True
-03-29 23:00:52 notification_utils - send_notification:[DEBUG] Notification send completed
-03-29 23:00:52 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 23:00:52 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 23:00:57 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 23:00:57 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 23:01:02 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 23:01:02 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 23:01:07 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 23:01:07 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 23:01:12 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 23:01:12 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 23:01:17 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 23:01:17 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 23:01:22 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 23:01:22 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 23:01:27 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 23:01:27 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 23:01:32 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 23:01:32 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 23:01:33 notification_utils - send_defect_notification:[DEBUG] Attempting to send defect notification for alert ID: 0_2264c351-ea2a-4341-b8e6-cb9568dbf995
-03-29 23:01:33 notification_utils - send_defect_notification:[DEBUG] Alert found for ID 0_2264c351-ea2a-4341-b8e6-cb9568dbf995, preparing notification
-03-29 23:01:33 notification_utils - send_defect_notification:[DEBUG] Created notification object without image payload, sending to 0 subscriptions
-03-29 23:01:33 notification_utils - send_notification:[INFO] Starting notification send process
-03-29 23:01:33 notification_utils - send_notification:[DEBUG] title='duetPrintGuard' body='Defect detected on camera Stream' image_url=None icon_url=None badge_url=None actions=[]
-03-29 23:01:33 duet_printer - duet_send_notification:[DEBUG] Defect notification title='duetPrintGuard' body='Defect detected on camera Stream' image_url=None icon_url=None badge_url=None actions=[]
-03-29 23:01:33 duet_printer - _send_macro:[INFO] Sending macro M98 P"0:/sys/duetPrintGuard/Notify.g"
-03-29 23:01:33 duet_printer - _urlCall:[DEBUG] Connection attempt: 0 url: http://192.168.30.41:80/rr_gcode?gcode=M98 P"0:/sys/duetPrintGuard/Notify.g" post:False
-03-29 23:01:33 duet_printer - _send_ntfy:[INFO] Sending NTFY with title duetPrintGuard
-03-29 23:01:33 duet_printer - _urlCall:[DEBUG] Connection attempt 0 url: https://ntfy.sh cmd: {"Topic": "MonksAtTheGate", "Title": "duetPrintGuard", "Priority": 5, "Message": "Defect detected on camera Stream"} post:True
-03-29 23:01:34 notification_utils - send_notification:[DEBUG] Notification send completed
-03-29 23:01:34 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 35.2ms)
-03-29 23:01:36 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 47.6ms)
-03-29 23:01:37 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 23:01:37 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 23:01:39 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 3.9ms)
-03-29 23:01:42 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 23:01:42 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 23:01:42 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 45.3ms)
-03-29 23:01:43 notification_utils - send_defect_notification:[DEBUG] Attempting to send defect notification for alert ID: 0_4d83c7c1-1b64-47a8-86b0-5042f3267f5a
-03-29 23:01:43 notification_utils - send_defect_notification:[DEBUG] Alert found for ID 0_4d83c7c1-1b64-47a8-86b0-5042f3267f5a, preparing notification
-03-29 23:01:43 notification_utils - send_defect_notification:[DEBUG] Created notification object without image payload, sending to 0 subscriptions
-03-29 23:01:43 notification_utils - send_notification:[INFO] Starting notification send process
-03-29 23:01:43 notification_utils - send_notification:[DEBUG] title='duetPrintGuard' body='Defect detected on camera Stream' image_url=None icon_url=None badge_url=None actions=[]
-03-29 23:01:43 duet_printer - duet_send_notification:[DEBUG] Defect notification title='duetPrintGuard' body='Defect detected on camera Stream' image_url=None icon_url=None badge_url=None actions=[]
-03-29 23:01:43 duet_printer - _send_macro:[INFO] Sending macro M98 P"0:/sys/duetPrintGuard/Notify.g"
-03-29 23:01:43 duet_printer - _urlCall:[DEBUG] Connection attempt: 0 url: http://192.168.30.41:80/rr_gcode?gcode=M98 P"0:/sys/duetPrintGuard/Notify.g" post:False
-03-29 23:01:43 duet_printer - _send_ntfy:[INFO] Sending NTFY with title duetPrintGuard
-03-29 23:01:43 duet_printer - _urlCall:[DEBUG] Connection attempt 0 url: https://ntfy.sh cmd: {"Topic": "MonksAtTheGate", "Title": "duetPrintGuard", "Priority": 5, "Message": "Defect detected on camera Stream"} post:True
-03-29 23:01:44 notification_utils - send_notification:[DEBUG] Notification send completed
-03-29 23:01:44 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 37.9ms)
-03-29 23:01:45 stream_utils - create_optimized_detection_loop:[DEBUG] Camera 1: Completed 100 detections, interval: 1.000s, mode: local
-03-29 23:01:47 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 23:01:47 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 23:01:47 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 6.8ms)
-03-29 23:01:50 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 30.2ms)
-03-29 23:01:52 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
-03-29 23:01:52 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
-03-29 23:01:52 notification_utils - send_defect_notification:[DEBUG] Attempting to send defect notification for alert ID: 1_2f2720d8-6030-4a13-b474-a3bd331f57c1
-03-29 23:01:52 notification_utils - send_defect_notification:[DEBUG] Alert found for ID 1_2f2720d8-6030-4a13-b474-a3bd331f57c1, preparing notification
-03-29 23:01:52 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 18.6ms)
-03-29 23:01:52 notification_utils - send_defect_notification:[DEBUG] Created notification object without image payload, sending to 0 subscriptions
-03-29 23:01:52 notification_utils - send_notification:[INFO] Starting notification send process
-03-29 23:01:52 notification_utils - send_notification:[DEBUG] title='duetPrintGuard' body='Defect detected on camera usb' image_url=None icon_url=None badge_url=None actions=[]
-03-29 23:01:52 duet_printer - duet_send_notification:[DEBUG] Defect notification title='duetPrintGuard' body='Defect detected on camera usb' image_url=None icon_url=None badge_url=None actions=[]
-03-29 23:01:52 duet_printer - _send_macro:[INFO] Sending macro M98 P"0:/sys/duetPrintGuard/Notify.g"
-03-29 23:01:52 duet_printer - _urlCall:[DEBUG] Connection attempt: 0 url: http://192.168.30.41:80/rr_gcode?gcode=M98 P"0:/sys/duetPrintGuard/Notify.g" post:False
-03-29 23:01:52 duet_printer - _send_ntfy:[INFO] Sending NTFY with title duetPrintGuard
-03-29 23:01:52 duet_printer - _urlCall:[DEBUG] Connection attempt 0 url: https://ntfy.sh cmd: {"Topic": "MonksAtTheGate", "Title": "duetPrintGuard", "Priority": 5, "Message": "Defect detected on camera usb"} post:True
-03-29 23:01:53 notification_utils - send_notification:[DEBUG] Notification send completed
-03-29 23:01:54 app - lifespan:[DEBUG] Cleaning up resources on shutdown...
-03-29 23:01:54 shared_video_stream - stop:[DEBUG] Stopped shared video stream for camera 0
-03-29 23:01:54 shared_video_stream - stop:[DEBUG] Stopped shared video stream for camera 1
-03-29 23:01:54 app - lifespan:[DEBUG] Cleaned up camera resources successfully.
+03-30 11:12:30 logger_module - create_log_file:[INFO] Logging started at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/sd/sys/duetPrintGuard/duetPrintGuard.log
+03-30 11:12:30 duetPrintGuard - start:[INFO] duetPrintGuard -- 0.0.2
+03-30 11:12:30 logger_module - set_log_level:[INFO] Log level changed to DEBUG
+03-30 11:12:30 duetPrintGuard - checkIP:[INFO] IP address 192.168.30.41 with port 8002 is available
+03-30 11:12:33 config - config_set_paths_and_initialize:[WARNING] Using app data directory: /home/stuart/.local/share/duetprintguard
+03-30 11:12:33 config - config_set_paths_and_initialize:[DEBUG] lock file path: /home/stuart/.local/share/duetprintguard/config.lock
+03-30 11:12:33 config - init_config:[DEBUG] Starting with new configuration file
+03-30 11:12:33 config - init_config:[DEBUG] {'version': '2.0.0', 'countdown': {'countdown_action': 'dismiss', 'countdown_time': 60, 'countdown_condition': 'any'}, 'camera_states': {'0': {'nickname': 'Stream', 'source': 'http://192.168.30.41:8090/stream', 'current_alert_id': None, 'detection_history': [], 'live_detection_running': False, 'last_result': '', 'last_time': None, 'start_time': None, 'error': None, 'brightness': 1.2, 'contrast': 1.6, 'focus': 1.0, 'sensitivity': 1.05, 'countdown_time': 15.0, 'countdown_action': 'cancel_print', 'majority_vote_threshold': 20, 'majority_vote_window': 100, 'printer_id': None, 'printer_config': None}, '1': {'nickname': 'usb', 'source': '/dev/video2', 'current_alert_id': None, 'detection_history': [], 'live_detection_running': False, 'last_result': '', 'last_time': None, 'start_time': None, 'error': None, 'brightness': 1.2, 'contrast': 0.95, 'focus': 1.0, 'sensitivity': 1.15, 'countdown_time': 15.0, 'countdown_action': 'cancel_print', 'majority_vote_threshold': 2, 'majority_vote_window': 5, 'printer_id': None, 'printer_config': None}}}
+03-30 11:12:33 duet_printer - _urlCall:[DEBUG] Connection attempt: 0 url: http://192.168.30.41:80/rr_connect?sessionKey=yes&password=reprap post:False
+03-30 11:12:33 duet_printer - <module>:[INFO] Successful login to printer at http://192.168.30.41:80
+03-30 11:12:33 app - appstartup:[WARNING] Startup mode: SiteStartupMode.LOCAL
+03-30 11:12:33 app - appstartup:[WARNING] Starting in local mode. Available at 
+03-30 11:12:33 app - appstartup:[DEBUG] Starting uvicorn
+03-30 11:12:33 inference_lib - _detect_backend:[INFO] ONNX Runtime detected, using ONNX Runtime backend
+03-30 11:12:33 model_downloader - download_all:[INFO] Downloading all model files for onnxruntime backend
+03-30 11:12:33 model_downloader - download_model:[INFO] Model model.onnx already cached at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/model.onnx
+03-30 11:12:33 model_downloader - download_options:[INFO] Options file already cached at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/opt.json
+03-30 11:12:33 model_downloader - download_prototypes:[INFO] Prototypes already cached at /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/prototypes/cache/prototypes.pkl
+03-30 11:12:33 model_downloader - download_all:[INFO] All model files successfully downloaded/cached for onnxruntime backend
+03-30 11:12:35 inference_lib - get_inference_engine:[INFO] Created inference engine with onnxruntime backend
+03-30 11:12:35 app - lifespan:[DEBUG] Setting up device...
+03-30 11:12:35 onnxruntime_engine - setup_device:[DEBUG] Using device: cpu
+03-30 11:12:35 app - lifespan:[DEBUG] Using device: cpu
+03-30 11:12:35 app - lifespan:[DEBUG] Loading model...
+03-30 11:12:35 inference_lib - _detect_backend:[INFO] ONNX Runtime detected, using ONNX Runtime backend
+03-30 11:12:35 onnxruntime_engine - _get_execution_providers:[DEBUG] Using execution providers: ['CPUExecutionProvider']
+03-30 11:12:35 onnxruntime_engine - load_model:[INFO] ONNX model loaded successfully. Input: input, Output: output, Shape: ['batch_size', 3, 224, 224]
+03-30 11:12:35 app - lifespan:[DEBUG] Model loaded successfully.
+03-30 11:12:35 app - lifespan:[DEBUG] Building prototypes...
+03-30 11:12:35 base_engine - _load_prototypes_from_cache:[DEBUG] Attempting to load prototypes from downloaded file: /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/prototypes/cache/prototypes.pkl
+03-30 11:12:35 onnxruntime_engine - _load_prototypes:[DEBUG] Prototypes loaded from cache: /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/prototypes/cache/prototypes.pkl
+03-30 11:12:35 base_engine - _load_prototypes_from_cache:[DEBUG] Successfully loaded prototypes from downloaded file: /home/stuart/DWC/Plugins/duetPrintGuard/plugin3.6.x/Code/dsf/model/prototypes/cache/prototypes.pkl
+03-30 11:12:35 app - lifespan:[DEBUG] Prototypes built successfully.
+03-30 11:12:35 app - lifespan:[DEBUG] Camera indices set up successfully.
+03-30 11:12:36 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-30 11:12:36 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-30 11:12:36 shared_video_stream - start:[DEBUG] Started shared video stream for camera 1
+03-30 11:12:37 camera_routes - camera_snapshot:[ERROR] Snapshot error for 1: 404: No frame available
+03-30 11:12:37 shared_video_stream - start:[DEBUG] Started shared video stream for camera 0
+03-30 11:12:40 stream_utils - log_optimization_info:[DEBUG] Stream optimization settings for local mode:
+03-30 11:12:40 stream_utils - log_optimization_info:[DEBUG]   Max FPS: 2
+03-30 11:12:40 stream_utils - log_optimization_info:[DEBUG]   JPEG Quality: 85
+03-30 11:12:40 stream_utils - log_optimization_info:[DEBUG]   Max Width: 1280
+03-30 11:12:40 stream_utils - log_optimization_info:[DEBUG]   Detection Interval: 1000ms
+03-30 11:12:40 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-30 11:12:40 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-30 11:12:40 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-30 11:12:42 stream_utils - log_optimization_info:[DEBUG] Stream optimization settings for local mode:
+03-30 11:12:42 stream_utils - log_optimization_info:[DEBUG]   Max FPS: 2
+03-30 11:12:42 stream_utils - log_optimization_info:[DEBUG]   JPEG Quality: 85
+03-30 11:12:42 stream_utils - log_optimization_info:[DEBUG]   Max Width: 1280
+03-30 11:12:42 stream_utils - log_optimization_info:[DEBUG]   Detection Interval: 1000ms
+03-30 11:12:42 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-30 11:12:43 notification_utils - send_defect_notification:[DEBUG] Attempting to send defect notification for alert ID: 1_5b24829d-4140-41ea-9125-a79c95298b1f
+03-30 11:12:43 notification_utils - send_defect_notification:[DEBUG] Alert found for ID 1_5b24829d-4140-41ea-9125-a79c95298b1f, preparing notification
+03-30 11:12:43 notification_utils - send_defect_notification:[DEBUG] Created notification object without image payload, sending to 0 subscriptions
+03-30 11:12:43 notification_utils - send_notification:[INFO] Starting notification send process
+03-30 11:12:43 notification_utils - send_notification:[DEBUG] title='duetPrintGuard' body='Defect detected on camera usb' image_url=None icon_url=None badge_url=None actions=[]
+03-30 11:12:43 duet_printer - duet_send_notification:[DEBUG] Defect notification title='duetPrintGuard' body='Defect detected on camera usb' image_url=None icon_url=None badge_url=None actions=[]
+03-30 11:12:43 duet_printer - _send_macro:[INFO] Sending macro M98 P"0:/sys/duetPrintGuard/Notify.g"
+03-30 11:12:43 duet_printer - _urlCall:[DEBUG] Connection attempt: 0 url: http://192.168.30.41:80/rr_gcode?gcode=M98 P"0:/sys/duetPrintGuard/Notify.g" post:False
+03-30 11:12:43 duet_printer - _send_ntfy:[INFO] Sending NTFY with title duetPrintGuard
+03-30 11:12:43 duet_printer - _urlCall:[DEBUG] Connection attempt 0 url: https://ntfy.sh cmd: {"Topic": "MonksAtTheGate", "Title": "duetPrintGuard", "Priority": 5, "Message": "Defect detected on camera usb"} post:True
+03-30 11:12:44 notification_utils - send_notification:[DEBUG] Notification send completed
+03-30 11:12:45 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-30 11:12:45 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-30 11:12:49 detection_routes - stop_live_detection:[DEBUG] Live detection task for camera 1 did not finish in time.
+03-30 11:12:49 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-30 11:12:50 detection_routes - stop_live_detection:[DEBUG] Live detection task for camera 0 did not finish in time.
+03-30 11:12:50 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-30 11:12:50 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-30 11:12:50 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-30 11:12:56 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-30 11:12:56 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-30 11:12:57 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-30 11:12:57 stream_utils - log_optimization_info:[DEBUG] Stream optimization settings for local mode:
+03-30 11:12:57 stream_utils - log_optimization_info:[DEBUG]   Max FPS: 2
+03-30 11:12:57 stream_utils - log_optimization_info:[DEBUG]   JPEG Quality: 85
+03-30 11:12:57 stream_utils - log_optimization_info:[DEBUG]   Max Width: 1280
+03-30 11:12:57 stream_utils - log_optimization_info:[DEBUG]   Detection Interval: 1000ms
+03-30 11:12:58 duet_printer - suspend_print_job:[DEBUG] Action requested from camera 1
+03-30 11:12:58 duet_printer - suspend_print_job:[WARNING] Requested action cancel_print --- current status running
+03-30 11:12:58 duet_printer - _urlCall:[DEBUG] Connection attempt: 0 url: http://192.168.30.41:80/rr_gcode?gcode=echo "Pausing  print with command M25" post:False
+03-30 11:12:58 duet_printer - _urlCall:[DEBUG] Connection attempt: 0 url: http://192.168.30.41:80/rr_gcode?gcode=M25 post:False
+03-30 11:13:00 duet_printer - _urlCall:[DEBUG] Connection attempt: 0 url: http://192.168.30.41:80/rr_gcode?gcode=echo "Cancelling print with command M2" post:False
+03-30 11:13:00 duet_printer - _urlCall:[DEBUG] Connection attempt: 0 url: http://192.168.30.41:80/rr_gcode?gcode=M2 post:False
+03-30 11:13:00 duet_printer - _urlCall:[DEBUG] Connection attempt: 0 url: http://192.168.30.41:80/rr_gcode?gcode=M291 S1 T0 P"Cancelled Printing" post:False
+03-30 11:13:01 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-30 11:13:01 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-30 11:13:06 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-30 11:13:06 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-30 11:13:11 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-30 11:13:11 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-30 11:13:16 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-30 11:13:16 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-30 11:13:21 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-30 11:13:21 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-30 11:13:26 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-30 11:13:26 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-30 11:13:31 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-30 11:13:31 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-30 11:13:36 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-30 11:13:36 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-30 11:13:41 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-30 11:13:41 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-30 11:13:44 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-30 11:13:44 stream_utils - log_optimization_info:[DEBUG] Stream optimization settings for local mode:
+03-30 11:13:44 stream_utils - log_optimization_info:[DEBUG]   Max FPS: 2
+03-30 11:13:44 stream_utils - log_optimization_info:[DEBUG]   JPEG Quality: 85
+03-30 11:13:44 stream_utils - log_optimization_info:[DEBUG]   Max Width: 1280
+03-30 11:13:44 stream_utils - log_optimization_info:[DEBUG]   Detection Interval: 1000ms
+03-30 11:13:46 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-30 11:13:46 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-30 11:13:51 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-30 11:13:51 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-30 11:13:55 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-30 11:13:55 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-30 11:13:58 stream_utils - log_optimization_info:[DEBUG] Stream optimization settings for local mode:
+03-30 11:13:58 stream_utils - log_optimization_info:[DEBUG]   Max FPS: 2
+03-30 11:13:58 stream_utils - log_optimization_info:[DEBUG]   JPEG Quality: 85
+03-30 11:13:58 stream_utils - log_optimization_info:[DEBUG]   Max Width: 1280
+03-30 11:13:58 stream_utils - log_optimization_info:[DEBUG]   Detection Interval: 1000ms
+03-30 11:13:58 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-30 11:14:00 stream_utils - log_optimization_info:[DEBUG] Stream optimization settings for local mode:
+03-30 11:14:00 stream_utils - log_optimization_info:[DEBUG]   Max FPS: 2
+03-30 11:14:00 stream_utils - log_optimization_info:[DEBUG]   JPEG Quality: 85
+03-30 11:14:00 stream_utils - log_optimization_info:[DEBUG]   Max Width: 1280
+03-30 11:14:00 stream_utils - log_optimization_info:[DEBUG]   Detection Interval: 1000ms
+03-30 11:14:00 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-30 11:14:00 sse_utils - append_new_outbound_packet:[DEBUG] Throttling SSE dispatch for camera_state (time since last: 35.6ms)
+03-30 11:14:00 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-30 11:14:00 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-30 11:14:01 notification_utils - send_defect_notification:[DEBUG] Attempting to send defect notification for alert ID: 0_c7d1e670-e4b5-4933-8ceb-4c30ab6031e6
+03-30 11:14:01 notification_utils - send_defect_notification:[DEBUG] Alert found for ID 0_c7d1e670-e4b5-4933-8ceb-4c30ab6031e6, preparing notification
+03-30 11:14:01 notification_utils - send_defect_notification:[DEBUG] Created notification object without image payload, sending to 0 subscriptions
+03-30 11:14:01 notification_utils - send_notification:[INFO] Starting notification send process
+03-30 11:14:01 notification_utils - send_notification:[DEBUG] title='duetPrintGuard' body='Defect detected on camera Stream' image_url=None icon_url=None badge_url=None actions=[]
+03-30 11:14:01 duet_printer - duet_send_notification:[DEBUG] Defect notification title='duetPrintGuard' body='Defect detected on camera Stream' image_url=None icon_url=None badge_url=None actions=[]
+03-30 11:14:01 duet_printer - _send_macro:[INFO] Sending macro M98 P"0:/sys/duetPrintGuard/Notify.g"
+03-30 11:14:01 duet_printer - _urlCall:[DEBUG] Connection attempt: 0 url: http://192.168.30.41:80/rr_gcode?gcode=M98 P"0:/sys/duetPrintGuard/Notify.g" post:False
+03-30 11:14:01 duet_printer - _send_ntfy:[INFO] Sending NTFY with title duetPrintGuard
+03-30 11:14:01 duet_printer - _urlCall:[DEBUG] Connection attempt 0 url: https://ntfy.sh cmd: {"Topic": "MonksAtTheGate", "Title": "duetPrintGuard", "Priority": 5, "Message": "Defect detected on camera Stream"} post:True
+03-30 11:14:01 notification_utils - send_notification:[DEBUG] Notification send completed
+03-30 11:14:05 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-30 11:14:05 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-30 11:14:05 detection_routes - stop_live_detection:[DEBUG] Live detection task for camera 0 did not finish in time.
+03-30 11:14:06 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-30 11:14:07 detection_routes - stop_live_detection:[DEBUG] Live detection task for camera 1 did not finish in time.
+03-30 11:14:07 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-30 11:14:10 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-30 11:14:10 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-30 11:14:15 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 0
+03-30 11:14:16 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 1
+03-30 11:14:16 duet_printer - suspend_print_job:[DEBUG] Action requested from camera 0
+03-30 11:14:16 duet_printer - suspend_print_job:[WARNING] Requested action pause_print --- current status cancelled

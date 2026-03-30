@@ -13,6 +13,8 @@ const settingsFocus = document.getElementById('focus');
 const settingsFocusLabel = document.getElementById('focus_val');
 const settingsCountdownTime = document.getElementById('countdown_time');
 const settingsCountdownTimeLabel = document.getElementById('countdown_time_val');
+const settingsCountdownControl = document.getElementById('countdowncontrol');
+const settingsCountdownControlLabel = document.getElementById('countdowncontrol_val');
 const settingsMajorityVoteThreshold = document.getElementById('majority_vote_threshold');
 const settingsMajorityVoteThresholdLabel = document.getElementById('majority_vote_threshold_val');
 const settingsMajorityVoteWindow = document.getElementById('majority_vote_window');
@@ -43,6 +45,7 @@ function changeLiveCameraFeed(cameraUUID) {
 
 function updateSelectedCameraSettings(d) {
     console.warn('updateSelectedCameraSettings: ==>', d.camera_uuid);
+    // Camera settings
     settingsCameraUUID.value = d.camera_uuid;
     settingsSensitivityLabel.textContent = d.sensitivity;
     settingsSensitivity.value = d.sensitivity;
@@ -56,16 +59,15 @@ function updateSelectedCameraSettings(d) {
     settingsFocusLabel.textContent = d.focus;
     settingsFocus.value = d.focus;
     updateSliderFill(settingsFocus);
-    settingsCountdownTimeLabel.textContent = d.countdown_time;
-    settingsCountdownTime.value = d.countdown_time;
-    updateSliderFill(settingsCountdownTime);
     settingsMajorityVoteThresholdLabel.textContent = d.majority_vote_threshold;
     settingsMajorityVoteThreshold.value = d.majority_vote_threshold;
     updateSliderFill(settingsMajorityVoteThreshold);
     settingsMajorityVoteWindowLabel.textContent = d.majority_vote_window;
     settingsMajorityVoteWindow.value = d.majority_vote_window;
     updateSliderFill(settingsMajorityVoteWindow);
-    settingsCountdownAction.value = d.countdown_action;
+
+
+
 }
 
 
@@ -245,6 +247,11 @@ function saveSetting(slider) {
     const formData = new FormData(settingsForm);
     const setting = slider.name;
     const value = slider.value;
+    console.warn(`Saving setting ${setting} with value ${value}`);
+    for (let [key, value] of formData.entries()) {
+    console.log(key, value);
+}
+
     fetch(settingsForm.action, {
         method: 'POST',
         headers: {
