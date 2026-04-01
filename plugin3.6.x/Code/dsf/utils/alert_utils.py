@@ -23,6 +23,7 @@ def append_new_alert(alert):
                 "camera_uuid": str,
                 "has_printer": bool,
                 "countdown_action": str
+                "countdown_control: str
             }
     """
     # pylint: disable=import-outside-toplevel
@@ -82,6 +83,7 @@ def alert_to_response_json(alert):
                 "camera_uuid": str,
                 "has_printer": bool,
                 "countdown_action": str
+                "countdown_control": str
             }
     """
     img_bytes = alert.snapshot

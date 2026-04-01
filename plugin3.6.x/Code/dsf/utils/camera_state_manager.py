@@ -93,8 +93,9 @@ class CameraStateManager:
             # SRS logger.critical(f'length {len(self._states)}')
             if not camera_state_ref:  # Add a new camera
                 camera_state_ref = CameraState(**new_states)
-                #self._states[camera_uuid] = camera_state_ref #SRS removed uuid
-                self._states[str(len(self._states))] = camera_state_ref
+                self._states[camera_uuid] = camera_state_ref #SRS removed uuid
+                # problem if removed out of sequence
+                # self._states[str(len(self._states))] = camera_state_ref
             else:
                 for key, value in new_states.items():
                     if hasattr(camera_state_ref, key):

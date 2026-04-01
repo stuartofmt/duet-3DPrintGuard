@@ -9,6 +9,7 @@ from utils.config import (STREAM_MAX_FPS, STREAM_TUNNEL_FPS,
                             STREAM_JPEG_QUALITY, STREAM_MAX_WIDTH,
                             DETECTION_INTERVAL_MS, PRINTER_STAT_POLLING_RATE_MS,
                             MIN_SSE_DISPATCH_DELAY_MS,
+                            COUNTDOWN_TIME, COUNTDOWN_ACTION, COUNTDOWN_CONTROL,
                             update_config, get_config, reset_all)
 from utils.camera_utils import update_camera_state
 from utils.camera_state_manager import get_camera_state_manager
@@ -86,8 +87,9 @@ async def update_settings(request: Request,
 # pylint: disable=unused-argument
 @router.post("/update-countdown", include_in_schema=False)
 async def update_countdown(request: Request,
-                          countdown_time: int = Form(...),
-                          countdown_action: str = Form(...)
+                            countdown_action: str = Form(...),
+                            countdown_time: int = Form(...),
+                            countdown_control: str = Form(...)
                           ):
     """Update camera settings and detection parameters.
 
@@ -99,9 +101,12 @@ async def update_countdown(request: Request,
     Returns:
         RedirectResponse: Redirect to the main index page.
     """
+    print(f"Received countdown settings update: action={countdown_action}, time={countdown_time}, control={countdown_control}")     
     for camera_uuid in await get_camera_state_manager().get_all_camera_uuids():
+        print(f"Updating countdown settings for camera {camera_uuid}: action={countdown_action}, time={countdown_time}, control={countdown_control}")    
         await update_camera_state(camera_uuid, {
+                                "countdown_action": countdown_action,
                                 "countdown_time": countdown_time,
-                                "countdown_action": countdown_action
+                                "countdown_control": countdown_control
                                 })
     return RedirectResponse("/settings", status_code=303)

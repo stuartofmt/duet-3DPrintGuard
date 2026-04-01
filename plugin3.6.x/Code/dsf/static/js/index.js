@@ -182,7 +182,8 @@ function updateDisplayItem(item ,cameraUUID) {
             last_time: data.last_time,
             live_detection_running: data.live_detection_running,
             countdown_time: data.countdown_time,
-            countdown_action: data.countdown_action
+            countdown_action: data.countdown_action,
+            countdown_control: data.countdown_control
         };
         updateCameraDisplay(item,camData);
     })
@@ -195,7 +196,8 @@ function updateDisplayItem(item ,cameraUUID) {
             last_time: 0,
             live_detection_running: '----',
             countdown_time: 0,
-            countdown_action: 'Unknown'
+            countdown_action: 'Unknown',
+            countdown_control: 'Unknown'
         };
         return emptyData;
     });
@@ -389,20 +391,13 @@ async function getCountdownSettings() {
     
     if (!res.ok) return [];
     const data = await res.json();
-    return data.countdown || { countdown_action: null, countdown_time: null, countdown_condition: null };;
+    return data.countdown || { countdown_action: null, countdown_time: null, countdown_control: null };;
   } catch {
-    return { countdown_action: null, countdown_time: null, countdown_condition: null };
+    return { countdown_action: null, countdown_time: null, countdown_control: null };
   }
 }
 
 // Wait until the DOM is fully loaded
 document.addEventListener("DOMContentLoaded", () => {
   console.warn('DOM loaded');
-  //d = await getCountdownSettings();
-  getCountdownSettings().then(d => {
-    console.warn(d.countdown_action);
-    console.warn(d.countdown_time);
-    console.warn(d.countdown_condition);
-  });
-
 });

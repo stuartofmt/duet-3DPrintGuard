@@ -46,17 +46,6 @@
             <div class="settings-section">
                 <form action="/settings" method="post" class="settings-form settings-grid">
                     <input type="hidden" id="camera_uuid" name="camera_uuid"  value="">
-                
-                    <!--             
-                    <div class="settings-item">
-                        <label for="countdown_action">Countdown Action</label>
-                        <select id="countdown_action" name="countdown_action" class="settings-dropdown">
-                            <option value="dismiss">Dismiss</option>
-                            <option value="cancel_print">Cancel Print</option>
-                            <option value="pause_print">Pause Print</option>
-                        </select>
-                    </div>
-                    -->
 
                     <div class="settings-item">
                         <label for="sensitivity">Sensitivity: <span id="sensitivity_val"></span></label>
@@ -74,12 +63,7 @@
                         <label for="focus">Focus: <span id="focus_val"></span></label>
                         <input type="range" id="focus" name="focus" min="0" max="2" step="0.05"  value="-" />
                     </div>
-                    <!--
-                    <div class="settings-item">
-                        <label for="countdown_time">Countdown Time (s): <span id="countdown_time_val"></span></label>
-                        <input type="range" id="countdown_time" name="countdown_time" min="0" max="300" step="5"  value="-" />
-                    </div>
-                    -->
+
                     <div class="settings-item">
                         <label for="majority_vote_threshold">Majority Vote Threshold: <span id="majority_vote_threshold_val"></span></label>
                         <input type="range" id="majority_vote_threshold" name="majority_vote_threshold" min="1" max="20"  value="-" />
@@ -93,7 +77,7 @@
         </div>
         <div class = grid-item>            
             <div class="countdown-section">
-                <form action="/update-countdown" method="post" class="settings-form settings-grid">
+                <form action="/update-countdown" method="post" class="control-form settings-grid">
                     <div class="settings-item">
                         <label for="countdown_action">Countdown Action</label>
                         <select id="countdown_action" name="countdown_action" class="settings-dropdown">
@@ -104,7 +88,7 @@
                     </div>
                     <div class="settings-item">
                         <label for="countdown_time">Countdown Time (s): <span id="countdown_time_val"></span></label>
-                        <input type="range" id="countdown_time" name="countdown_time" min="0" max="300" step="5"  value="-" />
+                        <input type="range" id="countdown_time" name="countdown_time" min="0" max="300" step="5"/>
                     </div>
                     <div class="settings-item">
                         <label for="countdown_control">Which Cameras</label>
@@ -174,7 +158,6 @@
                                 <input type="range" id="minSseDispatchDelay" name="minSseDispatchDelay" min="0" max="10000" step="20" value="100" />
                             </div>
                         </div>
-                        <!--Submit form automagically ?-->
                     </form>
                 </div>
             </div>

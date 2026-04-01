@@ -190,9 +190,10 @@ def init_config():
 				os.remove(CONFIG_FILE)
 				logger.info("Deleted old config file")
 
+			# Removed from top level
+			#SavedConfig.COUNTDOWN: {SavedConfig.COUNTDOWN_ACTION: COUNTDOWN_ACTION, SavedConfig.COUNTDOWN_TIME: COUNTDOWN_TIME, SavedConfig.COUNTDOWN_CONDITION: COUNTDOWN_CONDITION},
 			default_config = {
 				SavedConfig.VERSION: CONFIG_VERSION,
-				SavedConfig.COUNTDOWN: {SavedConfig.COUNTDOWN_ACTION: COUNTDOWN_ACTION, SavedConfig.COUNTDOWN_TIME: COUNTDOWN_TIME, SavedConfig.COUNTDOWN_CONDITION: COUNTDOWN_CONDITION},
 				SavedConfig.CAMERA_STATES: {}
 			}
 			'''
@@ -369,10 +370,13 @@ def reset_config():
 	Overwrites `config.json` with default empty fields for all SavedConfig options.
 	"""
 	acquire_lock()
+
+	# Removed from top level
+	#SavedConfig.COUNTDOWN: {SavedConfig.COUNTDOWN_ACTION: COUNTDOWN_ACTION, SavedConfig.COUNTDOWN_TIME: COUNTDOWN_TIME, SavedConfig.COUNTDOWN_CONDITION: COUNTDOWN_CONDITION},		
+
 	try:
 		default_config = {
 			SavedConfig.VERSION: CONFIG_VERSION,
-			SavedConfig.COUNTDOWN: {SavedConfig.COUNTDOWN_ACTION: COUNTDOWN_ACTION, SavedConfig.COUNTDOWN_TIME: COUNTDOWN_TIME, SavedConfig.COUNTDOWN_CONDITION: COUNTDOWN_CONDITION},
 			SavedConfig.CAMERA_STATES: {}
 		}
 		'''
@@ -443,7 +447,7 @@ FOCUS = 1.0
 #SRS
 COUNTDOWN_TIME = 60
 COUNTDOWN_ACTION = AlertAction.DISMISS
-COUNTDOWN_CONDITION = "any"
+COUNTDOWN_CONTROL = "any_camera"
 
 #SRS DEFULTS - NO LONGER IN HTML
 DETECTIONS_PER_SECOND = 1 #15

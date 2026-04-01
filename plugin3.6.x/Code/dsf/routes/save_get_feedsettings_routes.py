@@ -8,7 +8,7 @@ from fastapi.responses import RedirectResponse
 from utils.config import (STREAM_MAX_FPS, STREAM_TUNNEL_FPS,
                             STREAM_JPEG_QUALITY, STREAM_MAX_WIDTH,
                             DETECTION_INTERVAL_MS, PRINTER_STAT_POLLING_RATE_MS,
-                            MIN_SSE_DISPATCH_DELAY_MS,COUNTDOWN_ACTION, COUNTDOWN_TIME, COUNTDOWN_CONDITION,
+                            MIN_SSE_DISPATCH_DELAY_MS,COUNTDOWN_ACTION, COUNTDOWN_TIME, COUNTDOWN_CONTROL,
                             update_config, get_config)
 from utils.camera_utils import update_camera_state
 from utils.camera_state_manager import get_camera_state_manager
@@ -29,7 +29,7 @@ async def save_feed_settings(settings: FeedSettings):
         dict: Success status and message indicating settings were saved.
 
     Raises:
-        HTTPException: If saving settings fails due to validation or storage errors.
+        HTTPException: If saving fails due to validation or storage errors.
     """
     try:
         config_data = {
@@ -105,7 +105,7 @@ async def get_countdown_settings():
         countdown = {
             SavedConfig.COUNTDOWN_ACTION.value: config.get(SavedConfig.COUNTDOWN_ACTION, COUNTDOWN_ACTION),
             SavedConfig.COUNTDOWN_TIME.value: config.get(SavedConfig.COUNTDOWN_TIME, COUNTDOWN_TIME),
-            SavedConfig.COUNTDOWN_CONDITION.value: config.get(SavedConfig.COUNTDOWN_CONDITION, COUNTDOWN_CONDITION)
+            SavedConfig.COUNTDOWN_CONTROL.value: config.get(SavedConfig.COUNTDOWN_CONTROL, COUNTDOWN_CONTROL)
         }
         print(countdown)
         return {"success": True, "countdown": countdown}
@@ -116,6 +116,7 @@ async def get_countdown_settings():
             detail=f"Failed to load countdown settings: {str(e)}"
         )
     
+#SRS Unused for now - may want to add back in later if we want a non js way to update these settings    
 @router.post("/save-countdown-settings ", include_in_schema=False)
 async def save_countdown_settings(settings: CountdownSettings):
     """Save countdown settings to configuration.
@@ -127,14 +128,14 @@ async def save_countdown_settings(settings: CountdownSettings):
         dict: Success status and message indicating settings were saved.
 
     Raises:
-        HTTPException: If saving settings fails due to validation or storage errors.
+        HTTPException: If saving fails due to validation or storage errors.
     """
     try:
         config_data = {
             SavedConfig.COUNTDOWN: {
                 SavedConfig.COUNTDOWN_ACTION: settings.countdown_action,
                 SavedConfig.COUNTDOWN_TIME: settings.countdown_time,
-                SavedConfig.COUNTDOWN_CONDITION: settings.countdown_condition
+                SavedConfig.COUNTDOWN_CONTROL: settings.countdown_control
             }
         }
         update_config(config_data)

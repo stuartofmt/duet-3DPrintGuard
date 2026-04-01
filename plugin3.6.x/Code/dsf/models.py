@@ -9,10 +9,11 @@ class Alert(BaseModel):
     title: str
     message: str
     timestamp: float
-    countdown_time: float
     camera_uuid: str
     has_printer: bool = False
     countdown_action: str = "dismiss"
+    countdown_time: float
+    countdown_control: str = 'any_camera'
 
 class AlertAction(str, Enum):
     DISMISS = "dismiss"
@@ -41,7 +42,7 @@ def _get_config_value(key: str):
     # pylint: disable=import-outside-toplevel
     from utils.config import (BRIGHTNESS, CONTRAST,
                               FOCUS, SENSITIVITY,
-                              COUNTDOWN_TIME, COUNTDOWN_ACTION,
+                              COUNTDOWN_TIME, COUNTDOWN_ACTION,COUNTDOWN_CONTROL,
                               DETECTION_VOTING_THRESHOLD,
                               DETECTION_VOTING_WINDOW)
     config_map = {
@@ -51,6 +52,7 @@ def _get_config_value(key: str):
         'SENSITIVITY': SENSITIVITY,
         'COUNTDOWN_TIME': COUNTDOWN_TIME,
         'COUNTDOWN_ACTION': COUNTDOWN_ACTION,
+        'COUNTDOWN_CONTROL': COUNTDOWN_CONTROL,
         'DETECTION_VOTING_THRESHOLD': DETECTION_VOTING_THRESHOLD,
         'DETECTION_VOTING_WINDOW': DETECTION_VOTING_WINDOW,
     }
@@ -141,6 +143,7 @@ class CameraState(BaseModel):
     sensitivity: float = None
     countdown_time: float = None
     countdown_action: str = None
+    countdown_control: str = None
     majority_vote_threshold: int = None
     majority_vote_window: int = None
     printer_id: Optional[str] = None
@@ -159,6 +162,8 @@ class CameraState(BaseModel):
             data['countdown_time'] = _get_config_value('COUNTDOWN_TIME')
         if 'countdown_action' not in data:
             data['countdown_action'] = _get_config_value('COUNTDOWN_ACTION')
+        if 'countdown_control' not in data:
+            data['countdown_control'] = _get_config_value('COUNTDOWN_CONTROL')
         if 'majority_vote_threshold' not in data:
             data['majority_vote_threshold'] = _get_config_value('DETECTION_VOTING_THRESHOLD')
         if 'majority_vote_window' not in data:
@@ -231,10 +236,9 @@ class SavedConfig(str, Enum):
     MIN_SSE_DISPATCH_DELAY_MS = "min_sse_dispatch_delay_ms"
     PUSH_SUBSCRIPTIONS = "push_subscriptions"
     CAMERA_STATES = "camera_states"
-    COUNTDOWN = "countdown"
     COUNTDOWN_ACTION = "countdown_action"
     COUNTDOWN_TIME = "countdown_time"
-    COUNTDOWN_CONDITION = "countdown_condition"
+    COUNTDOWN_CONTROL = "countdown_control"
 
 class CloudflareTunnelConfig(BaseModel):
     account_id: str
@@ -276,7 +280,7 @@ class FeedSettings(BaseModel):
 class CountdownSettings(BaseModel):
     countdown_action: str
     countdown_time: int
-    countdown_condition: str
+    countdown_control: str
 
 class PollingTask(BaseModel):
     task: Optional[asyncio.Task] = None

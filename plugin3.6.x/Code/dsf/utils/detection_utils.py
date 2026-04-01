@@ -86,6 +86,7 @@ async def _create_alert_and_notify(camera_state_ref, camera_uuid, frame, timesta
         message=f"Defect detected on camera {camera_state_ref.nickname}",
         countdown_time=camera_state_ref.countdown_time,
         countdown_action=camera_state_ref.countdown_action,
+        countdown_control=camera_state_ref.countdown_control,
         has_printer=has_printer,
     )
     append_new_alert(alert)

@@ -11,15 +11,17 @@ const settingsContrast = document.getElementById('contrast');
 const settingsContrastLabel = document.getElementById('contrast_val');
 const settingsFocus = document.getElementById('focus');
 const settingsFocusLabel = document.getElementById('focus_val');
-const settingsCountdownTime = document.getElementById('countdown_time');
-const settingsCountdownTimeLabel = document.getElementById('countdown_time_val');
-const settingsCountdownControl = document.getElementById('countdowncontrol');
-const settingsCountdownControlLabel = document.getElementById('countdowncontrol_val');
 const settingsMajorityVoteThreshold = document.getElementById('majority_vote_threshold');
 const settingsMajorityVoteThresholdLabel = document.getElementById('majority_vote_threshold_val');
 const settingsMajorityVoteWindow = document.getElementById('majority_vote_window');
 const settingsMajorityVoteWindowLabel = document.getElementById('majority_vote_window_val');
+
+//COUNDOWN ELEMENTS
 const settingsCountdownAction = document.getElementById('countdown_action');
+const settingsCountdownTime = document.getElementById('countdown_time');
+const settingsCountdownTimeLabel = document.getElementById('countdown_time_val');
+const settingsCountdownControl = document.getElementById('countdown_control');
+
 
 const addCameraModalOverlay = document.getElementById('addCameraModalOverlay');
 const addCameraModalClose = document.getElementById('addCameraModalClose');
@@ -42,7 +44,7 @@ function changeLiveCameraFeed(cameraUUID) {
     camVideoPreview.src = `/camera/feed/${cameraUUID}`;
 }
 
-
+let countdown_set =  false;
 function updateSelectedCameraSettings(d) {
     console.warn('updateSelectedCameraSettings: ==>', d.camera_uuid);
     // Camera settings
@@ -66,8 +68,23 @@ function updateSelectedCameraSettings(d) {
     settingsMajorityVoteWindow.value = d.majority_vote_window;
     updateSliderFill(settingsMajorityVoteWindow);
 
+    // Countdown settings applied from first camera only since all cameras will be forced to same value
+    if (!countdown_set) {
+        countdown_set = true;
+        settingsCountdownAction.value = d.countdown_action;
+        console.warn('Countdown Action Value:', d.countdown_action);
 
 
+        settingsCountdownTimeLabel.textContent = d.countdown_time;
+        settingsCountdownTime.value = d.countdown_time;
+        console.warn('Countdown Time Value:', d.countdown_time);
+        updateSliderFill(settingsCountdownTime);
+
+        settingsCountdownControl.value = d.countdown_control;
+        console.warn('Countdown Control Value:', d.countdown_control);
+
+        submitControlForm(); //forces both cameras to same control settings when new camera added
+    }
 }
 
 
@@ -140,7 +157,8 @@ function fetchAndUpdateMetricsForCamera(cameraUUID) {
         return response.json();
     })
     .then(data => {
-        console.warn('Setting metricsData: Last update time ==>', data.last_time);   
+        console.warn('control ==>', data.countdown_control);
+        console.warn(data);
         const metricsData = {
             camera_uuid: cameraUUID,
             start_time: data.start_time,
@@ -153,12 +171,13 @@ function fetchAndUpdateMetricsForCamera(cameraUUID) {
             contrast: data.contrast,
             focus: data.focus,
             sensitivity: data.sensitivity,
-            countdown_time: data.countdown_time,
             majority_vote_threshold: data.majority_vote_threshold,
             majority_vote_window: data.majority_vote_window,
             printer_id: data.printer_id,
             printer_config: data.printer_config,
-            countdown_action: data.countdown_action
+            countdown_action: data.countdown_action,
+            countdown_time: data.countdown_time,
+            countdown_control: data.countdown_control
         };
         updateSelectedCameraSettings(metricsData);
     })
@@ -173,6 +192,7 @@ function fetchAndUpdateMetricsForCamera(cameraUUID) {
             frame_rate: null,
             live_detection_running: false
         };
+        //updateSelectedCameraSettings(emptyMetrics);
     });
 }
 
@@ -193,6 +213,7 @@ cameraItems.forEach(item => {
             cameraUUID = null;
             settingsCameraUUID.value = '';
         }
+    //submitControlForm(); //forces both cameras to same control settings when new camera added
     });
 
     const removeButton = item.querySelector('.remove-camera-btn');
@@ -205,17 +226,18 @@ cameraItems.forEach(item => {
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    const firstCameraItem = cameraItems[0];
-    if (firstCameraItem) {
-        const cameraId = firstCameraItem.dataset.cameraId;
+    console.warn('DOM' , cameraItems.length);
+    
+    if (cameraItems.length > 0) {
+        const cameraId = cameraItems[0].dataset.cameraId;
         if (cameraId) {
-            firstCameraItem.click();
-        } else {
+            cameraItems[0].click();
+        }
+    }else {
             if (addCameraModalOverlay) {
                 addCameraModalOverlay.style.display = 'flex';
             }
         }
-    }
 });
 
 addCameraBtn?.addEventListener('click', function(e) {
@@ -241,16 +263,22 @@ function updateSliderFill(slider) {
     }
 }
 
+
 function saveSetting(slider) {
     const settingsForm = slider.closest('form');
+    console.warn('form action is ', settingsForm ? settingsForm.action : 'N/A');
     if (!settingsForm) return;
     const formData = new FormData(settingsForm);
+
+    // 🔥 Ensure current field is always included
+    formData.set(slider.name, slider.value);
+
     const setting = slider.name;
     const value = slider.value;
     console.warn(`Saving setting ${setting} with value ${value}`);
     for (let [key, value] of formData.entries()) {
     console.log(key, value);
-}
+    }
 
     fetch(settingsForm.action, {
         method: 'POST',
@@ -275,25 +303,64 @@ function saveSetting(slider) {
 }
 
 document.querySelectorAll('.settings-form input[type="range"]').forEach(slider => {
+    console.warn('adding slider', slider);
     updateSliderFill(slider);
     slider.addEventListener('input', () => {
         updateSliderFill(slider);
     });
     slider.addEventListener('change', (e) => {
+        console.warn('settings event');
         e.preventDefault();
         updateSliderFill(slider);
         saveSetting(slider);
     });
 });
 
-document.getElementById('countdown_action').addEventListener('change', (e) => {
-    console.warn('Countdown Settings now ' + e.target.value)
-    saveSetting(e.target);
+document.querySelectorAll('.control-form input[type="range"').forEach(slider => {
+    console.warn('adding slider for control', slider);
+    updateSliderFill(slider);
+    slider.addEventListener('input', () => {
+        updateSliderFill(slider);
+    });
+    slider.addEventListener('change', (e) => {
+        console.warn('settings event');
+        e.preventDefault();
+        updateSliderFill(slider);
+        saveSetting(slider);
+    });
 });
 
+document.querySelectorAll('.control-form select').forEach(control => {
+    console.warn('adding control', control);
+    control.addEventListener('input', (e) => {
+        console.warn('input event');
+        saveSetting(control);
+    });
+    control.addEventListener('change', (e) => {
+        console.warn('control event');
+        e.preventDefault();
+        saveSetting(control);
+    });
+});
+
+function submitControlForm (){
+    console.warn('submitting form');
+document.querySelector('.control-form select')
+  .dispatchEvent(new Event('change', { bubbles: true }));
+}
+
+
+/*
 document.querySelector('.settings-form')?.addEventListener('submit', (e) => {
     e.preventDefault();
 });
+*/
+/*
+document.querySelector('.countrol-form')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    console.warn('form event');
+});
+*/
 
 function updateFeedSliderFill(slider) {
     const min = slider.min || 0;

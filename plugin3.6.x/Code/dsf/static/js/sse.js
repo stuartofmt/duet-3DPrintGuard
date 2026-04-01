@@ -105,20 +105,24 @@ function parseAlertData(alert_data) {
 let alert_uuids = [];
 function alertBypass(data) {
     console.warn(data.camera_uuid);
-    any = true;
-    if (any && alert_uuids.length == 0) {
+    console.warn(data.countdown_control);
+
+    if (data.countdown_control === 'any_camera' && alert_uuids.length == 0) {
         alert_uuids.push(data.camera_uuid);
         return false;
     }
-    if (!any){
+    if (data.countdown_control === 'all_cameras') {
         numCameras = document.querySelectorAll('.camera-card').length;
-        if (!alert_uuids.includes(data.camera_uuid)) {
-        alert_uuids.push(data.camera_uuid);
-        if (alert_uuids.length == numCameras) {
-            return false;
+        if (numCameras == alert_uuids.length) { // Active countdown already running, bypass
+            return true;
         }
-        return true;
-    }
+        if (!alert_uuids.includes(data.camera_uuid)) {
+            alert_uuids.push(data.camera_uuid);
+            if (alert_uuids.length == numCameras) { // First time we hit the required number of cameras, start the countdown
+                return false;
+            }
+            return true;
+        }
     return true;
     }
 }
