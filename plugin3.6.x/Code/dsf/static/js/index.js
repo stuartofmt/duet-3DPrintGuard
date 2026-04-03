@@ -232,7 +232,7 @@ function updateCameraDisplay(item, d) {
       statusIndicator.style.backgroundColor = 'transparent';
       startStopButton.textContent = BTNSTART;
       startStopButton.style.backgroundColor = '#2ecc40';
-      camPred.textContent = 'Pending';
+      camPred.textContent = '';
   }
 }
 

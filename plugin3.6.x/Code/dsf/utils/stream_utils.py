@@ -9,7 +9,11 @@ from PIL import Image
 
 from .model_utils import _run_inference
 from .sse_utils import sse_update_camera_state
+'''
 from .detection_utils import (_passed_majority_vote, _create_alert_and_notify,
+							  _send_alert)
+'''
+from .detection_utils import (failure_test, _create_alert_and_notify,
 							  _send_alert)
 from .camera_utils import get_camera_state_sync
 from .shared_video_stream import get_shared_camera_frame
@@ -224,6 +228,11 @@ async def create_optimized_detection_loop(app_state, camera_uuid, get_camera_sta
 			e.g., {'update_camera_state': ..., 'update_camera_detection_history': ...}.
 	"""
 	detection_count = 0
+	camera_state_ref = get_camera_state_sync_func(camera_uuid)
+	#detection_history = {}
+	majority_vote_window = camera_state_ref.majority_vote_window
+	majority_vote_threshold = camera_state_ref.majority_vote_threshold
+
 	stream_optimizer.log_optimization_info()
 	# pylint: disable=E1101
 	try:
@@ -266,9 +275,11 @@ async def create_optimized_detection_loop(app_state, camera_uuid, get_camera_sta
 				and 0 <= numeric < len(app_state.class_names)
 				) else str(numeric)
 			current_timestamp = time.time()
+			'''
 			await update_functions['update_camera_detection_history'](camera_uuid,
 																	  label,
 																	  current_timestamp)
+			'''
 			await update_functions['update_camera_state'](camera_uuid, {
 				"last_result": label,
 				"last_time": current_timestamp
@@ -278,9 +289,20 @@ async def create_optimized_detection_loop(app_state, camera_uuid, get_camera_sta
 			if isinstance(numeric, int) and numeric == app_state.defect_idx:
 				do_alert = False
 				camera_lock = camera_state_ref.lock
+				# SRS CHANGE HERE FOR failure_test function - does not need history or timestamp
+				last_result = 0 # assumes success
+				if label == 'failure':
+					last_result = 1
+				#majority_vote_window = camera_state_ref.majority_vote_window
+				#majority_vote_threshold = camera_state_ref.majority_vote_threshold
+
 				async with camera_lock:
+					passed_majority_vote = failure_test(camera_uuid,majority_vote_window,majority_vote_threshold,last_result)
+					if passed_majority_vote:
+						print(f'passed Majority Vote for {camera_uuid}')
+					#passed_majority_vote = _passed_majority_vote(camera_state_history)
 					if (camera_state_ref.current_alert_id is None
-						and _passed_majority_vote(camera_state_ref)):
+						and passed_majority_vote):
 						camera_state_ref.current_alert_id = True
 						do_alert = True
 				if do_alert:
