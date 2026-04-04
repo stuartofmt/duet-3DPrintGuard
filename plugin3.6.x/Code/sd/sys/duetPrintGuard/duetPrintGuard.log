@@ -124,3 +124,5 @@
 04-04 09:23:28 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 9e18c708-33e8-47f2-8142-4d4537c8865a
 04-04 09:23:33 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 966fb330-9369-450e-a6c1-41e86554c992
 04-04 09:23:33 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 9e18c708-33e8-47f2-8142-4d4537c8865a
+04-04 09:23:38 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 966fb330-9369-450e-a6c1-41e86554c992
+04-04 09:23:38 camera_routes - get_camera_state_ep:[WARNING] entered get_camera_state_ep with camera_uuid: 9e18c708-33e8-47f2-8142-4d4537c8865a
