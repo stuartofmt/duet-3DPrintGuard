@@ -30,34 +30,49 @@ body {
 }
 
 /* =========================
-   Top Buttons
+   Control
    ========================= */
-/*
 .top-controls {
   display: flex;
-  flex-flow: center;
-  gap: 10px;
-}
-*/
-.top-controls {
-  display: flex;
-  justify-content: center; /* horizontal */
-  align-items: center;     /* vertical */
+  justify-content: center;
+  align-items: center;
   gap: 10px;
 }
 
-.top-controls button {
+/* Shared styles for BOTH */
+.control {
   padding: 10px 20px;
-  border: none;
   border-radius: 6px;
   color: white;
   font-weight: bold;
-  cursor: pointer;
+  font-size: 14px;      /* 👈 force same font size */
+  line-height: 1;       /* 👈 removes extra vertical space */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  box-sizing: border-box; /* 👈 consistent sizing */
 }
 
-.btn-ignore { background-color: green; }
-.btn-pause { background-color: orange; }
-.btn-cancel { background-color: red; }
+/* Remove button defaults */
+button.control {
+  border: none;
+  cursor: pointer;
+  font: inherit;        /* 👈 VERY IMPORTANT */
+}
+
+/* Timer styling */
+.countdown-timer {
+  background-color: #06b4f8;
+  text-align: center;
+  font-size: 24px; 
+}
+
+/* Example colors */
+.btn-pause { background-color: #f0ad4e; }
+.btn-cancel { background-color: #d9534f; }
+.btn-ignore { background-color: #04f810; }
+
 
 
 /* =========================
