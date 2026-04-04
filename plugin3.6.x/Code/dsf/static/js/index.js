@@ -318,7 +318,6 @@ document.addEventListener('defectRaised', evt => {
     ignoreBtn.style.display = "block";
     countdownTimer.style.display = "block";
     flashButton = flashCountdown(action);
-    console.warn(flashButton);
   }
   if (countdown > 0) {
     defectActive  = true;

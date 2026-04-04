@@ -89,7 +89,6 @@ async function loadPendingAlerts() {
 function displayAlert(alert_data) {
     const parsedData = parseAlertData(alert_data);
     console.warn("ALERT RECIEVED");
-    console.warn(parsedData);
     if (alertBypass(parsedData)) {
         return;
     }
@@ -104,24 +103,27 @@ function parseAlertData(alert_data) {
 
 let alert_uuids = [];
 function alertBypass(data) {
-    console.warn(data.camera_uuid);
-    console.warn(data.countdown_control);
-
-    if (data.countdown_control === 'any_camera' && alert_uuids.length == 0) {
-        alert_uuids.push(data.camera_uuid);
-        return false;
+    // Dont bypass on first camera to raise alert
+    if (data.countdown_control === 'any_camera') {
+        if (alert_uuids.length == 0) {
+            alert_uuids.push(data.camera_uuid);
+            return false;
+         } else {
+        return true;
+        }
     }
+
+    // If all_cameras is allowed - only trigger if no countdown is active
     if (data.countdown_control === 'all_cameras') {
         numCameras = document.querySelectorAll('.camera-card').length;
-        if (numCameras == alert_uuids.length) { // Active countdown already running, bypass
+        if (alert_uuids.length >= numCameras) { // Active countdown already running, bypass
             return true;
         }
         if (!alert_uuids.includes(data.camera_uuid)) {
             alert_uuids.push(data.camera_uuid);
-            if (alert_uuids.length == numCameras) { // First time we hit the required number of cameras, start the countdown
+            if (alert_uuids.length >= numCameras) { // First time we hit the required number of cameras, start the countdown
                 return false;
             }
-            return true;
         }
     return true;
     }
@@ -218,6 +220,7 @@ function startAlertCountdown(data) {
     const startTime = Date.now();
     const countdownTime = data.countdown_time || 0;
     const endTime = startTime + countdownTime * 1000;
+
 
     function updateCountdown() {
         const now = Date.now();
