@@ -15,48 +15,6 @@ from duet_printer import get_printer_config, suspend_print_job
 
 from models import Alert, AlertAction, SSEDataType
 
-def failure_test(uuid,window,threshold,latest_failure):
-	'''
-	latest_failure == 1 for failure and 0 for success
-	'''
-	# initial setup
-	if not hasattr(failure_test, "counts"):
-		failure_test.counts = {}
-
-	# Add new uuid
-	if failure_test.counts.get(uuid) is None:
-		failure_test.counts[uuid] = {'failure_count': 0, 'stack': (), 'stack_length':0}
-
-	failure_count = failure_test.counts[uuid]['failure_count']
-	stack = failure_test.counts[uuid]['stack']
-	stack_length = failure_test.counts[uuid]['stack_length']
-	 
-	slicer = stack_length // window # integer divide ==>  0 if < window else 1
-	
-	# update the failure count
-	oldest_entry = 0
-	if stack_length >= window: 	# Dont grow the stack
-		oldest_entry = stack[0]
-	else:						# Still filling the stack window
-		stack_length += 1
-	
-	failure_count = failure_count + latest_failure-oldest_entry # latest and oldest may both have been failure
-
-	# Can we finish already?
-	if failure_count >= threshold:
-		del failure_test.counts[uuid] # reset
-		return True
-
-	stack = (*stack[slicer:], latest_failure) # max # entries == window 
-	failure_test.counts[uuid] = {'failure_count': failure_count, 'stack': stack, 'stack_length':stack_length}
-	return False
-
-
-
-
-
-
-
 
 def _xpassed_majority_vote(camera_state):
 	"""Determine if failures in detection history meet the majority threshold.
@@ -116,6 +74,7 @@ async def _create_alert_and_notify(camera_state_ref, camera_uuid, frame, timesta
 	Returns:
 		Alert: The newly created alert.
 	"""
+	print('DETECTION UTILS ALERT')
 	alert_id = f"{camera_uuid}_{str(uuid.uuid4())}"
 	# pylint: disable=E1101
 	_, img_buf = cv2.imencode('.jpg', frame)

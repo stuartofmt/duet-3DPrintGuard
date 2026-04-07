@@ -15,7 +15,8 @@ const grid = document.getElementById("grid");
  let detectionStatus;
  let BTNSTOP = 'Stop Detection';
  let BTNSTART =  'Start Detection';
- const countdownTimers = new Map(); // cameraId -> intervalId
+ //let cameraUUID;
+ // const countdownTimers = new Map(); // cameraId -> intervalId
 
  //
   let topControls;
@@ -68,7 +69,7 @@ function startSnapshots(img, camId) {
 }
 
 // =========================
-// Create UI (FIXED)
+// Create UI
 // =========================
 function createTopRowButtons(){
   const row = document.createElement("div");
@@ -83,6 +84,7 @@ function createTopRowButtons(){
   // Event for Ignore button
   ignoreBtn.addEventListener("click", () => {
     alert("Ignore button clicked");
+    executeAlertAction('dismiss', cameraUUID)
     // Add your Ignore logic here
   });
 
@@ -314,6 +316,7 @@ let defectActive = false;
 // Called from sse when defect confirmed
 document.addEventListener('defectRaised', evt => {
   const { camera, action, countdown } = evt.detail;
+  //cameraUUID = camera;
   if (!defectActive && countdown > 0) {
     ignoreBtn.style.display = "block";
     countdownTimer.style.display = "block";
@@ -321,7 +324,7 @@ document.addEventListener('defectRaised', evt => {
   }
   if (countdown > 0) {
     defectActive  = true;
-    countdownTimer.textContent = countdown;
+    countdownTimer.textContent = 'in ' + countdown + ' sec';
   } else {
     defectActive = false;
     flashButton.classList.remove('flash');

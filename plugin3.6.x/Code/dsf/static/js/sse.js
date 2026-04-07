@@ -88,10 +88,6 @@ async function loadPendingAlerts() {
 
 function displayAlert(alert_data) {
     const parsedData = parseAlertData(alert_data);
-    console.warn("ALERT RECIEVED");
-    if (alertBypass(parsedData)) {
-        return;
-    }
     //updateAlertUI(parsedData);
     startAlertCountdown(parsedData);
     //saveActiveAlert(parsedData);
@@ -101,33 +97,6 @@ function parseAlertData(alert_data) {
     return typeof alert_data === 'string' ? JSON.parse(alert_data) : alert_data;
 }
 
-let alert_uuids = [];
-function alertBypass(data) {
-    // Dont bypass on first camera to raise alert
-    if (data.countdown_control === 'any_camera') {
-        if (alert_uuids.length == 0) {
-            alert_uuids.push(data.camera_uuid);
-            return false;
-         } else {
-        return true;
-        }
-    }
-
-    // If all_cameras is allowed - only trigger if no countdown is active
-    if (data.countdown_control === 'all_cameras') {
-        numCameras = document.querySelectorAll('.camera-card').length;
-        if (alert_uuids.length >= numCameras) { // Active countdown already running, bypass
-            return true;
-        }
-        if (!alert_uuids.includes(data.camera_uuid)) {
-            alert_uuids.push(data.camera_uuid);
-            if (alert_uuids.length >= numCameras) { // First time we hit the required number of cameras, start the countdown
-                return false;
-            }
-        }
-    return true;
-    }
-}
 
 function updateAlertUI(data) {
     /*
@@ -209,12 +178,15 @@ function updateAlertUI(data) {
 function startAlertCountdown(data) {
     if (!data || !data.camera_uuid) return;
 
-    const countdownTimerId = `countdown-${data.camera_uuid}`;
+    const countdownTimerId = 'countdown';
+    //const countdownTimerId = `countdown-${data.camera_uuid}`;
 
     // Clear any existing timer for this camera
+    // only one timer instance - ignore calls during countdown
     if (window[countdownTimerId]) {
-        clearInterval(window[countdownTimerId]);
-        delete window[countdownTimerId];
+        return;
+        //clearInterval(window[countdownTimerId]);
+        //delete window[countdownTimerId];
     }
 
     const startTime = Date.now();
@@ -246,7 +218,6 @@ function startAlertCountdown(data) {
         if (secondsLeft <= 0) {
             clearInterval(window[countdownTimerId]);
             delete window[countdownTimerId];
-            alert_uuids = []; // Reset bypass list when countdown ends
         }
     }
 
@@ -377,7 +348,7 @@ function dismissAlert(action_type, alertId) {
     if (!alertId) alertId = currentAlertId;
     executeAlertAction(action_type, alertId);
 }
-
+/*
 document.addEventListener('DOMContentLoaded', () => {
     const dismissBtn = document.getElementById('dismissNotificationBtn');
     const cancelBtn = document.getElementById('cancelPrintBtn');
@@ -386,3 +357,4 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cancelBtn) cancelBtn.remove();
     if (pauseBtn) pauseBtn.remove();
 });
+*/

@@ -13,7 +13,7 @@ from .sse_utils import sse_update_camera_state
 from .detection_utils import (_passed_majority_vote, _create_alert_and_notify,
 							  _send_alert)
 '''
-from .detection_utils import (failure_test, _create_alert_and_notify,
+from .detection_utils import (_create_alert_and_notify,
 							  _send_alert)
 from .camera_utils import get_camera_state_sync
 from .shared_video_stream import get_shared_camera_frame
@@ -232,14 +232,18 @@ async def create_optimized_detection_loop(app_state, camera_uuid, get_camera_sta
 	#detection_history = {}
 	majority_vote_window = camera_state_ref.majority_vote_window
 	majority_vote_threshold = camera_state_ref.majority_vote_threshold
+	countdown_control = camera_state_ref.countdown_control
+	countdown_time = camera_state_ref.countdown_time
+	num_cameras = len(get_config().get('camera_states',0))
+	global _MAJORITY_VOTE, _CAMERA_AGREEMENT
+	_MAJORITY_VOTE = {}
+	_CAMERA_AGREEMENT = []
 
 	stream_optimizer.log_optimization_info()
 	# pylint: disable=E1101
 	try:
 		while True:
 			camera_state_ref = get_camera_state_sync_func(camera_uuid)
-			print("Camera state reference obtained for camera %s", camera_uuid)
-			print(camera_state_ref)
 			if not camera_state_ref.live_detection_running:
 				break
 			frame = get_shared_camera_frame(camera_uuid)
@@ -289,32 +293,49 @@ async def create_optimized_detection_loop(app_state, camera_uuid, get_camera_sta
 			if isinstance(numeric, int) and numeric == app_state.defect_idx:
 				do_alert = False
 				camera_lock = camera_state_ref.lock
-				# SRS CHANGE HERE FOR failure_test function - does not need history or timestamp
+				# SRS CHANGE HERE FOR _camera_failure_threshold function - does not need history or timestamp
 				last_result = 0 # assumes success
 				if label == 'failure':
 					last_result = 1
-				#majority_vote_window = camera_state_ref.majority_vote_window
-				#majority_vote_threshold = camera_state_ref.majority_vote_threshold
 
 				async with camera_lock:
-					passed_majority_vote = failure_test(camera_uuid,majority_vote_window,majority_vote_threshold,last_result)
+					passed_majority_vote = _camera_failure_threshold(camera_uuid,majority_vote_window,majority_vote_threshold,last_result)
+					passed_camera_combination = False
 					if passed_majority_vote:
-						print(f'passed Majority Vote for {camera_uuid}')
-					#passed_majority_vote = _passed_majority_vote(camera_state_history)
-					if (camera_state_ref.current_alert_id is None
-						and passed_majority_vote):
-						camera_state_ref.current_alert_id = True
+						logger.debug(f'{passed_majority_vote=}')
+						passed_camera_combination = _passed_multi_camera_test(countdown_control,camera_uuid,num_cameras)
+
+					if passed_majority_vote and passed_camera_combination:
+						logger.debug(f'{passed_camera_combination =}')
+						'''
+						# Can remove since blocked by sleep during alert
+						if camera_state_ref.current_alert_id is None:
+							camera_state_ref.current_alert_id = True
+							do_alert = True
+						'''
 						do_alert = True
-				if do_alert:
-					'''SRS'''
-					alert = await _create_alert_and_notify(camera_state_ref,
-														 camera_uuid,
-														 frame,
-														 current_timestamp)
-					
-					asyncio.create_task(_send_alert(alert))
-			detection_interval = stream_optimizer.get_detection_interval()
-			await asyncio.sleep(detection_interval)
+						if do_alert:
+							'''SRS'''
+							alert = await _create_alert_and_notify(camera_state_ref,
+																camera_uuid,
+																frame,
+																current_timestamp)
+							
+							asyncio.create_task(_send_alert(alert))
+
+							# Wait for countdown time during active alert
+							await asyncio.sleep(countdown_time)
+
+							#del _camera_failure_threshold.counts # reset for all
+							# _passed_multi_camera_test.alert_uuids = [] # reset the combination test
+							#if hasattr(_camera_failure_threshold, "counts"): del _camera_failure_threshold.counts # reset for all
+							_MAJORITY_VOTE = {}
+							_CAMERA_AGREEMENT = []
+
+					detection_interval = stream_optimizer.get_detection_interval()			
+					await asyncio.sleep(detection_interval)
+
+
 			if detection_count % 100 == 0:
 				settings = stream_optimizer.get_stream_settings()
 				logger.debug("Camera %s: Completed %d detections, interval: %.3fs, mode: %s",
@@ -362,3 +383,66 @@ def generate_frames(camera_uuid: str):
 			logger.error("Error in fallback frame generation for camera %s: %s",
 						  camera_uuid,
 						  fallback_e)
+			
+
+def _camera_failure_threshold(uuid,window,threshold,latest_failure):
+	'''
+	latest_failure == 1 for failure and 0 for success
+	'''
+	global _MAJORITY_VOTE
+	# initial setup
+
+	counts = _MAJORITY_VOTE
+
+	# Add new uuid
+	if counts.get(uuid) is None:
+		counts[uuid] = {'failure_count': 0, 'stack': (), 'stack_length':0}
+
+	failure_count = counts[uuid]['failure_count']
+	stack = counts[uuid]['stack']
+	stack_length = counts[uuid]['stack_length']
+ 
+	slicer = stack_length // window # integer divide ==>  0 if < window else 1
+	
+	# update the failure count
+	oldest_entry = 0
+	if stack_length >= window: 	# Dont grow the stack
+		oldest_entry = stack[0]
+	else:						# Still filling the stack window
+		stack_length += 1
+	
+	failure_count = failure_count + latest_failure-oldest_entry # latest and oldest may both have been failure
+
+	# Can we finish ?
+	if failure_count >= threshold:
+		return True
+
+	stack = (*stack[slicer:], latest_failure) # max # entries == window 
+	counts[uuid] = {'failure_count': failure_count, 'stack': stack, 'stack_length':stack_length}
+	return False
+
+
+def _passed_multi_camera_test(countdown_control, camera_uuid,num_cameras):
+	global _CAMERA_AGREEMENT
+
+	alert_uuids = _CAMERA_AGREEMENT
+	
+	if countdown_control == 'any_camera': #Ok on first camera
+		if len(alert_uuids) == 0:
+			alert_uuids.append(camera_uuid)
+			return True
+		else:
+			if camera_uuid not in alert_uuids:
+				alert_uuids.append(camera_uuid)
+				return False
+		
+	# If all_cameras is active - only trigger if no countdown is active
+	if countdown_control == 'all_cameras':
+		if camera_uuid not in alert_uuids:
+			alert_uuids.append(camera_uuid)
+			if len(alert_uuids) >= num_cameras: # First time we hit the required number of cameras, start the countdown
+				return True
+				   
+		return False
+	
+
