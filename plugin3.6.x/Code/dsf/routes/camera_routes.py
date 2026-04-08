@@ -19,7 +19,7 @@ router = APIRouter()
 async def get_camera_state_ep(request: Request, camera_uuid: str = Body(..., embed=True)):
     """Get the current state of a specific camera.
     """
-    logger.warning('entered get_camera_state_ep with camera_uuid: %s', camera_uuid)
+    logger.debug('entered get_camera_state_ep with camera_uuid: %s', camera_uuid) #  at least every n seconds by index.js
     camera_state = await get_camera_state(camera_uuid)
     detection_times = [t for t, _ in camera_state.detection_history] if (
         camera_state.detection_history
