@@ -43,7 +43,7 @@ async def append_new_outbound_packet(packet, sse_data_type: SSEDataType):
     pkt_json = json.dumps(pkt)
     await app.state.outbound_queue.put(pkt_json)
     _last_dispatch_times[sse_data_type] = current_time
-
+'''SRS - not used
 async def append_new_outbound_packet_force(packet, sse_data_type: SSEDataType):
     """Force append a new Server-Sent Event packet to the outbound queue, bypassing throttling.
 
@@ -58,7 +58,8 @@ async def append_new_outbound_packet_force(packet, sse_data_type: SSEDataType):
     await app.state.outbound_queue.put(pkt_json)
     current_time = time.time() * 1000
     _last_dispatch_times[sse_data_type] = current_time
-
+'''
+'''SRS Not used
 def reset_throttle_for_data_type(sse_data_type: SSEDataType):
     """Reset the throttle timer for a specific SSE data type.
 
@@ -68,7 +69,9 @@ def reset_throttle_for_data_type(sse_data_type: SSEDataType):
     if sse_data_type in _last_dispatch_times:
         del _last_dispatch_times[sse_data_type]
         logger.debug("Reset throttle for SSE data type: %s", sse_data_type.value)
+'''
 
+'''SRS NOT NEEDED
 def _calculate_frame_rate(detection_history):
     """Calculate frames per second based on detection timestamps.
 
@@ -83,6 +86,7 @@ def _calculate_frame_rate(detection_history):
     times = [t for t, _ in detection_history]
     duration = times[-1] - times[0]
     return (len(times) - 1) / duration if duration > 0 else 0.0
+'''
 
 async def _sse_update_camera_state_func(camera_uuid):
     """Build and send a camera state update SSE packet.
@@ -95,19 +99,20 @@ async def _sse_update_camera_state_func(camera_uuid):
     state = await get_camera_state(camera_uuid)
     detection_history = state.detection_history
     total_detections = len(detection_history)
-    frame_rate = _calculate_frame_rate(detection_history)
+    # SRS frame_rate = _calculate_frame_rate(detection_history)
+    # removed from data "frame_rate": frame_rate,
     data = {
         "start_time": state.start_time,
         "last_result": state.last_result,
         "last_time": state.last_time,
         "total_detections": total_detections,
-        "frame_rate": frame_rate,
         "error": state.error,
         "live_detection_running": state.live_detection_running,
         "camera_uuid": camera_uuid
     }
     await append_new_outbound_packet(data, SSEDataType.CAMERA_STATE)
 
+'''SRS NOT NEEDED
 async def sse_update_printer_state(printer_state: PrinterState):
     """Send an SSE update with the current printer state.
 
@@ -125,7 +130,7 @@ async def sse_update_printer_state(printer_state: PrinterState):
         logger.error("Error in SSE printer state update: %s", e)
     except Exception as e:
         logger.error("Unexpected error in SSE printer state update: %s", e)
-
+'''
 async def sse_update_camera_state(camera_uuid):
     """Send an SSE update with the current camera state.
 

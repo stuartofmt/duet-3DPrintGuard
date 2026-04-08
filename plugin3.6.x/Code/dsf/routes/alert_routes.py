@@ -23,6 +23,7 @@ async def alert_response(request: Request,
     Returns:
         dict: Response containing the result of the action or error message.
     """
+    """SRS Basically the same as _terminate_alert_after_cooldown in detection utils without waiting ..."""
     alert = get_alert(alert_id)
     camera_uuid = alert.camera_uuid if alert else None
     if not alert or camera_uuid is None:

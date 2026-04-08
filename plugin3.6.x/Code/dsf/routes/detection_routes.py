@@ -6,7 +6,8 @@ from fastapi import APIRouter, Body, File, HTTPException, Request, UploadFile
 from fastapi.responses import StreamingResponse
 
 from utils.camera_utils import get_camera_state, update_camera_state
-from utils.detection_utils import _live_detection_loop
+#from utils.detection_utils import _live_detection_loop
+from utils.stream_utils import _live_detection_loop
 
 router = APIRouter()
 

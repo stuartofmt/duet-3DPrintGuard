@@ -8,20 +8,29 @@ import numpy as np
 from PIL import Image
 
 from .model_utils import _run_inference
-from .sse_utils import sse_update_camera_state
-'''
-from .detection_utils import (_passed_majority_vote, _create_alert_and_notify,
-							  _send_alert)
-'''
-from .detection_utils import (_create_alert_and_notify,
-							  _send_alert)
-from .camera_utils import get_camera_state_sync
+from .sse_utils import sse_update_camera_state, append_new_outbound_packet
+
 from .shared_video_stream import get_shared_camera_frame
-from models import SavedConfig, SiteStartupMode
+from models import SavedConfig, SiteStartupMode, Alert, AlertAction, SSEDataType, Notification
 from .config import (get_config, STREAM_MAX_FPS, STREAM_TUNNEL_FPS,
 					 STREAM_JPEG_QUALITY, STREAM_TUNNEL_JPEG_QUALITY,
 					 STREAM_MAX_WIDTH, STREAM_TUNNEL_MAX_WIDTH,
 					 DETECTION_INTERVAL_MS, DETECTION_TUNNEL_INTERVAL_MS)
+
+import uuid
+
+from .alert_utils import (dismiss_alert, alert_to_response_json,
+						  get_alert, append_new_alert)
+
+from .camera_utils import (get_camera_state, get_camera_state_sync,
+						   update_camera_state, update_camera_detection_history)
+
+# from .notification_utils import send_defect_notification
+from duet_printer import get_printer_config, suspend_print_job, duet_send_notification
+
+
+
+
 
 
 class StreamOptimizer:
@@ -30,14 +39,14 @@ class StreamOptimizer:
 	def __init__(self):
 		"""Initialize the stream optimizer with empty cache and timing."""
 		self._config_cache = {}
-		self._last_config_check = 0
-		self._config_check_interval = 30.0
-
+		# self._last_config_check = 0
+		# self._config_check_interval = 30.0
+	'''
 	def invalidate_cache(self):
 		"""Clear cached streaming settings to force re-read from configuration."""
 		self._last_config_check = 0
 		self._config_cache.clear()
-
+	'''
 	def _get_current_settings(self) -> Dict:
 		"""Retrieve or update current stream settings from configuration.
 
@@ -48,18 +57,16 @@ class StreamOptimizer:
 					'jpeg_quality': int,
 					'max_width': int,
 					'detection_interval_ms': float,
-					'is_tunnel_mode': bool,
-					'startup_mode': SiteStartupMode,
-					'tunnel_provider': Optional[str] 
 				}
 		"""
-		current_time = time.time()
-		if (current_time - self._last_config_check) > self._config_check_interval:
+		#current_time = time.time()
+		#if (current_time - self._last_config_check) > self._config_check_interval:
+		if self._config_cache == {}:
 			config = get_config()
-			startup_mode = config.get(SavedConfig.STARTUP_MODE, SiteStartupMode.LOCAL)
-			tunnel_provider = config.get(SavedConfig.TUNNEL_PROVIDER, None)
-			optimize_for_tunnel = config.get(SavedConfig.STREAM_OPTIMIZE_FOR_TUNNEL, None)
-
+			#startup_mode = config.get(SavedConfig.STARTUP_MODE, SiteStartupMode.LOCAL)
+			#tunnel_provider = config.get(SavedConfig.TUNNEL_PROVIDER, None)
+			#optimize_for_tunnel = config.get(SavedConfig.STREAM_OPTIMIZE_FOR_TUNNEL, None)
+			'''
 			if optimize_for_tunnel is None:
 				is_tunnel_mode = startup_mode == (SiteStartupMode.TUNNEL
 												  and tunnel_provider is not None)
@@ -71,21 +78,18 @@ class StreamOptimizer:
 				default_width = STREAM_TUNNEL_MAX_WIDTH
 				default_detection_interval = DETECTION_TUNNEL_INTERVAL_MS
 			else:
-				default_fps = config.get(SavedConfig.STREAM_MAX_FPS, STREAM_MAX_FPS)
-				default_quality = STREAM_JPEG_QUALITY
-				default_width = STREAM_MAX_WIDTH
-				default_detection_interval = DETECTION_INTERVAL_MS
+			'''
+			default_fps = config.get(SavedConfig.STREAM_MAX_FPS, STREAM_MAX_FPS)
+			default_quality = STREAM_JPEG_QUALITY
+			default_width = STREAM_MAX_WIDTH
+			default_detection_interval = DETECTION_INTERVAL_MS
 			self._config_cache = {
 				'max_fps': default_fps,
 				'jpeg_quality': config.get(SavedConfig.STREAM_JPEG_QUALITY, default_quality),
 				'max_width': config.get(SavedConfig.STREAM_MAX_WIDTH, default_width),
 				'detection_interval_ms': config.get(SavedConfig.DETECTION_INTERVAL_MS,
 													default_detection_interval),
-				'is_tunnel_mode': is_tunnel_mode,
-				'startup_mode': startup_mode,
-				'tunnel_provider': tunnel_provider
 			}
-			self._last_config_check = current_time
 		return self._config_cache
 
 	def get_stream_settings(self) -> Dict:
@@ -144,8 +148,10 @@ class StreamOptimizer:
 			cv2.IMWRITE_JPEG_QUALITY, jpeg_quality,
 			cv2.IMWRITE_JPEG_OPTIMIZE, 1,
 		]
+		'''
 		if settings['is_tunnel_mode']:
 			encode_params.extend([cv2.IMWRITE_JPEG_PROGRESSIVE, 1])
+		'''
 		success, buffer = cv2.imencode('.jpg', frame, encode_params)
 		if not success:
 			_, buffer = cv2.imencode('.jpg', frame)
@@ -158,8 +164,7 @@ class StreamOptimizer:
 	def log_optimization_info(self):
 		"""Log current stream optimization settings for debugging."""
 		settings = self._get_current_settings()
-		mode_info = f"tunnel ({settings['tunnel_provider']})" if (
-			settings['is_tunnel_mode']) else "local"
+		mode_info = "local"
 		logger.debug("Stream optimization settings for %s mode:", mode_info)
 		logger.debug("  Max FPS: %d", settings['max_fps'])
 		logger.debug("  JPEG Quality: %d", settings['jpeg_quality'])
@@ -279,7 +284,7 @@ async def create_optimized_detection_loop(app_state, camera_uuid, get_camera_sta
 				and 0 <= numeric < len(app_state.class_names)
 				) else str(numeric)
 			current_timestamp = time.time()
-			'''
+			''' SRS dont use history any more
 			await update_functions['update_camera_detection_history'](camera_uuid,
 																	  label,
 																	  current_timestamp)
@@ -445,4 +450,146 @@ def _passed_multi_camera_test(countdown_control, camera_uuid,num_cameras):
 				   
 		return False
 	
+
+async def _send_alert(alert):
+	"""Send an alert to clients via Server-Sent Events.
+
+	Args:
+		alert (Alert): The alert object to send.
+	"""
+	await append_new_outbound_packet(alert_to_response_json(alert), SSEDataType.ALERT)
+
+async def _terminate_alert_after_cooldown(alert):
+	"""Wait for the alert's countdown, then dismiss or act on the print job.
+
+	Args:
+		alert (Alert): The alert object with `countdown_time` and `countdown_action`.
+	"""
+	await asyncio.sleep(alert.countdown_time)
+	if get_alert(alert.id) is not None: # if the alert has been reset ==> ignore
+		camera_uuid = alert.camera_uuid
+		camera_state = await get_camera_state(camera_uuid)
+		if not camera_state:
+			return
+		match camera_state.countdown_action:
+			case AlertAction.DISMISS:
+				await dismiss_alert(alert.id)
+			case AlertAction.CANCEL_PRINT | AlertAction.PAUSE_PRINT:
+				suspend_print_job(camera_uuid, camera_state.countdown_action)
+				return await dismiss_alert(alert.id)
+	else:
+		print(f'Alert was terminated')
+
+async def _create_alert_and_notify(camera_state_ref, camera_uuid, frame, timestamp_arg):
+	"""Create a new Alert object and notify all subsystems.
+
+	Args:
+		camera_state_ref (CameraState): The state reference for the camera.
+		camera_uuid (str): The UUID of the camera.
+		frame (ndarray): The image frame where a defect was detected.
+		timestamp_arg (float): The timestamp of detection.
+
+	Returns:
+		Alert: The newly created alert.
+	"""
+	print('DETECTION UTILS ALERT')
+	alert_id = f"{camera_uuid}_{str(uuid.uuid4())}"
+	# pylint: disable=E1101
+	_, img_buf = cv2.imencode('.jpg', frame)
+	has_printer = get_printer_config(camera_uuid) is not None
+	alert = Alert(
+		id=alert_id,
+		camera_uuid=camera_uuid,
+		timestamp=timestamp_arg,
+		snapshot=img_buf.tobytes(),
+		title=f"Defect - Camera {camera_state_ref.nickname}",
+		message=f"Defect detected on camera {camera_state_ref.nickname}",
+		countdown_time=camera_state_ref.countdown_time,
+		countdown_action=camera_state_ref.countdown_action,
+		countdown_control=camera_state_ref.countdown_control,
+		has_printer=has_printer,
+	)
+	append_new_alert(alert)
+	asyncio.create_task(_terminate_alert_after_cooldown(alert))
+	await update_camera_state(camera_uuid, {"current_alert_id": alert_id})
+	await send_defect_notification(alert_id)
+	return alert
+
+async def _live_detection_loop(app_state, camera_uuid):
+	"""Continuously run detection on camera frames and generate alerts using shared video stream.
+
+	This loop reads frames from the shared video stream, runs inference, updates state, 
+	and dispatches alerts when defects are detected based on majority vote.
+
+	Args:
+		app_state: The application state holding model, transforms, and other context.
+		camera_uuid (str): The UUID of the camera to process.
+	"""
+	# pylint: disable=C0415
+	#from .stream_utils import create_optimized_detection_loop
+	
+	update_functions = {
+		'update_camera_state': update_camera_state,
+		'update_camera_detection_history': update_camera_detection_history,
+	}
+	try:
+		await create_optimized_detection_loop(
+			app_state,
+			camera_uuid,
+			get_camera_state_sync,
+			update_functions
+		)
+	except Exception as e:
+		logger.error("Error in optimized detection loop for camera %s: %s", camera_uuid, e)
+		await update_camera_state(camera_uuid, {
+			"error": f"Detection loop error: {str(e)}",
+			"live_detection_running": False
+		})
+
+	
+async def send_defect_notification(alert_id):
+    """Send a defect notification for a given alert ID to all subscribers.
+
+    Args:
+        alert_id (str): The ID of the alert for which to send a notification.
+    """
+    logger.debug("Attempting to send defect notification for alert ID: %s", alert_id)
+    alert = get_alert(alert_id)
+    if alert:
+        logger.debug("Alert found for ID %s, preparing notification", alert_id)
+        # pylint: disable=import-outside-toplevel
+        from .camera_utils import get_camera_state
+        camera_state = await get_camera_state(alert.camera_uuid)
+        camera_nickname = camera_state.nickname if camera_state else alert.camera_uuid
+        notification = Notification(
+            title=f"duetPrintGuard",
+            body=f"Defect detected on camera {camera_nickname}",
+        )
+        subscriptions = []  #SRS NOT NEEDED - DELETE REFERENCES
+        logger.debug("Created notification object without image payload, sending to %d subscriptions",
+                      len(subscriptions))
+        send_notification(notification)
+    else:
+        logger.error("No alert found for ID: %s", alert_id)
+
+#SRS
+def send_notification(notification: Notification):
+    """Send a push notification to all current subscriptions.
+
+    Args:
+        notification (Notification): The notification object to send. Should have 'title' and 'body' fields at minimum.
+
+    Returns:
+        bool: True if at least one notification was sent successfully, False otherwise.
+    """
+    logger.info("Starting notification send process")
+    logger.debug(notification)
+
+    if duet_send_notification(notification):
+        logger.debug("Notification send completed")
+        return True
+    else:
+        logger.error("Unexpected error sending notification")
+        return False
+
 

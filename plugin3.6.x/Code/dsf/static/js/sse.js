@@ -97,9 +97,9 @@ function parseAlertData(alert_data) {
     return typeof alert_data === 'string' ? JSON.parse(alert_data) : alert_data;
 }
 
-
+/*
 function updateAlertUI(data) {
-    /*
+
     currentAlertId = data.id;
     const notificationsContainer = document.getElementById('notificationsContainer');
 
@@ -170,10 +170,10 @@ function updateAlertUI(data) {
         });
     }
     */
-
+/*
     //notificationPopup.style.display = 'block';
 }
-
+*/
 
 function startAlertCountdown(data) {
     if (!data || !data.camera_uuid) return;
@@ -201,7 +201,7 @@ function startAlertCountdown(data) {
         // Dispatch event
         document.dispatchEvent(new CustomEvent('defectRaised', {
             detail: {
-                camera: data.camera_uuid,
+                alert_id: data.id,
                 action: data.countdown_action,
                 countdown: secondsLeft
             }
@@ -330,18 +330,21 @@ function executeAlertAction(action_type, alertId) {
     })
         .then(response => {
             if (response.ok) {
+            /*
                 const alertElement = document.getElementById(`alert-${alertId}`);
                 if (alertElement) alertElement.remove();
+            */
                 removeActiveAlert(alertId);
-
+                /*
                 if (document.getElementById('notificationsContainer').children.length === 0) {
                     notificationPopup.style.display = 'none';
                 }
+                */
             } else {
                 console.error('Failed to execute alert action');
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => console.error('Error trying to execute alert action:', error));
 }
 
 function dismissAlert(action_type, alertId) {

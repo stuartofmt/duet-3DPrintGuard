@@ -15,6 +15,7 @@ const grid = document.getElementById("grid");
  let detectionStatus;
  let BTNSTOP = 'Stop Detection';
  let BTNSTART =  'Start Detection';
+ let ALERTID;
  //let cameraUUID;
  // const countdownTimers = new Map(); // cameraId -> intervalId
 
@@ -83,21 +84,17 @@ function createTopRowButtons(){
 
   // Event for Ignore button
   ignoreBtn.addEventListener("click", () => {
-    alert("Ignore button clicked");
-    executeAlertAction('dismiss', cameraUUID)
-    // Add your Ignore logic here
+    executeAlertAction('dismiss', ALERTID)
   });
 
   // Event for Pause button
   pauseBtn.addEventListener("click", () => {
-    alert("Pause button clicked");
-    // Add your Pause logic here
+    executeAlertAction('pause_print', ALERTID)
   });
 
   // Event for Cancel button
   cancelBtn.addEventListener("click", () => {
-    alert("Cancel button clicked");
-    // Add your Cancel logic here
+    executeAlertAction('cancel_print', ALERTID)
   });
 
   row.appendChild(btn);
@@ -315,8 +312,8 @@ let defectActive = false;
 
 // Called from sse when defect confirmed
 document.addEventListener('defectRaised', evt => {
-  const { camera, action, countdown } = evt.detail;
-  //cameraUUID = camera;
+  const { alert_id, action, countdown } = evt.detail;
+  ALERTID = alert_id;
   if (!defectActive && countdown > 0) {
     ignoreBtn.style.display = "block";
     countdownTimer.style.display = "block";

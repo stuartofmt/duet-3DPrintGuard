@@ -16,25 +16,6 @@ from duet_printer import get_printer_config, suspend_print_job
 from models import Alert, AlertAction, SSEDataType
 
 
-def _xpassed_majority_vote(camera_state):
-	"""Determine if failures in detection history meet the majority threshold.
-
-	Args:
-		camera_state (CameraState): The camera state containing detection history,
-			which includes a list of tuples `(timestamp, label)`.
-
-	Returns:
-		bool: True if the number of 'failure' labels in the most recent
-			  `majority_vote_window` entries is at least `majority_vote_threshold`.
-	"""
-	detection_history = camera_state.detection_history
-	majority_vote_window = camera_state.majority_vote_window
-	majority_vote_threshold = camera_state.majority_vote_threshold
-	results_to_retreive = min(len(detection_history), majority_vote_window)
-	detection_window_results = detection_history[-results_to_retreive:]
-	failed_detections = [res for res in detection_window_results if res[1] == 'failure']
-	return len(failed_detections) >= majority_vote_threshold
-
 async def _send_alert(alert):
 	"""Send an alert to clients via Server-Sent Events.
 
@@ -50,7 +31,7 @@ async def _terminate_alert_after_cooldown(alert):
 		alert (Alert): The alert object with `countdown_time` and `countdown_action`.
 	"""
 	await asyncio.sleep(alert.countdown_time)
-	if get_alert(alert.id) is not None:
+	if get_alert(alert.id) is not None: # if the alert has been reset ==> ignore
 		camera_uuid = alert.camera_uuid
 		camera_state = await get_camera_state(camera_uuid)
 		if not camera_state:
@@ -61,6 +42,8 @@ async def _terminate_alert_after_cooldown(alert):
 			case AlertAction.CANCEL_PRINT | AlertAction.PAUSE_PRINT:
 				suspend_print_job(camera_uuid, camera_state.countdown_action)
 				return await dismiss_alert(alert.id)
+	else:
+		print(f'Alert was terminated')
 
 async def _create_alert_and_notify(camera_state_ref, camera_uuid, frame, timestamp_arg):
 	"""Create a new Alert object and notify all subsystems.
