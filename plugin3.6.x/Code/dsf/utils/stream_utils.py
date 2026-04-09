@@ -11,11 +11,11 @@ from .model_utils import _run_inference
 from .sse_utils import sse_update_camera_state, append_new_outbound_packet
 
 from .shared_video_stream import get_shared_camera_frame
-from models import SavedConfig, SiteStartupMode, Alert, AlertAction, SSEDataType, Notification
-from .config import (get_config, STREAM_MAX_FPS, STREAM_TUNNEL_FPS,
-					 STREAM_JPEG_QUALITY, STREAM_TUNNEL_JPEG_QUALITY,
-					 STREAM_MAX_WIDTH, STREAM_TUNNEL_MAX_WIDTH,
-					 DETECTION_INTERVAL_MS, DETECTION_TUNNEL_INTERVAL_MS)
+from models import Alert, AlertAction, SSEDataType, Notification
+from .config import (get_config, STREAM_MAX_FPS,
+					 STREAM_JPEG_QUALITY,
+					 STREAM_MAX_WIDTH,
+					 DETECTION_INTERVAL_MS)
 
 import uuid
 
@@ -62,7 +62,7 @@ class StreamOptimizer:
 		#current_time = time.time()
 		#if (current_time - self._last_config_check) > self._config_check_interval:
 		if self._config_cache == {}:
-			config = get_config()
+			#config = get_config()
 			#startup_mode = config.get(SavedConfig.STARTUP_MODE, SiteStartupMode.LOCAL)
 			#tunnel_provider = config.get(SavedConfig.TUNNEL_PROVIDER, None)
 			#optimize_for_tunnel = config.get(SavedConfig.STREAM_OPTIMIZE_FOR_TUNNEL, None)
@@ -78,18 +78,20 @@ class StreamOptimizer:
 				default_width = STREAM_TUNNEL_MAX_WIDTH
 				default_detection_interval = DETECTION_TUNNEL_INTERVAL_MS
 			else:
-			'''
+			
 			default_fps = config.get(SavedConfig.STREAM_MAX_FPS, STREAM_MAX_FPS)
 			default_quality = STREAM_JPEG_QUALITY
 			default_width = STREAM_MAX_WIDTH
 			default_detection_interval = DETECTION_INTERVAL_MS
+			'''
 			self._config_cache = {
-				'max_fps': default_fps,
-				'jpeg_quality': config.get(SavedConfig.STREAM_JPEG_QUALITY, default_quality),
-				'max_width': config.get(SavedConfig.STREAM_MAX_WIDTH, default_width),
-				'detection_interval_ms': config.get(SavedConfig.DETECTION_INTERVAL_MS,
-													default_detection_interval),
+				'max_fps': STREAM_MAX_FPS,
+				'jpeg_quality': STREAM_JPEG_QUALITY,
+				'max_width': STREAM_MAX_WIDTH,
+				'detection_interval_ms': DETECTION_INTERVAL_MS
 			}
+			'''SRS Loops thrrough here like a banchee every time - need to optimize'''
+		print(f'{self._config_cache=}')	
 		return self._config_cache
 
 	def get_stream_settings(self) -> Dict:
@@ -340,12 +342,6 @@ async def create_optimized_detection_loop(app_state, camera_uuid, get_camera_sta
 					detection_interval = stream_optimizer.get_detection_interval()			
 					await asyncio.sleep(detection_interval)
 
-
-			if detection_count % 100 == 0:
-				settings = stream_optimizer.get_stream_settings()
-				logger.debug("Camera %s: Completed %d detections, interval: %.3fs, mode: %s",
-							camera_uuid, detection_count, detection_interval,
-							"tunnel" if settings['is_tunnel_mode'] else "local")
 	finally:
 		pass
 
@@ -548,48 +544,48 @@ async def _live_detection_loop(app_state, camera_uuid):
 
 	
 async def send_defect_notification(alert_id):
-    """Send a defect notification for a given alert ID to all subscribers.
+	"""Send a defect notification for a given alert ID to all subscribers.
 
-    Args:
-        alert_id (str): The ID of the alert for which to send a notification.
-    """
-    logger.debug("Attempting to send defect notification for alert ID: %s", alert_id)
-    alert = get_alert(alert_id)
-    if alert:
-        logger.debug("Alert found for ID %s, preparing notification", alert_id)
-        # pylint: disable=import-outside-toplevel
-        from .camera_utils import get_camera_state
-        camera_state = await get_camera_state(alert.camera_uuid)
-        camera_nickname = camera_state.nickname if camera_state else alert.camera_uuid
-        notification = Notification(
-            title=f"duetPrintGuard",
-            body=f"Defect detected on camera {camera_nickname}",
-        )
-        subscriptions = []  #SRS NOT NEEDED - DELETE REFERENCES
-        logger.debug("Created notification object without image payload, sending to %d subscriptions",
-                      len(subscriptions))
-        send_notification(notification)
-    else:
-        logger.error("No alert found for ID: %s", alert_id)
+	Args:
+		alert_id (str): The ID of the alert for which to send a notification.
+	"""
+	logger.debug("Attempting to send defect notification for alert ID: %s", alert_id)
+	alert = get_alert(alert_id)
+	if alert:
+		logger.debug("Alert found for ID %s, preparing notification", alert_id)
+		# pylint: disable=import-outside-toplevel
+		from .camera_utils import get_camera_state
+		camera_state = await get_camera_state(alert.camera_uuid)
+		camera_nickname = camera_state.nickname if camera_state else alert.camera_uuid
+		notification = Notification(
+			title=f"duetPrintGuard",
+			body=f"Defect detected on camera {camera_nickname}",
+		)
+		subscriptions = []  #SRS NOT NEEDED - DELETE REFERENCES
+		logger.debug("Created notification object without image payload, sending to %d subscriptions",
+					  len(subscriptions))
+		send_notification(notification)
+	else:
+		logger.error("No alert found for ID: %s", alert_id)
 
 #SRS
 def send_notification(notification: Notification):
-    """Send a push notification to all current subscriptions.
+	"""Send a push notification to all current subscriptions.
 
-    Args:
-        notification (Notification): The notification object to send. Should have 'title' and 'body' fields at minimum.
+	Args:
+		notification (Notification): The notification object to send. Should have 'title' and 'body' fields at minimum.
 
-    Returns:
-        bool: True if at least one notification was sent successfully, False otherwise.
-    """
-    logger.info("Starting notification send process")
-    logger.debug(notification)
+	Returns:
+		bool: True if at least one notification was sent successfully, False otherwise.
+	"""
+	logger.info("Starting notification send process")
+	logger.debug(notification)
 
-    if duet_send_notification(notification):
-        logger.debug("Notification send completed")
-        return True
-    else:
-        logger.error("Unexpected error sending notification")
-        return False
+	if duet_send_notification(notification):
+		logger.debug("Notification send completed")
+		return True
+	else:
+		logger.error("Unexpected error sending notification")
+		return False
 
 

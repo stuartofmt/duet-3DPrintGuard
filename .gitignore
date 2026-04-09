@@ -19,7 +19,4 @@ callgraph
 callgraph.png
 call_graph_pyan.py
 x*.py
-*copy.py
-*copy.js
-*copy.html
-*copy.css
+*.copy

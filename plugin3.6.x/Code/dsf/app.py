@@ -21,10 +21,9 @@ from fastapi.templating import Jinja2Templates
 
 from duet_config import (DUET, UI)
 
-from utils.config import (get_ssl_private_key_temporary_path,
-						   get_prototypes_dir,
+from utils.config import (get_prototypes_dir,
 						   get_model_path, get_model_options_path,
-						   get_config, update_config, init_config, config_set_paths_and_initialize)
+						   get_config, config_set_paths_and_initialize,DEVICE_TYPE, SUCCESS_LABEL)
 
 
 def init_routes_and_modules():
@@ -41,21 +40,17 @@ def init_routes_and_modules():
 	from models import (SiteStartupMode, SavedConfig)
 
 	from utils.inference_lib import get_inference_engine
-	#from utils.cloudflare_utils import (start_cloudflare_tunnel, stop_cloudflare_tunnel)
-
 
 	from routes.alert_routes import router as alert_router
 	from routes.detection_routes import router as detection_router
-	#from routes.notification_routes import router as notification_router
+
 	from routes.sse_routes import router as sse_router
-	#from routes.setup_routes import router as setup_router
+
 	from routes.index_routes import router as index_router
-	"""SRS"""
-	from routes.duetindex_routes import router as duetindex_router
+
 	from routes.settings_routes import router as settings_router
 	from routes.save_get_feedsettings_routes import router as feedsettings_router
 	from routes.camera_routes import router as camera_router
-	#from routes.printer_routes import router as printer_router
 
 	@asynccontextmanager
 	async def lifespan(app_instance: FastAPI):
@@ -64,15 +59,9 @@ def init_routes_and_modules():
 		
 		Initializes the device and model, sets up camera indices, and handles startup modes.
 		"""
-		# pylint: disable=C0415
-		from utils.setup_utils import startup_mode_requirements_met
-		startup_mode = startup_mode_requirements_met() #Currently forced to local mode
 
 		inference_engine = get_inference_engine()
-		if startup_mode is SiteStartupMode.SETUP:
-			logger.warning("Starting in setup mode. Detection model and device will not be initialized.")
-			yield
-			return
+
 		logger.debug("Setting up device...")
 		app_instance.state.device = inference_engine.setup_device(DEVICE_TYPE)
 		logger.debug("Using device: %s", app_instance.state.device)
@@ -149,17 +138,17 @@ def init_routes_and_modules():
 
 	app.include_router(detection_router, tags=["detection"])
 	app.include_router(alert_router, tags=["alerts"])
-	#app.include_router(notification_router, tags=["notifications"])
+
 	app.include_router(sse_router, tags=["sse"])
-	#app.include_router(setup_router, tags=["setup"])
+
 	app.include_router(index_router, tags=["index"])
 	"""SRS"""
-	app.include_router(duetindex_router, tags=["duetindex"])
+
 	app.include_router(settings_router, tags=["settings"])
 	app.include_router(feedsettings_router, tags=["feedsettings"])	
 
 	app.include_router(camera_router, tags=["camera"])
-	#app.include_router(printer_router, tags=["printer"])
+
 
 
 	@app.middleware("http")
@@ -190,78 +179,28 @@ def init_routes_and_modules():
 		return response
 
 def appstartup():
-	global SSL_CERT_FILE, DEVICE_TYPE, SUCCESS_LABEL
-	port = str(UI.PORT)  #unicorn looks for strings
-	"""
-	Run the FastAPI application with uvicorn, handling different startup modes.
-	"""
+	'''
+	Run the FastAPI application with uvicorn
+	'''
 	# pylint: disable=C0415
 	import uvicorn
 
-	"""SRS"""
-	# Allow config to first set paths for config file etc
+	# Allow config to first set paths for config file
 	config_set_paths_and_initialize()
 
-	# following need config to have done its work
-	global SSL_CERT_FILE, DEVICE_TYPE, SUCCESS_LABEL
-	from utils.config import (SSL_CERT_FILE, 
-						   	DEVICE_TYPE, SUCCESS_LABEL)
-	from utils.setup_utils import (startup_mode_requirements_met,
-									setup_ngrok_tunnel)
 	init_routes_and_modules()
 	
-	startup_mode = startup_mode_requirements_met()
-	logger.warning(f'Startup mode: {startup_mode}')
-
 	app_config = get_config()
 	site_domain = app_config.get(SavedConfig.SITE_DOMAIN, "")
-	#tunnel_provider = app_config.get(SavedConfig.TUNNEL_PROVIDER, None)
-	
-	#stop_cloudflare_tunnel()
-	
-	match startup_mode:
-		case SiteStartupMode.LOCAL:
-			logger.warning("Starting in local mode. Available at %s", site_domain)
-			"""SRS"""
-			if DUET.DWC:
-				logger.debug('Starting uvicorn')
-				uvicorn.run(app,
-							host=UI.HOST,
-							port=UI.PORT,
-							log_config=None
-							)
-				# At this point we swtch to uvicorn world and never return until done
-			"""
-			else:
-				ssl_private_key_path = get_ssl_private_key_temporary_path()
-				uvicorn.run(app,
-							host=UI.HOST,
-							port=UI.PORT,
-							ssl_certfile=SSL_CERT_FILE,
-							ssl_keyfile=ssl_private_key_path
-							)
-			
-		case SiteStartupMode.TUNNEL:
-			match tunnel_provider:
-				case TunnelProvider.NGROK:
-					logger.warning(
-						"Starting in tunnel mode with ngrok. Available at %s",
-						site_domain)
-					tunnel_setup = setup_ngrok_tunnel(close=False)
-					if not tunnel_setup:
-						logger.error("Failed to establish ngrok tunnel. Starting in SETUP mode.")
-						update_config({SavedConfig.STARTUP_MODE: SiteStartupMode.SETUP})
-						appstartup()
-					else:
-						uvicorn.run(app, host=UI.HOST, port=UI.PORT)
-				case TunnelProvider.CLOUDFLARE:
-					logger.warning("Starting in tunnel mode with Cloudflare.")
-					if start_cloudflare_tunnel():
-						logger.warning("Cloudflare tunnel started. Available at %s", site_domain)
-						uvicorn.run(app, host=UI.HOST, port=UI.PORT)
-					else:
-						logger.error("Failed to start Cloudflare tunnel. Starting in SETUP mode.")
-						update_config({SavedConfig.STARTUP_MODE: SiteStartupMode.SETUP})
-						appstartup()
-		"""
 
+	logger.info(f"Starting PrintGuard on domain: {site_domain} and port: {UI.PORT}")
+
+	port = str(UI.PORT)  #unicorn looks for strings	
+
+	logger.debug('Starting uvicorn')
+	uvicorn.run(app,
+				host=UI.HOST,
+				port=port,
+				log_config=None
+				)
+		# At this point we swtch to uvicorn world and never return until done
