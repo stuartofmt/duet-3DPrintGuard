@@ -91,7 +91,7 @@ class StreamOptimizer:
 				'detection_interval_ms': DETECTION_INTERVAL_MS
 			}
 			'''SRS Loops thrrough here like a banchee every time - need to optimize'''
-		print(f'{self._config_cache=}')	
+		# print(f'{self._config_cache=}')	
 		return self._config_cache
 
 	def get_stream_settings(self) -> Dict:

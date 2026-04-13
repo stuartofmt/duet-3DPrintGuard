@@ -5,6 +5,7 @@ especially in the context of DWC where we want to aet paths etc based on a passe
 """
 
 import json
+import uuid
 from logger_module import logger
 import os
 import fcntl
@@ -20,7 +21,51 @@ from duet_config import DUET
 
 # Config version - increment this when the config structure changes
 # SRS reduced config to just camera states
-CONFIG_VERSION = "2.0.0"
+CONFIG_VERSION = "2.0.2"
+
+'''
+Refactored so that only minimal camera info is persisted in the config file
+and all runtime state is reset on startup.
+Config info is now held in memory
+No more need for locks around config access since we only read/write on startup
+and when updating infrequent camera states.
+'''
+# The camera configuration that is accessed by other modules
+# Frequently updated and exist only in memory - not persisted to disk
+CAMERA_STATES = {}
+
+# Defaults
+# DETECTION_TIMEOUT = 5
+# DETECTION_THRESHOLD = 3
+DETECTION_VOTING_WINDOW = 5
+DETECTION_VOTING_THRESHOLD = 2
+SENSITIVITY = 1.0
+BRIGHTNESS = 1.0
+CONTRAST = 1.0
+FOCUS = 1.0
+
+# Default but can be updated by user and persisted in config
+CAMERA_SETTINGS = {}
+PERSISTED_CAMERA_SETTINGS = set('majority_vote_window majority_vote_threshold sensitivity brightness contrast focus'.split())
+
+COUNTDOWN_TIME = 60
+COUNTDOWN_ACTION = 'dismiss'
+COUNTDOWN_CONTROL = "any_camera"
+
+# Default but can be updated by user and persisted in config
+COUNTDOWN_SETTINGS = {'countdown_time': COUNTDOWN_TIME, 'countdown_action': COUNTDOWN_ACTION, 'countdown_control': COUNTDOWN_CONTROL}
+
+# Streaming and detection parameters
+DETECTIONS_PER_SECOND = 1 #15
+STREAM_MAX_FPS = 2 #30
+STREAM_JPEG_QUALITY = 85
+STREAM_MAX_WIDTH = 1280
+DETECTION_INTERVAL_MS = 1000 / DETECTIONS_PER_SECOND
+MIN_SSE_DISPATCH_DELAY_MS = 100 #100
+STANDARD_STAT_POLLING_RATE_MS = 250 #250
+SUCCESS_LABEL = "success"
+DEVICE_TYPE = "cuda" if (torch.cuda.is_available()) else (
+	"mps" if (torch.backends.mps.is_available()) else "cpu")
 
 _config_lock = threading.RLock()
 _file_lock = None
@@ -45,8 +90,7 @@ def config_set_paths_and_initialize():
 	CONFIG_FILE = os.path.join(APP_DATA_DIR, "config.json")
 	LOCK_FILE = os.path.join(APP_DATA_DIR, "config.lock")
  
-	logger.debug(f'{LOCK_FILE=}')
-	# continue with phase 2 of initialization which may depend on these paths being set
+	# continue with phase 2 of initialization which depends on these paths being set
 	init_config()
 
 
@@ -108,29 +152,49 @@ def get_config():
 		release_lock()
 
 def update_config(updates: dict):
+	global CAMERA_SETTINGS, COUNTDOWN_SETTINGS
 	"""Thread-safe update of configuration values in the config file.
 
 	Args:
 		updates (dict): A mapping of config keys to their new values.
 	"""
-	acquire_lock()
+	# ???
+	#SavedConfig.COUNTDOWN: {SavedConfig.COUNTDOWN_ACTION: COUNTDOWN_ACTION, SavedConfig.COUNTDOWN_TIME: COUNTDOWN_TIME, SavedConfig.COUNTDOWN_CONDITION: COUNTDOWN_CONDITION},		
+
+
+	#acquire_lock()
+
+	# updates = {k: v for k, v in updates.items() if k in CAMERA_SETTINGS_KEYS}
+	update_config = {}
+	config = _get_config_nolock() or {}
 	try:
-		config = _get_config_nolock() or {}
-		for key, value in updates.items():
-			config[key] = value
+		if updates.get("countdown_settings") is not None or "countdown_settings" in updates:
+			config['countdown_settings'] = updates['countdown_settings']
+
+		print(f'{PERSISTED_CAMERA_SETTINGS=}')
+		if updates.get("camera_settings") is not None or "camera_settings" in updates:
+			for camera_uuid, settings in updates['camera_settings'].items():
+				values = {}
+				for key, value in settings.items():
+						if key in PERSISTED_CAMERA_SETTINGS:
+							values[key] = value
+				config['camera_settings'][camera_uuid] = values
+				CAMERA_SETTINGS[camera_uuid] = values
+
 		with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
 			json.dump(config, f, indent=2)
 	finally:
-		release_lock()
+		logger.debug(f'Updated configuration with {updates=}')
+		# release_lock()
 
 def init_config():
+	global CAMERA_STATES
 	"""Initialize the configuration file with default keys if missing.
 	
 	Checks if the config file exists and has the correct version.
-	If the version doesn't match or is missing, deletes the config file and recreates it.
-	Creates `config.json` with default entries for all SavedConfig keys.
+	also checks if cameras have been defined
+	If not creates `config.json` with defaults .
 	"""
-	acquire_lock()
 	try:
 		config_needs_reset = False
 		if os.path.exists(CONFIG_FILE):
@@ -139,61 +203,46 @@ def init_config():
 				if existing_config is None:
 					logger.info("Config file is corrupted or empty, recreating")
 					config_needs_reset = True
-				else:
-					config_version = existing_config.get(SavedConfig.VERSION)
-					if config_version != CONFIG_VERSION:
-						logger.info(
-							"Config version mismatch (config: %s, expected: %s), recreating config",
-							config_version, CONFIG_VERSION)
-						config_needs_reset = True
+
+				config_version = existing_config.get(SavedConfig.VERSION)
+				if config_version != CONFIG_VERSION:
+					logger.info(
+						"Config version mismatch (config: %s, expected: %s), recreating config",
+						config_version, CONFIG_VERSION)
+					config_needs_reset = True
+
+				if len(existing_config.get('camera_settings')) == 0:
+					logger.info("No cameras defined in config, recreating")
+					config_needs_reset = True
 			except Exception as e:
 				logger.warning("Error reading config file: %s, recreating", e)
 				config_needs_reset = True
-		else:
+		else: # Config file doesn't exist, will be created with defaults
 			config_needs_reset = True
 		if config_needs_reset:
-			if os.path.exists(CONFIG_FILE):
-				os.remove(CONFIG_FILE)
-				logger.info("Deleted old config file")
-
-			# Removed from top level
-			#SavedConfig.COUNTDOWN: {SavedConfig.COUNTDOWN_ACTION: COUNTDOWN_ACTION, SavedConfig.COUNTDOWN_TIME: COUNTDOWN_TIME, SavedConfig.COUNTDOWN_CONDITION: COUNTDOWN_CONDITION},
-			default_config = {
-				SavedConfig.VERSION: CONFIG_VERSION,
-				SavedConfig.CAMERA_STATES: {}
-			}
-			'''
-			default_config = {
-				SavedConfig.VERSION: CONFIG_VERSION,
-				SavedConfig.CAMERA_STATES: {}
-			}
-			'''
-			with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
-				json.dump(default_config, f, indent=2)
-			logger.info("Created new config file with version %s at %s",
-						 CONFIG_VERSION,
-						 CONFIG_FILE)
+			reset_config()
 	finally:
-
-		#SRS - on first start of each application run - reset history and startup values
+		#SRS - on first start of each application run - reset camera startup values
 		startup_config = _get_config_nolock()
-		for k in startup_config['camera_states']:
-			startup_config['camera_states'][k]['current_alert_id'] = None
-			startup_config['camera_states'][k]['detection_history'] = []
-			startup_config['camera_states'][k]['live_detection_running'] = False
-			startup_config['camera_states'][k]['last_result'] = ''
-			startup_config['camera_states'][k]['last_time'] = None
-			startup_config['camera_states'][k]['start_time'] = None
-			startup_config['camera_states'][k]['error'] = None
-	
+		for k, v in startup_config['camera_settings'].items():
+			print(f'{v=}')
+			
+			CAMERA_STATES = {'camera_uuid':v, 'states': {'live_detection_running':False,
+				   			'last_result':None,
+					 		'last_time':None,
+					   		'start_time':None,
+						 	'error':None}}
+			
+			logger.debug(f'{CAMERA_STATES=}')
+
+
 		with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
 			json.dump(startup_config, f, indent=2)
 
-		logger.debug('Starting with new configuration file')
-		logger.debug(startup_config)
-		
-		release_lock()
+		logger.debug('Starting with new configuration')
+		logger.debug(f'{startup_config=}')
 
+		
 
 def reset_config():
 	"""Reset the configuration file to default values.
@@ -202,25 +251,20 @@ def reset_config():
 	"""
 	acquire_lock()
 
-	# Removed from top level
-	#SavedConfig.COUNTDOWN: {SavedConfig.COUNTDOWN_ACTION: COUNTDOWN_ACTION, SavedConfig.COUNTDOWN_TIME: COUNTDOWN_TIME, SavedConfig.COUNTDOWN_CONDITION: COUNTDOWN_CONDITION},		
-
 	try:
-		default_config = {
-			SavedConfig.VERSION: CONFIG_VERSION,
-			SavedConfig.CAMERA_STATES: {}
-		}
-		'''
-		default_config = {
-			SavedConfig.VERSION: CONFIG_VERSION,
-			SavedConfig.CAMERA_STATES: {}
-		}
-		'''
+		if os.path.exists(CONFIG_FILE):
+			os.remove(CONFIG_FILE)
+			logger.info("Deleted old config file")
 
+		default_config = {
+			'version': CONFIG_VERSION,
+			'camera_settings': CAMERA_SETTINGS,
+			'countdown_settings': COUNTDOWN_SETTINGS,
+		}
 		with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
 			json.dump(default_config, f, indent=2)
-	except Exception as e:
-		logger.info(f'Error initializing configuration ==> {e}')
+		logger.info(f'Created new config file with version {CONFIG_VERSION} at {CONFIG_FILE}')
+		logger.debug(f'{default_config=}')
 	finally:
 		release_lock()
 
@@ -231,7 +275,7 @@ def reset_all():
 	Invokes `reset_all_keys`, `reset_config`, and `reset_ssl_files` sequentially.
 	"""
 	reset_config()
-	logger.debug("Config file have been reset")
+	logger.debug("Config file has been reset")
 
 
 def get_model_path() -> str:
@@ -255,35 +299,3 @@ def get_prototypes_dir() -> str:
 	except ImportError:
 		return os.path.join(BASE_DIR, "model", "prototypes")
 
-SUCCESS_LABEL = "success"
-DEVICE_TYPE = "cuda" if (torch.cuda.is_available()) else (
-	"mps" if (torch.backends.mps.is_available()) else "cpu")
-SENSITIVITY = 1.0
-DETECTION_TIMEOUT = 5
-DETECTION_THRESHOLD = 3
-DETECTION_VOTING_WINDOW = 5
-DETECTION_VOTING_THRESHOLD = 2
-MAX_CAMERA_HISTORY = 10_000
-
-BRIGHTNESS = 1.0
-CONTRAST = 1.0
-FOCUS = 1.0
-#SRS
-COUNTDOWN_TIME = 60
-COUNTDOWN_ACTION = AlertAction.DISMISS
-COUNTDOWN_CONTROL = "any_camera"
-
-#SRS DEFULTS - NO LONGER IN HTML
-DETECTIONS_PER_SECOND = 1 #15
-STREAM_MAX_FPS = 2 #30
-STREAM_TUNNEL_FPS = 10
-STREAM_JPEG_QUALITY = 85
-STREAM_TUNNEL_JPEG_QUALITY = 60
-STREAM_MAX_WIDTH = 1280
-STREAM_TUNNEL_MAX_WIDTH = 640
-DETECTION_INTERVAL_MS = 1000 / DETECTIONS_PER_SECOND
-DETECTION_TUNNEL_INTERVAL_MS = 1000 / DETECTIONS_PER_SECOND
-
-PRINTER_STAT_POLLING_RATE_MS = 2000
-MIN_SSE_DISPATCH_DELAY_MS = 50 #100
-STANDARD_STAT_POLLING_RATE_MS = 250 #250

@@ -13,6 +13,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding&display=swap" rel="stylesheet">
 </head>
 <body>
+    <template id="cameraListTemplate">
+        <div class="camera-item" id="camera-list-container">
+            <ul id="cameraList" name="camera">
+                    <li class="camera-item">
+                        <div class="camera-text-content">
+                            <div class="camera-header" style="font-size: large;">
+                                <span class="nickname"></span> &nbsp; <span class="source"></span>
+                            </div>
+                            <button class="remove-camera-btn" title="Remove camera">Remove Camera</button>
+                        </div>
+                    </li>
+            </ul>                             
+            <div class="settings-item">
+                <button class="start-stop-btn" id="addCameraBtn">Add Camera</button>
+            </div>
+        </div>
+    </template>
+
+    
     <div class="grid-container">
         
         <div class="grid-item" id="video-feed-container">
@@ -23,25 +42,12 @@
             </div>
         </div>
         
-        
-        <div class="grid-item" id="camera-list-container">
-            <ul id="cameraList" name="camera">
-                {% for camera_id, camera_state in camera_states.items() %}
-                    <li class="camera-item" data-camera-id="{{ camera_id }}">
-                        <div class="camera-text-content">
-                            <div class="camera-header" style="font-size: large;">
-                                <span>{{ camera_state.nickname }} &nbsp; {{ camera_state.source }}</span>
-                            </div>
-                            <button class="remove-camera-btn" title="Remove camera">Remove Camera</button>
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
-                                
-                    <div class="settings-item">
-                        <button class="start-stop-btn" id="addCameraBtn">Add Camera</button>
-                    </div>
+        <div class="grid-item">
+            <div class="camera-section">
+                    <!-- Camera list will be rendered here -->
+            </div>
         </div>
+        
         <div class="grid-item">
             <div class="settings-section">
                 <form action="/settings" method="post" class="settings-form settings-grid">

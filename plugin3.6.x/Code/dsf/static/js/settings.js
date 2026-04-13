@@ -28,6 +28,45 @@ const addCameraModalClose = document.getElementById('addCameraModalClose');
 const addCameraBtn = document.getElementById('addCameraBtn');
 const addFirstCameraBtn = document.getElementById('addFirstCameraBtn');
 
+// =========================
+// API
+// =========================
+async function getCameraList() {
+console.warn('Fetching camera list');
+  try {
+    const res = await fetch("/camera/cameralist");
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.camera_list || [];
+  } catch {
+    return [];
+  }
+}
+
+
+function createDisplayItem(camId) {
+  // Wrapper (CRITICAL)
+  const row = document.createElement("div");
+  row.className = "camera-row";
+
+  // Card
+  const camFrag = camTemplate.content.cloneNode(true);
+  const card = camFrag.firstElementChild;
+  card.dataset.cameraId = camId;
+
+  // Button
+  const button = card.querySelector("button");
+  button.addEventListener("click", () => {
+    //alert(`Camera ${camId} says ${btnState}`);
+    const btnState = button.textContent;
+    let isStart = false;
+    if (btnState === BTNSTART){
+      isStart = true;
+    }
+    sendDetectionRequest(isStart,card,camId);
+  })};
+
+
 camVideoPreview.onload = () => {
     loadingOverlay.style.display = 'none';
 };
@@ -345,8 +384,8 @@ document.querySelectorAll('.control-form select').forEach(control => {
 
 function submitControlForm (){
     console.warn('submitting form');
-document.querySelector('.control-form select')
-  .dispatchEvent(new Event('change', { bubbles: true }));
+    document.querySelector('.control-form select')
+    .dispatchEvent(new Event('change', { bubbles: true }));
 }
 
 
@@ -722,3 +761,21 @@ addCameraModalClose?.addEventListener('click', function() {
         clearTimeout(previewUpdateTimeout);
     }
 });
+
+
+// =========================
+// Init
+// =========================
+(async function init() {
+  console.warn('Initializing');
+
+  const cameras = await getCameraList();
+
+  if (cameras.length === 0) {
+    document.getElementById("noCamera").style.display = "block";
+  }
+
+    //create a row for each camera
+    cameras.forEach(createDisplayItem);
+
+})();

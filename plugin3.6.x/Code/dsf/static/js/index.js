@@ -144,6 +144,7 @@ function createDisplayItem(camId) {
 // API
 // =========================
 async function getCameraList() {
+  console.warn('Fetching camera list');
   try {
     const res = await fetch("/camera/cameralist");
     if (!res.ok) return [];
