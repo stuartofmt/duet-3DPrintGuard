@@ -1,56 +1,87 @@
-import time
 from logger_module import logger
+import time
+import uuid
 
-from fastapi import Form, Request, APIRouter
-from fastapi.exceptions import HTTPException
-from fastapi.responses import RedirectResponse
+from fastapi import APIRouter, Body, HTTPException, Request
 
+from utils.config import CAMERA_SETTINGS, DEFAULT_CAMERA_SETTINGS, CAMERA_STATES, update_config
 from utils.config import (STREAM_MAX_FPS,
                             STREAM_JPEG_QUALITY, STREAM_MAX_WIDTH,
                             DETECTION_INTERVAL_MS,
                             MIN_SSE_DISPATCH_DELAY_MS,COUNTDOWN_ACTION, COUNTDOWN_TIME, COUNTDOWN_CONTROL,
-                            update_config, get_config)
+                            )
 from utils.camera_utils import update_camera_state
-from utils.camera_state_manager import get_camera_state_manager
-from utils.stream_utils import stream_optimizer
-from models import FeedSettings, SavedConfig, CountdownSettings
+
+from models import  SavedConfig, CountdownSettings
 
 router = APIRouter()
 
-@router.post("/save-feed-settings", include_in_schema=False)
-async def save_feed_settings(settings: FeedSettings):
-    """Save camera feed and detection settings to configuration.
+@router.post("/config/add-camera")
+async def add_camera_ep(request: Request):
+    """Add a new camera."""
+    data = await request.json()
+    nickname = data.get('nickname')
+    source = data.get('source')
+    if not nickname or not source:
+        raise HTTPException(status_code=400, detail="Missing camera nickname or source.")
+    '''SRS What happens here ??'''
+    #camera = await add_camera(source=source, nickname=nickname)
+    camera_uuid = str(uuid.uuid4()) 
+    # Initialize camera settings with defaults
+    update_config({'camera_settings': {camera_uuid: {
+        "nickname": nickname,
+        "source": source,
+        **DEFAULT_CAMERA_SETTINGS
+	}}})
+
+    return {"camera_uuid": camera_uuid, "nickname": nickname, "source": source}
+
+
+@router.post("/config/remove-camera")
+async def remove_camera_ep(request: Request):
+    """Remove a camera."""
+    data = await request.json()
+    camera_uuid = data.get('camera_uuid')
+    if not camera_uuid:
+        raise HTTPException(status_code=400, detail="Missing camera_uuid.")
+    success = await remove_camera_util(camera_uuid)
+    if not success:
+        raise HTTPException(status_code=404, detail="Camera not found.")
+    return {"message": "Camera removed successfully."}
+
+
+@router.get("/config/get-camera-list", include_in_schema=False)
+async def camera_list(request: Request):
+    """Get a list of current camera id's
 
     Args:
-        settings (FeedSettings): Feed configuration settings including FPS,
-                                quality, detection intervals, and polling rates.
+        request (Request): The FastAPI request object.
 
     Returns:
-        dict: Success status and message indicating settings were saved.
-
-    Raises:
-        HTTPException: If saving fails due to validation or storage errors.
+        list of camera UUID
     """
-    try:
-        config_data = {
-            SavedConfig.STREAM_MAX_FPS: settings.stream_max_fps,
-            SavedConfig.STREAM_JPEG_QUALITY: settings.stream_jpeg_quality,
-            SavedConfig.STREAM_MAX_WIDTH: settings.stream_max_width,
-            SavedConfig.DETECTION_INTERVAL_MS: settings.detection_interval_ms,
-            SavedConfig.MIN_SSE_DISPATCH_DELAY_MS: settings.min_sse_dispatch_delay_ms
-        }
-        update_config(config_data)
-        stream_optimizer.invalidate_cache()
-        logger.debug("Feed settings saved successfully.")
-        return {"success": True, "message": "Feed settings saved successfully."}
-    except Exception as e:
-        logger.error("Error saving feed settings: %s", e)
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to save feed settings: {str(e)}"
-        )
+    # pylint: disable=import-outside-toplevel
+    camera_uuid_list = []
+    for camera_uuid in CAMERA_SETTINGS:
+        camera_uuid_list.append(camera_uuid)
+    print(f'{camera_uuid_list=}')
+    return {"camera_list": camera_uuid_list}
 
-@router.get("/get-feed-settings", include_in_schema=False)
+@router.get("/get/camerasettings", include_in_schema=False)
+async def camera_settings(request: Request):
+    """Get a list of current camera settings
+
+    Args:
+        request (Request): The FastAPI request object.
+
+    Returns:
+        dict of camera settings
+    """
+    # pylint: disable=import-outside-toplevel
+    return {"camera_settings": CAMERA_SETTINGS}
+
+
+@router.get("/config/get-feed-settings", include_in_schema=False)
 async def get_feed_settings():
     """Retrieve current camera feed and detection settings.
 
@@ -80,7 +111,7 @@ async def get_feed_settings():
             detail=f"Failed to load feed settings: {str(e)}"
         )
     
-@router.get("/get-countdown-settings", include_in_schema=False)
+@router.get("/config/get-countdown-settings", include_in_schema=False)
 
 async def get_countdown_settings():
     """Retrieve countdown settings.
@@ -113,7 +144,7 @@ async def get_countdown_settings():
         )
     
 #SRS Unused for now - may want to add back in later if we want a non js way to update these settings    
-@router.post("/save-countdown-settings ", include_in_schema=False)
+@router.post("/config/save-countdown-settings ", include_in_schema=False)
 async def save_countdown_settings(settings: CountdownSettings):
     """Save countdown settings to configuration.
 
@@ -144,3 +175,21 @@ async def save_countdown_settings(settings: CountdownSettings):
             status_code=500,
             detail=f"Failed to save countdown settings: {str(e)}"
         )
+
+
+@router.post("/config/get-camera-setting", include_in_schema=False)
+async def get_camera_setting(request: Request, camera_uuid: str = Body(..., embed=True)):
+    """Get the current setting of a specific camera.
+    """
+
+    camera_setting = CAMERA_SETTINGS[camera_uuid]
+
+    return camera_setting
+
+@router.post("/config/get-camera-state", include_in_schema=False)
+async def get_camera_state(request: Request, camera_uuid: str = Body(..., embed=True)):
+    """Get the current state of a specific camera.
+    """
+    camera_state = CAMERA_STATES[camera_uuid]
+
+    return camera_state

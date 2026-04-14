@@ -21,7 +21,7 @@ from duet_config import DUET
 
 # Config version - increment this when the config structure changes
 # SRS reduced config to just camera states
-CONFIG_VERSION = "2.0.2"
+CONFIG_VERSION = "2.0.1"
 
 '''
 Refactored so that only minimal camera info is persisted in the config file
@@ -33,6 +33,7 @@ and when updating infrequent camera states.
 # The camera configuration that is accessed by other modules
 # Frequently updated and exist only in memory - not persisted to disk
 CAMERA_STATES = {}
+ALLOWED_CAMERA_STATES = set('start_time last_result last_time detection_times error live_detection_running'.split())
 
 # Defaults
 # DETECTION_TIMEOUT = 5
@@ -46,7 +47,13 @@ FOCUS = 1.0
 
 # Default but can be updated by user and persisted in config
 CAMERA_SETTINGS = {}
-PERSISTED_CAMERA_SETTINGS = set('majority_vote_window majority_vote_threshold sensitivity brightness contrast focus'.split())
+PERSISTED_CAMERA_SETTINGS = set('nickname source majority_vote_window majority_vote_threshold sensitivity brightness contrast focus'.split())
+# Note nickname and source are created with camera. Default settinga are added at that time
+DEFAULT_CAMERA_SETTINGS = {'majority_vote_window': DETECTION_VOTING_WINDOW,
+						   'majority_vote_threshold': DETECTION_VOTING_THRESHOLD,
+						   'sensitivity': SENSITIVITY, 'brightness': BRIGHTNESS,
+						   'contrast': CONTRAST,
+						   'focus': FOCUS}
 
 COUNTDOWN_TIME = 60
 COUNTDOWN_ACTION = 'dismiss'
@@ -152,7 +159,7 @@ def get_config():
 		release_lock()
 
 def update_config(updates: dict):
-	global CAMERA_SETTINGS, COUNTDOWN_SETTINGS
+	global CAMERA_SETTINGS, COUNTDOWN_SETTINGS, CAMERA_STATES
 	"""Thread-safe update of configuration values in the config file.
 
 	Args:
@@ -171,20 +178,29 @@ def update_config(updates: dict):
 		if updates.get("countdown_settings") is not None or "countdown_settings" in updates:
 			config['countdown_settings'] = updates['countdown_settings']
 
-		print(f'{PERSISTED_CAMERA_SETTINGS=}')
 		if updates.get("camera_settings") is not None or "camera_settings" in updates:
 			for camera_uuid, settings in updates['camera_settings'].items():
-				values = {}
+				#values = {}
 				for key, value in settings.items():
 						if key in PERSISTED_CAMERA_SETTINGS:
-							values[key] = value
-				config['camera_settings'][camera_uuid] = values
-				CAMERA_SETTINGS[camera_uuid] = values
+							if camera_uuid not in config.get('camera_settings', {}):
+								config.setdefault('camera_settings', {})[camera_uuid] = {}
+								CAMERA_SETTINGS[camera_uuid] = {}
+							config['camera_settings'][camera_uuid][key] = value
+							CAMERA_SETTINGS[camera_uuid][key] = value
+
+		if updates.get("camera_states") is not None or "camera_states" in updates:
+			for camera_uuid, settings in updates['camera_states'].items():
+				for key, value in settings.items():
+						if key in ALLOWED_CAMERA_STATES:
+							if camera_uuid not in CAMERA_STATES:
+								CAMERA_STATES[camera_uuid] = {}
+							CAMERA_STATES[camera_uuid][key] = value
 
 		with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
 			json.dump(config, f, indent=2)
 	finally:
-		logger.debug(f'Updated configuration with {updates=}')
+		logger.debug(f'{config=}')
 		# release_lock()
 
 def init_config():

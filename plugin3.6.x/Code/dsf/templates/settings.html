@@ -13,21 +13,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding&display=swap" rel="stylesheet">
 </head>
 <body>
-    <template id="cameraListTemplate">
+    <template id="camera-template">
         <div class="camera-item" id="camera-list-container">
             <ul id="cameraList" name="camera">
-                    <li class="camera-item">
+                    <li class="camera-items">
                         <div class="camera-text-content">
                             <div class="camera-header" style="font-size: large;">
-                                <span class="nickname"></span> &nbsp; <span class="source"></span>
+                                <span class="nickname">TEST WITH</span>
+                                <br>
+                                <span class="source">MORE WORDS</span>
                             </div>
                             <button class="remove-camera-btn" title="Remove camera">Remove Camera</button>
                         </div>
                     </li>
             </ul>                             
-            <div class="settings-item">
-                <button class="start-stop-btn" id="addCameraBtn">Add Camera</button>
-            </div>
         </div>
     </template>
 
@@ -43,14 +42,17 @@
         </div>
         
         <div class="grid-item">
-            <div class="camera-section">
+            <div class="camera-section" id="grid">
                     <!-- Camera list will be rendered here -->
+            </div>
+            <div class="settings-item">
+                <button class="start-stop-btn" id="addCameraBtn">Add Camera</button>
             </div>
         </div>
         
         <div class="grid-item">
             <div class="settings-section">
-                <form action="/settings" method="post" class="settings-form settings-grid">
+                <form action="/settings/save-settings" method="post" class="settings-form settings-grid">
                     <input type="hidden" id="camera_uuid" name="camera_uuid"  value="">
 
                     <div class="settings-item">
@@ -83,7 +85,7 @@
         </div>
         <div class = grid-item>            
             <div class="countdown-section">
-                <form action="/update-countdown" method="post" class="control-form settings-grid">
+                <form action="/settings/update-countdown" method="post" class="control-form settings-grid">
                     <div class="settings-item">
                         <label for="countdown_action">Countdown Action</label>
                         <select id="countdown_action" name="countdown_action" class="settings-dropdown">

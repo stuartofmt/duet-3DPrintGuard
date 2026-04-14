@@ -12,6 +12,7 @@ from utils.camera_utils import remove_camera as remove_camera_util
 from utils.shared_video_stream import get_shared_stream_manager
 from utils.stream_utils import generate_frames
 from utils.camera_state_manager import get_camera_state_manager
+from utils.config import CAMERA_SETTINGS,DEFAULT_CAMERA_SETTINGS,update_config
 
 router = APIRouter()
 
@@ -97,7 +98,15 @@ async def add_camera_ep(request: Request):
     source = data.get('source')
     if not nickname or not source:
         raise HTTPException(status_code=400, detail="Missing camera nickname or source.")
+    '''SRS What happens here ??'''
     camera = await add_camera(source=source, nickname=nickname)
+    # Initialize camera settings with defaults
+    update_config({'camera_settings': {camera['camera_uuid']: {
+        "nickname": camera['nickname'],
+        "source": camera['source'],
+        **DEFAULT_CAMERA_SETTINGS
+	}}})
+
     return {"camera_uuid": camera['camera_uuid'], "nickname": camera['nickname'], "source": camera['source']}
 
 
@@ -173,6 +182,14 @@ async def camera_list(request: Request):
         list of camera UUID
     """
     # pylint: disable=import-outside-toplevel
+    camera_uuid_list = []
+    for camera_uuid in CAMERA_SETTINGS:
+        camera_uuid_list.append(camera_uuid)
+    print(f'{camera_uuid_list=}')
+    return {"camera_list": camera_uuid_list}
+    '''
     camera_state_manager = get_camera_state_manager()
     camera_uuids = await camera_state_manager.get_all_camera_uuids()
+    print(f'{camera_uuids= }')
     return {"camera_list": camera_uuids}
+    '''

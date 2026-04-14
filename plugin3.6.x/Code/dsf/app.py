@@ -49,8 +49,9 @@ def init_routes_and_modules():
 	from routes.index_routes import router as index_router
 
 	from routes.settings_routes import router as settings_router
-	from routes.save_get_feedsettings_routes import router as feedsettings_router
+
 	from routes.camera_routes import router as camera_router
+	from routes.config_routes import router as config_router
 
 	@asynccontextmanager
 	async def lifespan(app_instance: FastAPI):
@@ -145,9 +146,9 @@ def init_routes_and_modules():
 	"""SRS"""
 
 	app.include_router(settings_router, tags=["settings"])
-	app.include_router(feedsettings_router, tags=["feedsettings"])	
 
 	app.include_router(camera_router, tags=["camera"])
+	app.include_router(config_router, tags=["config"])
 
 
 

@@ -4,8 +4,8 @@ console.warn("Countdown abstacted");
 // Templates
 // =========================
 const camTemplate = document.getElementById("camera-template");
-const vidTemplate = document.getElementById("video-template");
-const btnTemplate = document.getElementById("button-template");
+//const vidTemplate = document.getElementById("video-template");
+//const btnTemplate = document.getElementById("button-template");
 const grid = document.getElementById("grid");
 
 // =========================
@@ -306,7 +306,7 @@ function update_cameras () {
         const camId = item.dataset.cameraId;
         updateDisplayItem(item,camId);
     });
-    //setTimeout(update_cameras, 5000);
+
 }
 
 let defectActive = false;
@@ -374,13 +374,11 @@ document.addEventListener('cameraStateUpdated', evt => {
   //create a row for each camera
   cameras.forEach(createDisplayItem);
 
+  //Get a list of all camera rows
+    cameraItems = document.querySelectorAll('.camera-card');
 
-
-//Get a list of all camera rows
-  cameraItems = document.querySelectorAll('.camera-card');
-
-  update_cameras();
-  setInterval(update_cameras, 5000);
+    update_cameras();
+    setInterval(update_cameras, 5000);
 })();
 
 //test feed settings

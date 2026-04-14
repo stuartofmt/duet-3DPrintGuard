@@ -46,7 +46,7 @@ async def serve_index(request: Request):
 	})
 
 # pylint: disable=unused-argument
-@router.post("/settings", include_in_schema=False)
+@router.post("/settings/save-settings", include_in_schema=False)
 async def update_settings(request: Request,
 						  camera_uuid: str = Form(...),
 						  sensitivity: float = Form(...),
@@ -96,7 +96,7 @@ async def update_settings(request: Request,
 	return RedirectResponse("/settings", status_code=303)
 
 # pylint: disable=unused-argument
-@router.post("/update-countdown", include_in_schema=False)
+@router.post("/settings/update-countdown", include_in_schema=False)
 async def update_countdown(request: Request,
 							countdown_action: str = Form(...),
 							countdown_time: int = Form(...),
